@@ -7,21 +7,22 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-    /**
-     * Define the application's command schedule.
-     */
-    protected function schedule(Schedule $schedule): void
+    protected $commands = [
+        // Tus otros comandos aquí...
+    ];
+
+    protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Ejecutar diariamente a la 1:00 AM
+        $schedule->command('usuarios:eliminar-inactivos')->dailyAt('15:00');
+        
+        // Para testing, puedes usar cada minuto (comenta la línea de arriba y descomenta esta):
+        // $schedule->command('usuarios:eliminar-inactivos')->everyMinute();
     }
 
-    /**
-     * Register the commands for the application.
-     */
-    protected function commands(): void
+    protected function commands()
     {
         $this->load(__DIR__.'/Commands');
-
         require base_path('routes/console.php');
     }
 }

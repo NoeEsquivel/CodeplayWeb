@@ -38,5 +38,29 @@ Route::get('/cambio-clave-obligatorio', [AuthController::class, 'mostrarCambioCl
 Route::post('/cambio-clave-procesar', [AuthController::class, 'procesarCambioClaveObligatorio'])
     ->name('cambio.clave.procesar');
 
+// Rutas para alumnos
+Route::prefix('alumno')->group(function () {
+    Route::get('/documentacion', function () {
+        return view('alumno.documentacion');
+    })->name('alumno.documentacion');
+    
+    Route::get('/tutoriales', function () {
+        return view('alumno.tutoriales');
+    })->name('alumno.tutoriales');
+    
+    Route::get('/desafios', function () {
+        return view('alumno.desafios');
+    })->name('alumno.desafios');
+    
+    Route::get('/tests', function () {
+        return view('alumno.tests');
+    })->name('alumno.tests');
+    
+    Route::get('/progreso', function () {
+        return view('alumno.progreso');
+    })->name('alumno.progreso');
+});
+
+
 // Ruta de logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
