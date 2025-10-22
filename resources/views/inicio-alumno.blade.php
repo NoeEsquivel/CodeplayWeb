@@ -106,6 +106,28 @@
             border: 2px solid var(--accent-color);
             backdrop-filter: blur(5px);
             z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .points-animation {
+            animation: pointsPop 0.6s ease-out;
+        }
+        
+        @keyframes pointsPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        
+        .points-badge {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #000;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
         }
         
         .logout-btn {
@@ -229,14 +251,20 @@
             .menu-description {
                 font-size: 0.9rem;
             }
+            
+            .points-display {
+                font-size: 0.9rem;
+                padding: 8px 15px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Puntos del jugador -->
-    <div class="points-display">
-        <i class="fas fa-star me-2 text-warning"></i>
-        <span id="pointsDisplay">{{ Auth::user()->puntos_totales ?? 0 }} puntos</span>
+    <!-- Puntos del jugador - ACTUALIZADO -->
+    <div class="points-display" id="pointsDisplay">
+        <i class="fas fa-star text-warning"></i>
+        <span id="pointsValue">{{ session('puntos_disponibles') ?? 0 }}</span>
+        <span class="points-badge">PUNTOS</span>
     </div>
 
     <!-- Nombre del jugador -->
@@ -282,7 +310,7 @@
                     <div class="menu-item" onclick="navegarA('desafios')">
                         <i class="menu-icon fas fa-gamepad"></i>
                         <div class="menu-content">
-                            <h4 class="menu-title">⚔️ Desafíos de Programación</h4>
+                            <h4 class="menu-title">⚔️ Desafíos de Programación y Aprender Jugando</h4>
                             <p class="menu-description">Completa niveles y gana puntos</p>
                         </div>
                     </div>
@@ -320,6 +348,105 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        // Variable para almacenar los puntos actuales
+        let puntosActuales = {{ session('puntos_disponibles') ?? 0 }};
+
+        // Función para actualizar los puntos con animación
+        function actualizarPuntos(nuevosPuntos) {
+            const pointsElement = document.getElementById('pointsValue');
+            const pointsDisplay = document.getElementById('pointsDisplay');
+            
+            if (pointsElement && nuevosPuntos !== puntosActuales) {
+                // Animación de cambio
+                pointsDisplay.classList.add('points-animation');
+                
+                // Actualizar el valor
+                pointsElement.textContent = nuevosPuntos;
+                puntosActuales = nuevosPuntos;
+                
+                // Remover la clase de animación después de que termine
+                setTimeout(() => {
+                    pointsDisplay.classList.remove('points-animation');
+                }, 600);
+            }
+        }
+
+        // Función para verificar actualizaciones de puntos
+        function verificarActualizacionPuntos() {
+            fetch('{{ route("usuario.puntos") }}', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Datos de puntos recibidos:', data); // Para debug
+                
+                if (data.success && data.puntos !== puntosActuales) {
+                    actualizarPuntos(data.puntos);
+                    
+                    // Mostrar notificación si ganó puntos
+                    if (data.puntos > puntosActuales) {
+                        const puntosGanados = data.puntos - puntosActuales;
+                        mostrarNotificacionPuntos(puntosGanados);
+                    }
+                }
+            })
+            .catch(error => console.error('Error al verificar puntos:', error));
+        }
+
+        // Función para mostrar notificación de puntos ganados
+        function mostrarNotificacionPuntos(puntos) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                left: 20px;
+                background: linear-gradient(45deg, #FFD700, #FFA500);
+                color: #000;
+                padding: 10px 15px;
+                border-radius: 10px;
+                font-weight: bold;
+                z-index: 10000;
+                animation: slideInLeft 0.5s ease-out;
+                box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+            `;
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-star" style="color: #000;"></i>
+                    <span>+${puntos} puntos!</span>
+                    <i class="fas fa-arrow-up" style="color: #28a745;"></i>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutLeft 0.5s ease-in forwards';
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 500);
+            }, 3000);
+        }
+
+        // Verificar puntos cada 30 segundos
+        setInterval(verificarActualizacionPuntos, 30000);
+
+        // Verificar puntos inmediatamente al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarActualizacionPuntos();
+            
+            // Mostrar puntos actuales en consola para debug
+            console.log('Puntos disponibles actuales:', puntosActuales);
+            console.log('Usuario:', '{{ session('usuario_nombre') ?? "No autenticado" }}');
+        });
+
         function navegarA(destino) {
             // Agregar efecto de click
             event.currentTarget.style.transform = 'scale(0.95)';
@@ -327,23 +454,24 @@
                 event.currentTarget.style.transform = 'scale(1.05)';
             }, 150);
             
-            // Mostrar notificación personalizada según el destino
+            // Definir las rutas para cada destino (SOLO documentación existe)
+            const rutas = {
+                'documentacion': "{{ route('alumno.documentacion') }}",
+                'tutoriales': "{{ route('alumno.tutoriales') }}",
+                'desafios': "{{ route('alumno.desafios') }}"
+            };
+
+            // Si es una ruta existente, redirigir directamente
+            if (rutas[destino]) {
+                setTimeout(() => {
+                    window.location.href = rutas[destino];
+                }, 300);
+                return;
+            }
+
+            // Para otros destinos, mostrar notificación de desarrollo
             const mensajes = {
-                'documentacion': {
-                    titulo: '🚀 Documentación',
-                    mensaje: 'Próximamente: Aprende conceptos básicos de programación',
-                    color: '#6a11cb'
-                },
-                'tutoriales': {
-                    titulo: '🎯 Tutoriales Interactivos',
-                    mensaje: 'Próximamente: Guías paso a paso con ejemplos prácticos',
-                    color: '#2575fc'
-                },
-                'desafios': {
-                    titulo: '⚔️ Desafíos de Programación',
-                    mensaje: 'Próximamente: Completa niveles y gana puntos',
-                    color: '#00ff9d'
-                },
+
                 'tests': {
                     titulo: '📝 Tests y Evaluaciones',
                     mensaje: 'Próximamente: Pon a prueba tus conocimientos',
@@ -486,6 +614,28 @@
             to {
                 top: 20%;
                 opacity: 1;
+            }
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutLeft {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(-100px);
+                opacity: 0;
             }
         }
     </style>

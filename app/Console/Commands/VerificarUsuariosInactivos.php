@@ -32,7 +32,7 @@ class VerificarUsuariosInactivos extends Command
         if ($usuariosInactivos->count() > 0) {
             $this->info("\nDetalles:");
             foreach ($usuariosInactivos as $usuario) {
-                // ✅ CORREGIDO: Convertir a Carbon si es string
+                
                 $ultimoAcceso = $usuario->ultimo_acceso 
                     ? Carbon::parse($usuario->ultimo_acceso)->format('Y-m-d H:i:s')
                     : 'NUNCA (creado: ' . Carbon::parse($usuario->created_at)->format('Y-m-d') . ')';

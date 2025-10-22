@@ -8,7 +8,7 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 class Kernel extends ConsoleKernel
 {
     protected $commands = [
-        // Tus otros comandos aquí...
+        
     ];
 
     protected function schedule(Schedule $schedule)
@@ -16,8 +16,6 @@ class Kernel extends ConsoleKernel
         // Ejecutar diariamente a la 1:00 AM
         $schedule->command('usuarios:eliminar-inactivos')->dailyAt('15:00');
         
-        // Para testing, puedes usar cada minuto (comenta la línea de arriba y descomenta esta):
-        // $schedule->command('usuarios:eliminar-inactivos')->everyMinute();
     }
 
     protected function commands()

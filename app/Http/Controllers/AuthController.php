@@ -9,54 +9,75 @@ use App\Models\Usuario;
 class AuthController extends Controller
 {
     public function verify(Request $request)
-    {
-        // Validación
-        $request->validate([
-            'nombre' => 'required|string',
-            'clave' => 'required|string'
-        ]);
+{
+    // Validación
+    $request->validate([
+        'nombre' => 'required|string',
+        'clave' => 'required|string'
+    ]);
 
-        // Buscar usuario por nombre
-        $usuario = Usuario::where('nombre', $request->nombre)->first();
+    // Buscar usuario por nombre
+    $usuario = Usuario::where('nombre', $request->nombre)->first();
 
-        // Verificar si el usuario existe y la contraseña es correcta
-        if (!$usuario || !Hash::check($request->clave, $usuario->clave)) {
-            return redirect()->route('login')->with('error', 'Nombre de usuario o contraseña incorrectos');
-        }
-
-        // ✅ **NUEVO: ACTUALIZAR ÚLTIMO ACCESO**
-        $usuario->update([
-            'ultimo_acceso' => now()
-        ]);
-
-        // Crear sesión
-        session([
-            'usuario_id' => $usuario->id,
-            'usuario_nombre' => $usuario->nombre,
-            'usuario_rol' => $usuario->rol,
-            'cambio_clave_requerido' => $usuario->cambio_clave_requerido
-        ]);
-
-        // Si la contraseña es temporal y requiere cambio, redirigir al formulario
-        // IMPORTANTE: Esto aplica para TODOS los roles (Alumno, Administrador, Master)
-        if ($usuario->cambio_clave_requerido || Hash::check('Ined1234', $usuario->clave)) {
-            return redirect()->route('cambio.clave.obligatorio');
-        }
-
-        // Redirigir según el rol
-        return $this->redirectByRole($usuario->rol);
+    // Verificar si el usuario existe y la contraseña es correcta
+    if (!$usuario || !Hash::check($request->clave, $usuario->clave)) {
+        return redirect()->route('login')->with('error', 'Nombre de usuario o contraseña incorrectos');
     }
+
+    // ✅ **NUEVO: ACTUALIZAR ÚLTIMO ACCESO**
+    $usuario->update([
+        'ultimo_acceso' => now()
+    ]);
+
+    // ✅ **NUEVO: CALCULAR PUNTOS DISPONIBLES**
+    $puntosDisponibles = ($usuario->puntos_totales ?? 0) - ($usuario->puntos_usados ?? 0);
+
+    // Crear sesión (ACTUALIZADA con puntos)
+    session([
+        'usuario_id' => $usuario->id,
+        'usuario_nombre' => $usuario->nombre,
+        'usuario_rol' => $usuario->rol,
+        'cambio_clave_requerido' => $usuario->cambio_clave_requerido,
+        'puntos_disponibles' => $puntosDisponibles,
+        'puntos_totales' => $usuario->puntos_totales ?? 0,
+        'puntos_usados' => $usuario->puntos_usados ?? 0
+    ]);
+
+    // Si la contraseña es temporal y requiere cambio, redirigir al formulario
+    // IMPORTANTE: Esto aplica para TODOS los roles (Alumno, Administrador, Master)
+    if ($usuario->cambio_clave_requerido || Hash::check('Ined1234', $usuario->clave)) {
+        return redirect()->route('cambio.clave.obligatorio');
+    }
+
+    // Redirigir según el rol
+    return $this->redirectByRole($usuario->rol);
+}
 
     private function redirectByRole($rol)
     {
+        // ✅ **NUEVO: ACTUALIZAR PUNTOS ANTES DE REDIRIGIR**
+        $usuarioId = session('usuario_id');
+        if ($usuarioId) {
+            $usuario = Usuario::find($usuarioId);
+            if ($usuario) {
+                $puntosDisponibles = ($usuario->puntos_totales ?? 0) - ($usuario->puntos_usados ?? 0);
+                session([
+                    'puntos_disponibles' => $puntosDisponibles,
+                    'puntos_totales' => $usuario->puntos_totales ?? 0,
+                    'puntos_usados' => $usuario->puntos_usados ?? 0
+                ]);
+            }
+        }
+
         switch ($rol) {
-            case 'Master':
-                return redirect()->route('inicio.master');
+            case 'Alumno':
+                return redirect()->route('inicio.alumno');
             case 'Administrador':
                 return redirect()->route('inicio.administrador');
-            case 'Alumno':
+            case 'Master':
+                return redirect()->route('inicio.master');
             default:
-                return redirect()->route('inicio.alumno');
+                return redirect()->route('login')->with('error', 'Rol no válido');
         }
     }
 
@@ -129,5 +150,15 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('login');
+    }
+
+    public function debugPuntos()
+    {
+        $usuario = Auth::user();
+        return response()->json([
+            'usuario' => $usuario->nombre,
+            'puntos_totales' => $usuario->puntos_totales,
+            'puntos_usados' => $usuario->puntos_usados
+        ]);
     }
 }
