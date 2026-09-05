@@ -20,6 +20,7 @@ class DocumentacionController extends Controller
             'html3' => 'fundamentos_html.enlaces_imagenes',
             'html4' => 'fundamentos_html.formularios_html',
             'css1' => 'fundamentos_css.introduccion_css',
+            'css2' => 'fundamentos_css.colores_fuentes_fondos',
         ];
 
         if (array_key_exists($documento, $documentos)) {
@@ -27,7 +28,6 @@ class DocumentacionController extends Controller
         }
 
         $modulosEnPreparacion = [
-            'css2' => ['numero' => 6, 'titulo' => 'Colores, Fuentes y Fondos', 'descripcion' => 'Primeros cambios visuales para personalizar una pagina'],
             'css3' => ['numero' => 7, 'titulo' => 'Espacios, Bordes y Cajas', 'descripcion' => 'Como se acomodan los elementos usando margin, padding y border'],
             'css4' => ['numero' => 8, 'titulo' => 'Diseños Flexibles', 'descripcion' => 'Organizar tarjetas, menus y secciones con Flexbox'],
             'js1' => ['numero' => 9, 'titulo' => '¿Que es JavaScript?', 'descripcion' => 'La parte que permite que una pagina responda y cambie'],
