@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="580" viewBox="0 0 1000 580">
+  <rect width="1000" height="580" rx="16" fill="#12121c"/>
+  <rect x="8" y="8" width="984" height="564" rx="12" fill="#1a1a2e" stroke="#00ff9d" stroke-width="3"/>
+  <text x="40" y="52" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Una imagen tambien puede ser un enlace</text>
+  <rect x="52" y="105" width="895" height="365" rx="12" fill="#f7f7f7"/>
+  <text x="85" y="152" fill="#555" font-family="Segoe UI, Arial, sans-serif" font-size="16">Resultado: el usuario hace clic sobre la imagen</text>
+  <rect x="140" y="195" width="270" height="185" rx="14" fill="#0b2540" stroke="#2575fc" stroke-width="4"/>
+  <circle cx="215" cy="260" r="35" fill="#00ff9d"/>
+  <polygon points="160,350 235,290 285,338 325,305 390,350" fill="#6a11cb"/>
+  <path d="M420 288 C500 210, 610 215, 685 288" fill="none" stroke="#00a1ff" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="704,305 673,294 698,273" fill="#00a1ff"/>
+  <rect x="705" y="230" width="160" height="110" rx="12" fill="#eef6ff" stroke="#2575fc" stroke-width="2"/>
+  <text x="735" y="270" fill="#1a1a2e" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="700">Destino</text>
+  <text x="728" y="300" fill="#1a1a2e" font-family="Segoe UI, Arial, sans-serif" font-size="15">galeria.html</text>
+  <text x="150" y="415" fill="#0b63ce" font-family="Segoe UI, Arial, sans-serif" font-size="17" text-decoration="underline">Clic en la imagen</text>
+  <rect x="80" y="500" width="840" height="52" rx="8" fill="#1e1e1e"/>
+  <text x="105" y="533" fill="#569cd6" font-family="Consolas, Courier New, monospace" font-size="18">&lt;a href=&quot;galeria.html&quot;&gt;&lt;img src=&quot;Imagenes/foto.png&quot; alt=&quot;Abrir galeria&quot;&gt;&lt;/a&gt;</text>
+</svg>

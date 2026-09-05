@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600">
+  <rect width="1000" height="600" rx="16" fill="#12121c"/>
+  <rect x="8" y="8" width="984" height="584" rx="12" fill="#1a1a2e" stroke="#00ff9d" stroke-width="3"/>
+  <text x="40" y="52" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Rutas relativas, locales y externas</text>
+  <rect x="60" y="105" width="390" height="390" rx="12" fill="#111827" stroke="#6a11cb" stroke-width="2"/>
+  <text x="90" y="145" fill="#cbb4ff" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">Proyecto local</text>
+  <rect x="100" y="180" width="270" height="45" rx="8" fill="#1e1e1e"/>
+  <text x="125" y="210" fill="#e5e7eb" font-family="Consolas, Courier New, monospace" font-size="16">index.html</text>
+  <rect x="100" y="250" width="270" height="45" rx="8" fill="#0d2818"/>
+  <text x="125" y="280" fill="#00ff9d" font-family="Consolas, Courier New, monospace" font-size="16">Imagenes/</text>
+  <rect x="145" y="320" width="225" height="45" rx="8" fill="#0b2540"/>
+  <text x="170" y="350" fill="#9cdcfe" font-family="Consolas, Courier New, monospace" font-size="16">foto.png</text>
+  <path d="M220 225 L220 250" stroke="#00ff9d" stroke-width="4"/>
+  <path d="M220 295 L220 320" stroke="#00ff9d" stroke-width="4"/>
+  <text x="92" y="425" fill="#e5e7eb" font-family="Consolas, Courier New, monospace" font-size="17">&lt;img src=&quot;Imagenes/foto.png&quot;&gt;</text>
+  <rect x="520" y="105" width="420" height="390" rx="12" fill="#f7f7f7"/>
+  <text x="550" y="145" fill="#111" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">Dos formas comunes</text>
+  <rect x="560" y="185" width="330" height="80" rx="10" fill="#eef6ff" stroke="#2575fc" stroke-width="2"/>
+  <text x="585" y="217" fill="#2575fc" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="700">Ruta relativa</text>
+  <text x="585" y="245" fill="#111" font-family="Consolas, Courier New, monospace" font-size="15">Imagenes/foto.png</text>
+  <rect x="560" y="300" width="330" height="100" rx="10" fill="#fff7ed" stroke="#f59e0b" stroke-width="2"/>
+  <text x="585" y="333" fill="#b45309" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="700">URL externa</text>
+  <text x="585" y="361" fill="#111" font-family="Consolas, Courier New, monospace" font-size="15">https://sitio.com/foto.png</text>
+  <text x="585" y="385" fill="#555" font-family="Segoe UI, Arial, sans-serif" font-size="14">Depende de internet y del sitio externo.</text>
+  <text x="560" y="455" fill="#111" font-family="Segoe UI, Arial, sans-serif" font-size="16">En CodePlay conviene guardar tus imagenes en public/Imagenes.</text>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="560" viewBox="0 0 1000 560">
+  <rect width="1000" height="560" rx="16" fill="#12121c"/>
+  <rect x="8" y="8" width="984" height="544" rx="12" fill="#1a1a2e" stroke="#00ff9d" stroke-width="3"/>
+  <text x="40" y="50" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Enlaces con la etiqueta &lt;a&gt;</text>
+  <text x="40" y="82" fill="#9cdcfe" font-family="Consolas, Courier New, monospace" font-size="16">&lt;a href=&quot;pagina.html&quot;&gt;Abrir pagina&lt;/a&gt;</text>
+  <rect x="50" y="120" width="900" height="360" rx="12" fill="#f7f7f7"/>
+  <circle cx="82" cy="150" r="8" fill="#ff5f57"/>
+  <circle cx="108" cy="150" r="8" fill="#febc2e"/>
+  <circle cx="134" cy="150" r="8" fill="#28c840"/>
+  <text x="165" y="156" fill="#555" font-family="Segoe UI, Arial, sans-serif" font-size="14">index.html</text>
+  <line x1="50" y1="174" x2="950" y2="174" stroke="#ddd"/>
+  <text x="92" y="245" fill="#111" font-family="Georgia, serif" font-size="26">Visita nuestra guia de HTML:</text>
+  <text x="92" y="300" fill="#0b63ce" font-family="Georgia, serif" font-size="30" text-decoration="underline">Abrir pagina de practica</text>
+  <path d="M438 312 C500 372, 610 366, 662 318" fill="none" stroke="#00a1ff" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="678,300 665,333 645,306" fill="#00a1ff"/>
+  <rect x="690" y="250" width="180" height="92" rx="10" fill="#eef6ff" stroke="#2575fc" stroke-width="2"/>
+  <text x="718" y="287" fill="#1a1a2e" font-family="Segoe UI, Arial, sans-serif" font-size="17" font-weight="700">Al hacer clic</text>
+  <text x="712" y="314" fill="#1a1a2e" font-family="Segoe UI, Arial, sans-serif" font-size="15">el navegador abre</text>
+  <text x="730" y="337" fill="#1a1a2e" font-family="Segoe UI, Arial, sans-serif" font-size="15">otra pagina.</text>
+  <rect x="92" y="380" width="800" height="62" rx="8" fill="#1e1e1e"/>
+  <text x="112" y="418" fill="#569cd6" font-family="Consolas, Courier New, monospace" font-size="20">&lt;a</text>
+  <text x="155" y="418" fill="#9cdcfe" font-family="Consolas, Courier New, monospace" font-size="20"> href</text>
+  <text x="218" y="418" fill="#d4d4d4" font-family="Consolas, Courier New, monospace" font-size="20">=</text>
+  <text x="235" y="418" fill="#ce9178" font-family="Consolas, Courier New, monospace" font-size="20">&quot;practica.html&quot;</text>
+  <text x="385" y="418" fill="#569cd6" font-family="Consolas, Courier New, monospace" font-size="20">&gt;</text>
+  <text x="405" y="418" fill="#d4d4d4" font-family="Consolas, Courier New, monospace" font-size="20">Abrir practica</text>
+  <text x="565" y="418" fill="#569cd6" font-family="Consolas, Courier New, monospace" font-size="20">&lt;/a&gt;</text>
+</svg>

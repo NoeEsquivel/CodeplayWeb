@@ -114,6 +114,11 @@
         .js-badge { background-color: #f0db4f; color: #000; }
         .php-badge { background-color: #787cb5; }
         .bootstrap-badge { background-color: #7952b3; }
+        .concept-badge { background-color: #00a1ff; }
+        .python-badge { background-color: #3776ab; }
+        .java-badge { background-color: #f89820; color: #000; }
+        .robot-badge { background-color: #20c997; color: #000; }
+        .game-badge { background-color: #ff4d6d; }
         
         .doc-title {
             color: white;
@@ -225,41 +230,41 @@
                 </div>
                 
                 <!-- Sección: Estilos con CSS -->
-                <h3 class="section-title"><i class="fas fa-paint-brush me-2"></i>Estilos con CSS</h3>
+                <h3 class="section-title"><i class="fas fa-paint-brush me-2"></i>Diseño Visual con CSS</h3>
                 <div class="row">
                     <div class="col-md-6 mb-4">
                         <a href="{{ route('alumno.documentacion.show', 'css1') }}" class="doc-btn w-100">
                             <h4 class="text-white">5. Introducción a CSS
                                 <span class="badge css-badge badge-language">CSS</span>
                             </h4>
-                            <p class="mb-0 text-white-50">Selectores y propiedades esenciales</p>
+                            <p class="mb-0 text-white-50">Colores, estilos y apariencia de una página</p>
                         </a>
                     </div>
                     
                     <div class="col-md-6 mb-4">
                         <a href="{{ route('alumno.documentacion.show', 'css2') }}" class="doc-btn w-100">
-                            <h4 class="text-white">6. Modelo de Caja
+                            <h4 class="text-white">6. Colores, Fuentes y Fondos
                                 <span class="badge css-badge badge-language">CSS</span>
                             </h4>
-                            <p class="mb-0 text-white-50">Margin, padding, border y box-sizing</p>
+                            <p class="mb-0 text-white-50">Personalizar el estilo visual de un sitio</p>
                         </a>
                     </div>
                     
                     <div class="col-md-6 mb-4">
                         <a href="{{ route('alumno.documentacion.show', 'css3') }}" class="doc-btn w-100">
-                            <h4 class="text-white">7. Flexbox
+                            <h4 class="text-white">7. Espacios, Bordes y Cajas
                                 <span class="badge css-badge badge-language">CSS</span>
                             </h4>
-                            <p class="mb-0 text-white-50">Diseños flexibles con CSS</p>
+                            <p class="mb-0 text-white-50">Margin, padding, border y tamaño de elementos</p>
                         </a>
                     </div>
                     
                     <div class="col-md-6 mb-4">
                         <a href="{{ route('alumno.documentacion.show', 'css4') }}" class="doc-btn w-100">
-                            <h4 class="text-white">8. Responsive Design
+                            <h4 class="text-white">8. Diseños Flexibles
                                 <span class="badge css-badge badge-language">CSS</span>
                             </h4>
-                            <p class="mb-0 text-white-50">Media queries y diseño adaptable</p>
+                            <p class="mb-0 text-white-50">Acomodar tarjetas, menús y secciones con Flexbox</p>
                         </a>
                     </div>
                 </div>
@@ -269,117 +274,89 @@
                 <div class="row">
                     <div class="col-md-6 mb-4">
                         <a href="{{ route('alumno.documentacion.show', 'js1') }}" class="doc-btn w-100">
-                            <h4 class="text-white">9. Introducción a JavaScript
+                            <h4 class="text-white">9. ¿Qué es JavaScript?
                                 <span class="badge js-badge badge-language">JS</span>
                             </h4>
-                            <p class="mb-0 text-white-50">Variables, tipos de datos y operadores</p>
+                            <p class="mb-0 text-white-50">La parte que permite que una página responda</p>
                         </a>
                     </div>
                     
                     <div class="col-md-6 mb-4">
                         <a href="{{ route('alumno.documentacion.show', 'js2') }}" class="doc-btn w-100">
-                            <h4 class="text-white">10. Funciones y Eventos
+                            <h4 class="text-white">10. Variables y Decisiones
                                 <span class="badge js-badge badge-language">JS</span>
                             </h4>
-                            <p class="mb-0 text-white-50">Crear funciones y manejar eventos</p>
+                            <p class="mb-0 text-white-50">Guardar datos y tomar decisiones simples</p>
                         </a>
                     </div>
                     
                     <div class="col-md-6 mb-4">
                         <a href="{{ route('alumno.documentacion.show', 'js3') }}" class="doc-btn w-100">
-                            <h4 class="text-white">11. DOM Manipulation
+                            <h4 class="text-white">11. Botones y Eventos
                                 <span class="badge js-badge badge-language">JS</span>
                             </h4>
-                            <p class="mb-0 text-white-50">Interactuar con elementos HTML</p>
+                            <p class="mb-0 text-white-50">Hacer que una página reaccione a clics</p>
                         </a>
                     </div>
                     
                     <div class="col-md-6 mb-4">
                         <a href="{{ route('alumno.documentacion.show', 'js4') }}" class="doc-btn w-100">
-                            <h4 class="text-white">12. Validación de Formularios
+                            <h4 class="text-white">12. Mini Quiz con JavaScript
                                 <span class="badge js-badge badge-language">JS</span>
                             </h4>
-                            <p class="mb-0 text-white-50">Validar formularios con JavaScript</p>
+                            <p class="mb-0 text-white-50">Preguntas, respuestas y puntaje en pantalla</p>
                         </a>
                     </div>
                 </div>
                 
-                <!-- Sección: Bootstrap para Principiantes -->
-                <h3 class="section-title"><i class="fab fa-bootstrap me-2"></i>Bootstrap para Principiantes</h3>
+                <!-- Sección: Mundos de la Programación -->
+                <h3 class="section-title"><i class="fas fa-globe-americas me-2"></i>Mundos de la Programación</h3>
                 <div class="row">
                     <div class="col-md-6 mb-4">
-                        <a href="{{ route('alumno.documentacion.show', 'bootstrap1') }}" class="doc-btn w-100">
-                            <h4 class="text-white">13. Introducción a Bootstrap
-                                <span class="badge bootstrap-badge badge-language">BOOTSTRAP</span>
+                        <a href="{{ route('alumno.documentacion.show', 'mundo1') }}" class="doc-btn w-100">
+                            <h4 class="text-white">13. Tipos de Lenguajes
+                                <span class="badge concept-badge badge-language">MAPA</span>
+                                <span class="badge python-badge badge-language">PYTHON</span>
+                                <span class="badge java-badge badge-language">JAVA</span>
                             </h4>
-                            <p class="mb-0 text-white-50">¿Qué es Bootstrap y cómo implementarlo?</p>
+                            <p class="mb-0 text-white-50">HTML, CSS, JavaScript, Python, Java, PHP y más</p>
                         </a>
                     </div>
                     
                     <div class="col-md-6 mb-4">
-                        <a href="{{ route('alumno.documentacion.show', 'bootstrap2') }}" class="doc-btn w-100">
-                            <h4 class="text-white">14. Sistema de Grid
-                                <span class="badge bootstrap-badge badge-language">BOOTSTRAP</span>
+                        <a href="{{ route('alumno.documentacion.show', 'mundo2') }}" class="doc-btn w-100">
+                            <h4 class="text-white">14. Frontend, Backend y Bases de Datos
+                                <span class="badge concept-badge badge-language">CONCEPTOS</span>
+                                <span class="badge php-badge badge-language">BACKEND</span>
                             </h4>
-                            <p class="mb-0 text-white-50">Crear layouts responsivos con el sistema de grid</p>
+                            <p class="mb-0 text-white-50">Qué ve el usuario y qué ocurre detrás</p>
                         </a>
                     </div>
                     
                     <div class="col-md-6 mb-4">
-                        <a href="{{ route('alumno.documentacion.show', 'bootstrap3') }}" class="doc-btn w-100">
-                            <h4 class="text-white">15. Componentes Básicos
-                                <span class="badge bootstrap-badge badge-language">BOOTSTRAP</span>
+                        <a href="{{ route('alumno.documentacion.show', 'mundo3') }}" class="doc-btn w-100">
+                            <h4 class="text-white">15. Programación de Software
+                                <span class="badge concept-badge badge-language">APPS</span>
                             </h4>
-                            <p class="mb-0 text-white-50">Botones, cards, navbar y más</p>
+                            <p class="mb-0 text-white-50">Cómo se crean programas para computadora y celular</p>
                         </a>
                     </div>
                     
                     <div class="col-md-6 mb-4">
-                        <a href="{{ route('alumno.documentacion.show', 'bootstrap4') }}" class="doc-btn w-100">
-                            <h4 class="text-white">16. Utilidades de Bootstrap
-                                <span class="badge bootstrap-badge badge-language">BOOTSTRAP</span>
+                        <a href="{{ route('alumno.documentacion.show', 'mundo4') }}" class="doc-btn w-100">
+                            <h4 class="text-white">16. Programación de Robots y Componentes
+                                <span class="badge robot-badge badge-language">ROBOTS</span>
                             </h4>
-                            <p class="mb-0 text-white-50">Clases utilitarias para espaciado, colores, etc.</p>
+                            <p class="mb-0 text-white-50">Sensores, motores, placas y código que mueve cosas reales</p>
                         </a>
                     </div>
-                </div>
-                
-                <!-- Sección: Introducción a PHP -->
-                <h3 class="section-title"><i class="fab fa-php me-2"></i>Introducción a PHP</h3>
-                <div class="row">
+
                     <div class="col-md-6 mb-4">
-                        <a href="{{ route('alumno.documentacion.show', 'php1') }}" class="doc-btn w-100">
-                            <h4 class="text-white">17. ¿Qué es PHP?
-                                <span class="badge php-badge badge-language">PHP</span>
+                        <a href="{{ route('alumno.documentacion.show', 'mundo5') }}" class="doc-btn w-100">
+                            <h4 class="text-white">17. Videojuegos e Interactividad
+                                <span class="badge game-badge badge-language">JUEGOS</span>
                             </h4>
-                            <p class="mb-0 text-white-50">Introducción al lenguaje del lado del servidor</p>
-                        </a>
-                    </div>
-                    
-                    <div class="col-md-6 mb-4">
-                        <a href="{{ route('alumno.documentacion.show', 'php2') }}" class="doc-btn w-100">
-                            <h4 class="text-white">18. Sintaxis Básica
-                                <span class="badge php-badge badge-language">PHP</span>
-                            </h4>
-                            <p class="mb-0 text-white-50">Variables, estructuras de control y funciones</p>
-                        </a>
-                    </div>
-                    
-                    <div class="col-md-6 mb-4">
-                        <a href="{{ route('alumno.documentacion.show', 'php3') }}" class="doc-btn w-100">
-                            <h4 class="text-white">19. Formularios con PHP
-                                <span class="badge php-badge badge-language">PHP</span>
-                            </h4>
-                            <p class="mb-0 text-white-50">Procesar datos de formularios con PHP</p>
-                        </a>
-                    </div>
-                    
-                    <div class="col-md-6 mb-4">
-                        <a href="{{ route('alumno.documentacion.show', 'php4') }}" class="doc-btn w-100">
-                            <h4 class="text-white">20. Sesiones y Cookies
-                                <span class="badge php-badge badge-language">PHP</span>
-                            </h4>
-                            <p class="mb-0 text-white-50">Manejo de sesiones y cookies en PHP</p>
+                            <p class="mb-0 text-white-50">Personajes, reglas, colisiones, controles y puntos</p>
                         </a>
                     </div>
                 </div>
@@ -389,22 +366,53 @@
                 <div class="row">
                     <div class="col-md-6 mb-4">
                         <a href="{{ route('alumno.documentacion.show', 'proyecto1') }}" class="doc-btn w-100">
-                            <h4 class="text-white">21. Página Web Personal
+                            <h4 class="text-white">18. Página Web Personal
                                 <span class="badge html-badge badge-language">HTML</span>
                                 <span class="badge css-badge badge-language">CSS</span>
                             </h4>
-                            <p class="mb-0 text-white-50">Crear tu primera página web desde cero</p>
+                            <p class="mb-0 text-white-50">Crear una página propia con estilo e identidad</p>
                         </a>
                     </div>
                     
                     <div class="col-md-6 mb-4">
                         <a href="{{ route('alumno.documentacion.show', 'proyecto2') }}" class="doc-btn w-100">
-                            <h4 class="text-white">22. Formulario Interactivo
+                            <h4 class="text-white">19. Menú de VideoJuego
+                                <span class="badge html-badge badge-language">HTML</span>
+                                <span class="badge css-badge badge-language">CSS</span>
+                                <span class="badge game-badge badge-language">JUEGO</span>
+                            </h4>
+                            <p class="mb-0 text-white-50">Diseñar una pantalla inicial con opciones estilo gamer</p>
+                        </a>
+                    </div>
+                    
+                    <div class="col-md-6 mb-4">
+                        <a href="{{ route('alumno.documentacion.show', 'proyecto3') }}" class="doc-btn w-100">
+                            <h4 class="text-white">20. Tarjeta Interactiva
+                                <span class="badge html-badge badge-language">HTML</span>
+                                <span class="badge css-badge badge-language">CSS</span>
+                                <span class="badge js-badge badge-language">JS</span>
+                            </h4>
+                            <p class="mb-0 text-white-50">Una tarjeta que cambia al presionar un botón</p>
+                        </a>
+                    </div>
+                    
+                    <div class="col-md-6 mb-4">
+                        <a href="{{ route('alumno.documentacion.show', 'proyecto4') }}" class="doc-btn w-100">
+                            <h4 class="text-white">21. Mini Quíz con JavaScript
+                                <span class="badge js-badge badge-language">JS</span>
+                            </h4>
+                            <p class="mb-0 text-white-50">Preguntas, opciones, puntaje y resultado final</p>
+                        </a>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <a href="{{ route('alumno.documentacion.show', 'proyecto5') }}" class="doc-btn w-100">
+                            <h4 class="text-white">22. Creemos un juego "La culebrita"
                                 <span class="badge html-badge badge-language">HTML</span>
                                 <span class="badge js-badge badge-language">JS</span>
-                                <span class="badge php-badge badge-language">PHP</span>
+                                <span class="badge game-badge badge-language">JUEGO</span>
                             </h4>
-                            <p class="mb-0 text-white-50">Formulario con validación y procesamiento</p>
+                            <p class="mb-0 text-white-50">Crear una versión simple del clásico juego de la culebrita</p>
                         </a>
                     </div>
                 </div>

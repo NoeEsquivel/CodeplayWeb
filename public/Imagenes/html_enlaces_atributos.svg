@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="560" viewBox="0 0 1000 560">
+  <rect width="1000" height="560" rx="16" fill="#12121c"/>
+  <rect x="8" y="8" width="984" height="544" rx="12" fill="#1a1a2e" stroke="#00ff9d" stroke-width="3"/>
+  <text x="40" y="50" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Atributos importantes en enlaces</text>
+  <rect x="48" y="100" width="904" height="390" rx="12" fill="#111827" stroke="#2575fc" stroke-width="2"/>
+  <rect x="85" y="145" width="830" height="82" rx="10" fill="#1e1e1e"/>
+  <text x="110" y="194" fill="#569cd6" font-family="Consolas, Courier New, monospace" font-size="22">&lt;a</text>
+  <text x="155" y="194" fill="#9cdcfe" font-family="Consolas, Courier New, monospace" font-size="22"> href</text>
+  <text x="223" y="194" fill="#d4d4d4" font-family="Consolas, Courier New, monospace" font-size="22">=</text>
+  <text x="242" y="194" fill="#ce9178" font-family="Consolas, Courier New, monospace" font-size="22">&quot;https://codeplay.test&quot;</text>
+  <text x="515" y="194" fill="#9cdcfe" font-family="Consolas, Courier New, monospace" font-size="22"> target</text>
+  <text x="598" y="194" fill="#d4d4d4" font-family="Consolas, Courier New, monospace" font-size="22">=</text>
+  <text x="617" y="194" fill="#ce9178" font-family="Consolas, Courier New, monospace" font-size="22">&quot;_blank&quot;</text>
+  <text x="730" y="194" fill="#569cd6" font-family="Consolas, Courier New, monospace" font-size="22">&gt;</text>
+  <line x1="206" y1="208" x2="206" y2="278" stroke="#00ff9d" stroke-width="4"/>
+  <line x1="574" y1="208" x2="574" y2="278" stroke="#00a1ff" stroke-width="4"/>
+  <rect x="95" y="285" width="320" height="110" rx="10" fill="#0d2818" stroke="#00ff9d" stroke-width="2"/>
+  <text x="120" y="322" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="700">href</text>
+  <text x="120" y="352" fill="#e5e7eb" font-family="Segoe UI, Arial, sans-serif" font-size="16">Indica a donde lleva el enlace:</text>
+  <text x="120" y="378" fill="#e5e7eb" font-family="Segoe UI, Arial, sans-serif" font-size="16">otra pagina, archivo o sitio web.</text>
+  <rect x="465" y="285" width="360" height="110" rx="10" fill="#0b2540" stroke="#00a1ff" stroke-width="2"/>
+  <text x="490" y="322" fill="#9cdcfe" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="700">target=&quot;_blank&quot;</text>
+  <text x="490" y="352" fill="#e5e7eb" font-family="Segoe UI, Arial, sans-serif" font-size="16">Abre el enlace en una pestana nueva.</text>
+  <text x="490" y="378" fill="#e5e7eb" font-family="Segoe UI, Arial, sans-serif" font-size="16">Se usa para enlaces externos.</text>
+  <text x="110" y="455" fill="#cbd5e1" font-family="Segoe UI, Arial, sans-serif" font-size="17">El texto entre apertura y cierre es lo que el usuario ve y puede presionar.</text>
+</svg>
