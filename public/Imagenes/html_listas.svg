@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="560" viewBox="0 0 1000 560">
+  <rect width="1000" height="560" rx="16" fill="#12121c"/>
+  <rect x="8" y="8" width="984" height="544" rx="12" fill="#1a1a2e" stroke="#00ff9d" stroke-width="3"/>
+  <text x="40" y="48" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700">Listas: vinetas y numeros</text>
+  <text x="40" y="76" fill="#9cdcfe" font-family="Consolas, Courier New, monospace" font-size="16">&lt;ul&gt; | &lt;ol&gt; | &lt;li&gt;</text>
+  <rect x="40" y="100" width="440" height="410" rx="12" fill="#f7f7f7"/>
+  <text x="60" y="140" fill="#6a11cb" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">Lista no ordenada &lt;ul&gt;</text>
+  <text x="80" y="190" fill="#111" font-family="Georgia, serif" font-size="22">- HTML</text>
+  <text x="80" y="230" fill="#111" font-family="Georgia, serif" font-size="22">- CSS</text>
+  <text x="80" y="270" fill="#111" font-family="Georgia, serif" font-size="22">- JavaScript</text>
+  <text x="60" y="330" fill="#444" font-family="Consolas, Courier New, monospace" font-size="15">&lt;ul&gt;</text>
+  <text x="80" y="356" fill="#444" font-family="Consolas, Courier New, monospace" font-size="15">&lt;li&gt;HTML&lt;/li&gt;</text>
+  <text x="80" y="382" fill="#444" font-family="Consolas, Courier New, monospace" font-size="15">&lt;li&gt;CSS&lt;/li&gt;</text>
+  <text x="80" y="408" fill="#444" font-family="Consolas, Courier New, monospace" font-size="15">&lt;li&gt;JavaScript&lt;/li&gt;</text>
+  <text x="60" y="434" fill="#444" font-family="Consolas, Courier New, monospace" font-size="15">&lt;/ul&gt;</text>
+  <text x="60" y="478" fill="#555" font-family="Segoe UI, Arial, sans-serif" font-size="15">Usala cuando el orden no importa.</text>
+  <rect x="520" y="100" width="440" height="410" rx="12" fill="#f7f7f7"/>
+  <text x="540" y="140" fill="#2575fc" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">Lista ordenada &lt;ol&gt;</text>
+  <text x="560" y="190" fill="#111" font-family="Georgia, serif" font-size="22">1. Abrir el editor</text>
+  <text x="560" y="230" fill="#111" font-family="Georgia, serif" font-size="22">2. Escribir el HTML</text>
+  <text x="560" y="270" fill="#111" font-family="Georgia, serif" font-size="22">3. Guardar como .html</text>
+  <text x="540" y="330" fill="#444" font-family="Consolas, Courier New, monospace" font-size="15">&lt;ol&gt;</text>
+  <text x="560" y="356" fill="#444" font-family="Consolas, Courier New, monospace" font-size="15">&lt;li&gt;Abrir el editor&lt;/li&gt;</text>
+  <text x="560" y="382" fill="#444" font-family="Consolas, Courier New, monospace" font-size="15">&lt;li&gt;Escribir el HTML&lt;/li&gt;</text>
+  <text x="560" y="408" fill="#444" font-family="Consolas, Courier New, monospace" font-size="15">&lt;li&gt;Guardar como .html&lt;/li&gt;</text>
+  <text x="540" y="434" fill="#444" font-family="Consolas, Courier New, monospace" font-size="15">&lt;/ol&gt;</text>
+  <text x="540" y="478" fill="#555" font-family="Segoe UI, Arial, sans-serif" font-size="15">Usala para pasos o ranking.</text>
+</svg>

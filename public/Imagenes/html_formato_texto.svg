@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="560" viewBox="0 0 1000 560">
+  <rect width="1000" height="560" rx="16" fill="#12121c"/>
+  <rect x="8" y="8" width="984" height="544" rx="12" fill="#1a1a2e" stroke="#00ff9d" stroke-width="3"/>
+  <text x="40" y="48" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700">Enfasis, salto de linea y separador</text>
+  <text x="40" y="76" fill="#9cdcfe" font-family="Consolas, Courier New, monospace" font-size="16">&lt;strong&gt; | &lt;em&gt; | &lt;br&gt; | &lt;hr&gt;</text>
+  <rect x="40" y="100" width="920" height="420" rx="12" fill="#f7f7f7"/>
+  <text x="70" y="150" fill="#111" font-family="Georgia, serif" font-size="26">HTML no es solo texto: tambien indica importancia.</text>
+  <text x="70" y="210" fill="#111" font-family="Georgia, serif" font-size="22">Esta palabra esta en</text>
+  <text x="310" y="210" fill="#111" font-family="Georgia, serif" font-size="22" font-weight="800">negrita</text>
+  <text x="420" y="210" fill="#111" font-family="Georgia, serif" font-size="22">porque es clave.</text>
+  <text x="70" y="240" fill="#6a11cb" font-family="Consolas, Courier New, monospace" font-size="16">&lt;strong&gt;negrita&lt;/strong&gt;</text>
+  <text x="70" y="300" fill="#111" font-family="Georgia, serif" font-size="22">Esta frase tiene</text>
+  <text x="265" y="300" fill="#111" font-family="Georgia, serif" font-size="22" font-style="italic">enfasis en cursiva</text>
+  <text x="485" y="300" fill="#111" font-family="Georgia, serif" font-size="22">para destacar el tono.</text>
+  <text x="70" y="330" fill="#2575fc" font-family="Consolas, Courier New, monospace" font-size="16">&lt;em&gt;enfasis en cursiva&lt;/em&gt;</text>
+  <text x="70" y="390" fill="#111" font-family="Georgia, serif" font-size="22">Direccion:</text>
+  <text x="70" y="422" fill="#111" font-family="Georgia, serif" font-size="22">Calle Principal 123</text>
+  <text x="70" y="454" fill="#111" font-family="Georgia, serif" font-size="22">Ciudad CodePlay</text>
+  <text x="360" y="422" fill="#555" font-family="Consolas, Courier New, monospace" font-size="16">&lt;br&gt; fuerza un salto de linea</text>
+  <text x="360" y="446" fill="#555" font-family="Consolas, Courier New, monospace" font-size="16">sin crear un parrafo nuevo.</text>
+  <line x1="70" y1="480" x2="930" y2="480" stroke="#888" stroke-width="2"/>
+  <text x="70" y="508" fill="#555" font-family="Consolas, Courier New, monospace" font-size="16">&lt;hr&gt; dibuja una linea horizontal para separar bloques.</text>
+</svg>

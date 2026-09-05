@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="640" viewBox="0 0 1000 640">
+  <rect width="1000" height="640" rx="16" fill="#12121c"/>
+  <rect x="8" y="8" width="984" height="624" rx="12" fill="#1a1a2e" stroke="#00ff9d" stroke-width="3"/>
+  <text x="40" y="48" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700">div ocupa toda la linea y span solo una palabra</text>
+  <text x="40" y="76" fill="#9cdcfe" font-family="Consolas, Courier New, monospace" font-size="16">bloque vs. en linea</text>
+  <rect x="40" y="100" width="440" height="500" rx="12" fill="#111827" stroke="#6a11cb" stroke-width="3"/>
+  <text x="60" y="140" fill="#cbb4ff" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">&lt;div&gt; - contenedor de bloque</text>
+  <rect x="70" y="170" width="380" height="90" rx="8" fill="#2a1454" stroke="#00ff9d" stroke-width="2"/>
+  <text x="90" y="210" fill="#fff" font-family="Segoe UI, Arial, sans-serif" font-size="18">Caja 1: cabecera</text>
+  <text x="90" y="238" fill="#00ff9d" font-family="Consolas, Courier New, monospace" font-size="14">&lt;div&gt; &amp; &lt;/div&gt;</text>
+  <rect x="70" y="280" width="380" height="90" rx="8" fill="#2a1454" stroke="#00ff9d" stroke-width="2"/>
+  <text x="90" y="320" fill="#fff" font-family="Segoe UI, Arial, sans-serif" font-size="18">Caja 2: contenido</text>
+  <text x="90" y="348" fill="#00ff9d" font-family="Consolas, Courier New, monospace" font-size="14">&lt;div&gt; &amp; &lt;/div&gt;</text>
+  <rect x="70" y="390" width="380" height="90" rx="8" fill="#2a1454" stroke="#00ff9d" stroke-width="2"/>
+  <text x="90" y="430" fill="#fff" font-family="Segoe UI, Arial, sans-serif" font-size="18">Caja 3: pie</text>
+  <text x="90" y="458" fill="#00ff9d" font-family="Consolas, Courier New, monospace" font-size="14">&lt;div&gt; &amp; &lt;/div&gt;</text>
+  <text x="70" y="520" fill="#ccc" font-family="Segoe UI, Arial, sans-serif" font-size="15">Cada div empieza en una linea nueva</text>
+  <text x="70" y="544" fill="#ccc" font-family="Segoe UI, Arial, sans-serif" font-size="15">y usa todo el ancho disponible.</text>
+  <rect x="520" y="100" width="440" height="500" rx="12" fill="#111827" stroke="#2575fc" stroke-width="3"/>
+  <text x="540" y="140" fill="#9cdcfe" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">&lt;span&gt; - texto en linea</text>
+  <text x="550" y="210" fill="#eee" font-family="Georgia, serif" font-size="22">Hola, me llamo</text>
+  <rect x="550" y="230" width="160" height="44" rx="8" fill="#0b3d66" stroke="#00ff9d" stroke-width="2"/>
+  <text x="575" y="260" fill="#00ff9d" font-family="Georgia, serif" font-size="22" font-weight="700">Alex</text>
+  <text x="720" y="260" fill="#eee" font-family="Georgia, serif" font-size="22">y estudio HTML.</text>
+  <text x="550" y="320" fill="#9cdcfe" font-family="Consolas, Courier New, monospace" font-size="15">&lt;p&gt;Hola, me llamo</text>
+  <text x="550" y="344" fill="#9cdcfe" font-family="Consolas, Courier New, monospace" font-size="15">&lt;span&gt;Alex&lt;/span&gt;</text>
+  <text x="550" y="368" fill="#9cdcfe" font-family="Consolas, Courier New, monospace" font-size="15">y estudio HTML.&lt;/p&gt;</text>
+  <text x="550" y="430" fill="#ccc" font-family="Segoe UI, Arial, sans-serif" font-size="16">span no rompe el parrafo:</text>
+  <text x="550" y="458" fill="#ccc" font-family="Segoe UI, Arial, sans-serif" font-size="16">solo envuelve una palabra o frase</text>
+  <text x="550" y="486" fill="#ccc" font-family="Segoe UI, Arial, sans-serif" font-size="16">para resaltarla o aplicarle estilo.</text>
+  <rect x="550" y="520" width="360" height="48" rx="8" fill="#0d2818" stroke="#00ff9d" stroke-width="1"/>
+  <text x="568" y="550" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="15">Usa div para secciones y span para texto.</text>
+</svg>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CODEPLAY - Test HTML</title>
+    <title>CODEPLAY - {{ $test->titulo ?? 'Test HTML' }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -110,8 +110,8 @@
             <div class="col-lg-8">
                 <div class="test-container">
                     <div class="text-center mb-4">
-                        <h1><i class="fas fa-file-alt me-2"></i>Test de HTML</h1>
-                        <p class="lead">Responde las siguientes 5 preguntas sobre HTML</p>
+                        <h1><i class="fas fa-file-alt me-2"></i>{{ $test->titulo ?? 'Test de HTML' }}</h1>
+                        <p class="lead">Responde las siguientes 5 preguntas sobre {{ $test->titulo ?? 'HTML' }}</p>
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle me-2"></i>
                             Cada respuesta correcta vale 10 puntos. Solo puedes realizar este test una vez cada 24 horas.
