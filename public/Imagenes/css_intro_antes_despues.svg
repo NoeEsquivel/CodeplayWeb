@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600">
+  <rect width="1000" height="600" rx="16" fill="#12121c"/>
+  <rect x="8" y="8" width="984" height="584" rx="12" fill="#1a1a2e" stroke="#00ff9d" stroke-width="3"/>
+  <text x="40" y="52" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">HTML sin CSS vs. HTML con CSS</text>
+  <rect x="55" y="105" width="410" height="390" rx="14" fill="#f7f7f7"/>
+  <text x="90" y="150" fill="#111" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">Sin CSS</text>
+  <text x="90" y="210" fill="#111" font-family="Times New Roman, serif" font-size="34" font-weight="700">Mi pagina</text>
+  <text x="90" y="255" fill="#111" font-family="Times New Roman, serif" font-size="18">Este texto usa el estilo normal del navegador.</text>
+  <rect x="90" y="290" width="120" height="34" fill="#efefef" stroke="#999"/>
+  <text x="118" y="314" fill="#111" font-family="Times New Roman, serif" font-size="16">Boton</text>
+  <rect x="535" y="105" width="410" height="390" rx="14" fill="#111827"/>
+  <text x="570" y="150" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">Con CSS</text>
+  <rect x="580" y="185" width="300" height="190" rx="18" fill="#f8fafc" stroke="#2575fc" stroke-width="3"/>
+  <text x="610" y="240" fill="#6a11cb" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="800">Mi pagina</text>
+  <text x="610" y="282" fill="#334155" font-family="Segoe UI, Arial, sans-serif" font-size="17">El mismo HTML puede verse mejor.</text>
+  <rect x="610" y="315" width="135" height="42" rx="21" fill="#00ff9d"/>
+  <text x="646" y="342" fill="#102018" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700">Boton</text>
+  <text x="120" y="545" fill="#cbd5e1" font-family="Segoe UI, Arial, sans-serif" font-size="17">CSS cambia colores, tamanos, espacios, bordes y posicion.</text>
+</svg>

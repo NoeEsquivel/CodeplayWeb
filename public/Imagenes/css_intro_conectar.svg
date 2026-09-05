@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600">
+  <rect width="1000" height="600" rx="16" fill="#12121c"/>
+  <rect x="8" y="8" width="984" height="584" rx="12" fill="#1a1a2e" stroke="#00ff9d" stroke-width="3"/>
+  <text x="40" y="52" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Tres formas de usar CSS</text>
+  <rect x="55" y="120" width="270" height="340" rx="14" fill="#111827" stroke="#2575fc" stroke-width="2"/>
+  <text x="90" y="165" fill="#9cdcfe" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">Externo</text>
+  <text x="85" y="220" fill="#e5e7eb" font-family="Segoe UI, Arial, sans-serif" font-size="15">Archivo separado:</text>
+  <rect x="85" y="250" width="205" height="70" rx="8" fill="#1e1e1e"/>
+  <text x="105" y="292" fill="#ce9178" font-family="Consolas, Courier New, monospace" font-size="16">style.css</text>
+  <text x="85" y="375" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="15">Mas ordenado.</text>
+  <rect x="365" y="120" width="270" height="340" rx="14" fill="#111827" stroke="#6a11cb" stroke-width="2"/>
+  <text x="400" y="165" fill="#cbb4ff" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">Interno</text>
+  <text x="395" y="220" fill="#e5e7eb" font-family="Segoe UI, Arial, sans-serif" font-size="15">Dentro de &lt;style&gt;:</text>
+  <rect x="395" y="250" width="205" height="70" rx="8" fill="#1e1e1e"/>
+  <text x="415" y="292" fill="#569cd6" font-family="Consolas, Courier New, monospace" font-size="16">&lt;style&gt;</text>
+  <text x="395" y="375" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="15">Util para practicar.</text>
+  <rect x="675" y="120" width="270" height="340" rx="14" fill="#111827" stroke="#f59e0b" stroke-width="2"/>
+  <text x="710" y="165" fill="#ffd166" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">En linea</text>
+  <text x="705" y="220" fill="#e5e7eb" font-family="Segoe UI, Arial, sans-serif" font-size="15">Dentro del elemento:</text>
+  <rect x="705" y="250" width="205" height="70" rx="8" fill="#1e1e1e"/>
+  <text x="725" y="292" fill="#9cdcfe" font-family="Consolas, Courier New, monospace" font-size="16">style=&quot;...&quot;</text>
+  <text x="705" y="375" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="15">Solo casos pequenos.</text>
+</svg>

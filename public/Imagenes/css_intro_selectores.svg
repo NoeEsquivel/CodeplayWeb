@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600">
+  <rect width="1000" height="600" rx="16" fill="#12121c"/>
+  <rect x="8" y="8" width="984" height="584" rx="12" fill="#1a1a2e" stroke="#00ff9d" stroke-width="3"/>
+  <text x="40" y="52" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Selectores: elegir que elemento cambiar</text>
+  <rect x="65" y="110" width="390" height="370" rx="14" fill="#f7f7f7"/>
+  <text x="100" y="165" fill="#6a11cb" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="800">Titulo</text>
+  <rect x="100" y="205" width="240" height="58" rx="10" fill="#eef6ff" stroke="#2575fc" stroke-width="2"/>
+  <text x="125" y="242" fill="#111" font-family="Segoe UI, Arial, sans-serif" font-size="18">Parrafo destacado</text>
+  <rect x="100" y="305" width="150" height="48" rx="24" fill="#00ff9d"/>
+  <text x="145" y="335" fill="#111" font-family="Segoe UI, Arial, sans-serif" font-size="17" font-weight="700">Boton</text>
+  <rect x="525" y="110" width="410" height="370" rx="14" fill="#111827" stroke="#2575fc" stroke-width="2"/>
+  <rect x="560" y="155" width="330" height="220" rx="10" fill="#1e1e1e"/>
+  <text x="585" y="205" fill="#dcdcaa" font-family="Consolas, Courier New, monospace" font-size="22">h1</text>
+  <text x="650" y="205" fill="#cbd5e1" font-family="Segoe UI, Arial, sans-serif" font-size="16">Todos los h1</text>
+  <text x="585" y="260" fill="#dcdcaa" font-family="Consolas, Courier New, monospace" font-size="22">.destacado</text>
+  <text x="745" y="260" fill="#cbd5e1" font-family="Segoe UI, Arial, sans-serif" font-size="16">Clase</text>
+  <text x="585" y="315" fill="#dcdcaa" font-family="Consolas, Courier New, monospace" font-size="22">#principal</text>
+  <text x="725" y="315" fill="#cbd5e1" font-family="Segoe UI, Arial, sans-serif" font-size="16">Id unico</text>
+  <text x="560" y="425" fill="#e5e7eb" font-family="Segoe UI, Arial, sans-serif" font-size="16">El selector apunta al elemento que recibira el estilo.</text>
+</svg>
