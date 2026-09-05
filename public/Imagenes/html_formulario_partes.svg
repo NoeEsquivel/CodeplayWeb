@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600">
+  <rect width="1000" height="600" rx="16" fill="#12121c"/>
+  <rect x="8" y="8" width="984" height="584" rx="12" fill="#1a1a2e" stroke="#00ff9d" stroke-width="3"/>
+  <text x="40" y="52" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Partes de un formulario</text>
+  <rect x="60" y="100" width="420" height="405" rx="14" fill="#f7f7f7"/>
+  <text x="95" y="150" fill="#111" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700">Crear cuenta</text>
+  <text x="95" y="200" fill="#333" font-family="Segoe UI, Arial, sans-serif" font-size="16">Nombre</text>
+  <rect x="95" y="215" width="300" height="44" rx="8" fill="#fff" stroke="#2575fc" stroke-width="2"/>
+  <text x="112" y="243" fill="#777" font-family="Segoe UI, Arial, sans-serif" font-size="15">Ana</text>
+  <text x="95" y="295" fill="#333" font-family="Segoe UI, Arial, sans-serif" font-size="16">Correo</text>
+  <rect x="95" y="310" width="300" height="44" rx="8" fill="#fff" stroke="#2575fc" stroke-width="2"/>
+  <text x="112" y="338" fill="#777" font-family="Segoe UI, Arial, sans-serif" font-size="15">ana@correo.com</text>
+  <rect x="95" y="395" width="150" height="48" rx="24" fill="#6a11cb"/>
+  <text x="130" y="425" fill="#fff" font-family="Segoe UI, Arial, sans-serif" font-size="17" font-weight="700">Enviar</text>
+  <rect x="545" y="100" width="390" height="405" rx="14" fill="#111827" stroke="#2575fc" stroke-width="2"/>
+  <rect x="575" y="145" width="330" height="250" rx="10" fill="#1e1e1e"/>
+  <text x="600" y="188" fill="#569cd6" font-family="Consolas, Courier New, monospace" font-size="19">&lt;form&gt;</text>
+  <text x="625" y="225" fill="#569cd6" font-family="Consolas, Courier New, monospace" font-size="19">&lt;label&gt;</text>
+  <text x="730" y="225" fill="#d4d4d4" font-family="Consolas, Courier New, monospace" font-size="19">Nombre</text>
+  <text x="805" y="225" fill="#569cd6" font-family="Consolas, Courier New, monospace" font-size="19">&lt;/label&gt;</text>
+  <text x="625" y="262" fill="#569cd6" font-family="Consolas, Courier New, monospace" font-size="19">&lt;input&gt;</text>
+  <text x="625" y="299" fill="#569cd6" font-family="Consolas, Courier New, monospace" font-size="19">&lt;button&gt;</text>
+  <text x="720" y="299" fill="#d4d4d4" font-family="Consolas, Courier New, monospace" font-size="19">Enviar</text>
+  <text x="795" y="299" fill="#569cd6" font-family="Consolas, Courier New, monospace" font-size="19">&lt;/button&gt;</text>
+  <text x="600" y="340" fill="#569cd6" font-family="Consolas, Courier New, monospace" font-size="19">&lt;/form&gt;</text>
+  <text x="585" y="445" fill="#e5e7eb" font-family="Segoe UI, Arial, sans-serif" font-size="17">form agrupa los controles que el usuario llena.</text>
+</svg>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="580" viewBox="0 0 1000 580">
+  <rect width="1000" height="580" rx="16" fill="#12121c"/>
+  <rect x="8" y="8" width="984" height="564" rx="12" fill="#1a1a2e" stroke="#00ff9d" stroke-width="3"/>
+  <text x="40" y="52" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">select y textarea</text>
+  <rect x="70" y="110" width="380" height="350" rx="14" fill="#f7f7f7"/>
+  <text x="105" y="160" fill="#111" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="700">Elige tu nivel</text>
+  <rect x="105" y="185" width="250" height="48" rx="8" fill="#fff" stroke="#2575fc" stroke-width="2"/>
+  <text x="125" y="216" fill="#111" font-family="Segoe UI, Arial, sans-serif" font-size="16">Principiante</text>
+  <polygon points="325,203 345,203 335,218" fill="#2575fc"/>
+  <text x="105" y="285" fill="#111" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="700">Mensaje</text>
+  <rect x="105" y="310" width="290" height="95" rx="8" fill="#fff" stroke="#2575fc" stroke-width="2"/>
+  <text x="125" y="342" fill="#777" font-family="Segoe UI, Arial, sans-serif" font-size="15">Quiero aprender a crear</text>
+  <text x="125" y="367" fill="#777" font-family="Segoe UI, Arial, sans-serif" font-size="15">mi primera pagina.</text>
+  <rect x="520" y="110" width="410" height="350" rx="14" fill="#111827" stroke="#2575fc" stroke-width="2"/>
+  <text x="555" y="165" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">select</text>
+  <text x="555" y="198" fill="#e5e7eb" font-family="Segoe UI, Arial, sans-serif" font-size="16">Permite elegir una opcion de una lista.</text>
+  <text x="555" y="270" fill="#00ff9d" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">textarea</text>
+  <text x="555" y="303" fill="#e5e7eb" font-family="Segoe UI, Arial, sans-serif" font-size="16">Permite escribir mensajes largos o comentarios.</text>
+  <rect x="555" y="350" width="315" height="58" rx="8" fill="#1e1e1e"/>
+  <text x="575" y="385" fill="#9cdcfe" font-family="Consolas, Courier New, monospace" font-size="16">&lt;select&gt; ... &lt;/select&gt;</text>
+</svg>
