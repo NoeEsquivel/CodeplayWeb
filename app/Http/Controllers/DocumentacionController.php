@@ -36,6 +36,7 @@ class DocumentacionController extends Controller
             'proyecto2' => 'proyectos_integradores.menu_videojuego',
             'proyecto3' => 'proyectos_integradores.tarjeta_interactiva',
             'proyecto4' => 'proyectos_integradores.mini_quiz_javascript',
+            'proyecto5' => 'proyectos_integradores.juego_culebrita',
         ];
 
         if (array_key_exists($documento, $documentos)) {
@@ -43,7 +44,6 @@ class DocumentacionController extends Controller
         }
 
         $modulosEnPreparacion = [
-            'proyecto5' => ['numero' => 22, 'titulo' => 'Creemos un juego "La culebrita"', 'descripcion' => 'Crear una version simple del juego de la culebrita'],
         ];
 
         if (array_key_exists($documento, $modulosEnPreparacion)) {
@@ -55,7 +55,3 @@ class DocumentacionController extends Controller
         abort(404, 'Documento no encontrado');
     }
 }
-
-
-
-
