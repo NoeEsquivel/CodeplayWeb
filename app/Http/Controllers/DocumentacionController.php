@@ -28,6 +28,7 @@ class DocumentacionController extends Controller
             'js3' => 'javascript_basico.botones_eventos',
             'js4' => 'javascript_basico.mini_quiz_javascript',
             'mundo1' => 'mundos_programacion.tipos_lenguajes',
+            'mundo2' => 'mundos_programacion.frontend_backend_bases_datos',
         ];
 
         if (array_key_exists($documento, $documentos)) {
@@ -35,7 +36,6 @@ class DocumentacionController extends Controller
         }
 
         $modulosEnPreparacion = [
-            'mundo2' => ['numero' => 14, 'titulo' => 'Frontend, Backend y Bases de Datos', 'descripcion' => 'Que parte ve el usuario y que parte trabaja por detras'],
             'mundo3' => ['numero' => 15, 'titulo' => 'Programacion de Software', 'descripcion' => 'Como se crean aplicaciones para computadora y celular'],
             'mundo4' => ['numero' => 16, 'titulo' => 'Programacion de Robots y Componentes', 'descripcion' => 'Sensores, motores, placas y codigo que mueve cosas reales'],
             'mundo5' => ['numero' => 17, 'titulo' => 'Videojuegos e Interactividad', 'descripcion' => 'Personajes, reglas, colisiones, puntos y controles'],
