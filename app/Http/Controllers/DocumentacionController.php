@@ -27,6 +27,7 @@ class DocumentacionController extends Controller
             'js2' => 'javascript_basico.variables_decisiones',
             'js3' => 'javascript_basico.botones_eventos',
             'js4' => 'javascript_basico.mini_quiz_javascript',
+            'mundo1' => 'mundos_programacion.tipos_lenguajes',
         ];
 
         if (array_key_exists($documento, $documentos)) {
@@ -34,7 +35,6 @@ class DocumentacionController extends Controller
         }
 
         $modulosEnPreparacion = [
-            'mundo1' => ['numero' => 13, 'titulo' => 'Tipos de Lenguajes', 'descripcion' => 'Diferencias entre HTML, CSS, JavaScript, Python, Java, PHP y otros'],
             'mundo2' => ['numero' => 14, 'titulo' => 'Frontend, Backend y Bases de Datos', 'descripcion' => 'Que parte ve el usuario y que parte trabaja por detras'],
             'mundo3' => ['numero' => 15, 'titulo' => 'Programacion de Software', 'descripcion' => 'Como se crean aplicaciones para computadora y celular'],
             'mundo4' => ['numero' => 16, 'titulo' => 'Programacion de Robots y Componentes', 'descripcion' => 'Sensores, motores, placas y codigo que mueve cosas reales'],
