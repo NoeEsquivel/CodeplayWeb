@@ -520,8 +520,13 @@
                     <div class="row">
                         <!-- Nivel 6: Flexbox -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-medium" onclick="navigateToLevel(6)">
+                            <div class="level-card level-medium {{ in_array(6, $nivelesCompletados ?? []) ? 'completed' : '' }}" onclick="navigateToLevel(6)">
                                 <div class="level-card-content">
+                                    @if(in_array(6, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">06</div>
                                     <div class="level-title">Diseño con Flexbox</div>
                                     <div class="level-stars">100 puntos
@@ -536,8 +541,13 @@
                         
                         <!-- Nivel 7: CSS Grid -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-medium" onclick="navigateToLevel(7)">
+                            <div class="level-card level-medium {{ in_array(7, $nivelesCompletados ?? []) ? 'completed' : '' }}" onclick="navigateToLevel(7)">
                                 <div class="level-card-content">
+                                    @if(in_array(7, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">07</div>
                                     <div class="level-title">CSS Grid Layout</div>
                                     <div class="level-stars">100 puntos
@@ -840,7 +850,9 @@ function navigateToLevel(levelNumber) {
         2: "{{ route('alumno.desafios.nivel2') }}",
         3: "{{ route('alumno.desafios.nivel3') }}",
         4: "{{ route('alumno.desafios.nivel4') }}",
-        5: "{{ route('alumno.desafios.nivel5') }}"
+        5: "{{ route('alumno.desafios.nivel5') }}",
+        6: "{{ route('alumno.desafios.nivel6') }}",
+        7: "{{ route('alumno.desafios.nivel7') }}"
         // Agregar más niveles aquí cuando los crees
     };
 
