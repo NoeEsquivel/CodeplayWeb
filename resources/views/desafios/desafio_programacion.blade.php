@@ -472,8 +472,13 @@
                         
                         <!-- Nivel 4: CSS Básico -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-easy" onclick="navigateToLevel(4)">
+                            <div class="level-card level-easy {{ in_array(4, $nivelesCompletados ?? []) ? 'completed' : '' }}" onclick="navigateToLevel(4)">
                                 <div class="level-card-content">
+                                    @if(in_array(4, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">04</div>
                                     <div class="level-title">Estilos CSS Básicos</div>
                                     <div class="level-stars">50 puntos
@@ -828,7 +833,8 @@ function navigateToLevel(levelNumber) {
     const rutas = {
         1: "{{ route('alumno.desafios.nivel1') }}",
         2: "{{ route('alumno.desafios.nivel2') }}",
-        3: "{{ route('alumno.desafios.nivel3') }}"
+        3: "{{ route('alumno.desafios.nivel3') }}",
+        4: "{{ route('alumno.desafios.nivel4') }}"
         // Agregar más niveles aquí cuando los crees
     };
 

@@ -71,6 +71,14 @@ class DesafioController extends Controller
         return view('desafios.fundamentos_web.desafiolvl3', compact('infoRecompensa'));
     }
 
+    public function nivel4()
+    {
+        $usuarioId = session('usuario_id');
+        $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 4);
+        
+        return view('desafios.fundamentos_web.desafiolvl4', compact('infoRecompensa'));
+    }
+
     // Función para obtener información de recompensa
     private function obtenerInfoRecompensa($usuarioId, $nivel)
     {
