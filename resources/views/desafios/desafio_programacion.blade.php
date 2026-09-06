@@ -493,8 +493,13 @@
                         
                         <!-- Nivel 5: Modelo de Caja -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-easy" onclick="navigateToLevel(5)">
+                            <div class="level-card level-easy {{ in_array(5, $nivelesCompletados ?? []) ? 'completed' : '' }}" onclick="navigateToLevel(5)">
                                 <div class="level-card-content">
+                                    @if(in_array(5, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">05</div>
                                     <div class="level-title">Modelo de Caja CSS</div>
                                     <div class="level-stars">100 puntos+item R
@@ -834,7 +839,8 @@ function navigateToLevel(levelNumber) {
         1: "{{ route('alumno.desafios.nivel1') }}",
         2: "{{ route('alumno.desafios.nivel2') }}",
         3: "{{ route('alumno.desafios.nivel3') }}",
-        4: "{{ route('alumno.desafios.nivel4') }}"
+        4: "{{ route('alumno.desafios.nivel4') }}",
+        5: "{{ route('alumno.desafios.nivel5') }}"
         // Agregar más niveles aquí cuando los crees
     };
 
