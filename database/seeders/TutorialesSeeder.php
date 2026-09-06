@@ -10,30 +10,14 @@ class TutorialesSeeder extends Seeder
     public function run()
     {
         $tutoriales = [
-            [
-                'titulo' => 'Tu Primera Página Web',
-                'slug' => 'primer-pagina-web',
-                'dificultad' => 'facil',
-                'puntos_otorgados' => 25,
-            ],
-            [
-                'titulo' => 'Añadiendo Estilos CSS',
-                'slug' => 'estilos-css',
-                'dificultad' => 'facil',
-                'puntos_otorgados' => 30,
-            ],
-            [
-                'titulo' => 'Creando Botones Interactivos',
-                'slug' => 'botones-interactivos',
-                'dificultad' => 'facil',
-                'puntos_otorgados' => 25,
-            ],
-            [
-                'titulo' => 'Navegación entre Páginas',
-                'slug' => 'navegacion-paginas',
-                'dificultad' => 'facil',
-                'puntos_otorgados' => 25,
-            ],
+            ['titulo' => 'Tu Primera Página Web', 'slug' => 'primer-pagina-web', 'dificultad' => 'facil', 'puntos_otorgados' => 25],
+            ['titulo' => 'Añadiendo Estilos CSS', 'slug' => 'estilos-css', 'dificultad' => 'facil', 'puntos_otorgados' => 30],
+            ['titulo' => 'Creando Botones Interactivos', 'slug' => 'botones-interactivos', 'dificultad' => 'facil', 'puntos_otorgados' => 25],
+            ['titulo' => 'Navegación entre Páginas', 'slug' => 'navegacion-paginas', 'dificultad' => 'facil', 'puntos_otorgados' => 25],
+            ['titulo' => 'Introducción a Bootstrap', 'slug' => 'introduccion-bootstrap', 'dificultad' => 'medio', 'puntos_otorgados' => 50],
+            ['titulo' => 'Creando Formularios Web', 'slug' => 'formularios-web', 'dificultad' => 'medio', 'puntos_otorgados' => 45],
+            ['titulo' => 'JavaScript para Principiantes', 'slug' => 'javascript-basico', 'dificultad' => 'medio', 'puntos_otorgados' => 60],
+            ['titulo' => 'Configurar Entorno de Desarrollo', 'slug' => 'entorno-desarrollo', 'dificultad' => 'medio', 'puntos_otorgados' => 40],
         ];
 
         foreach ($tutoriales as $tutorial) {
