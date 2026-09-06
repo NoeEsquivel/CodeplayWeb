@@ -24,6 +24,7 @@ class DocumentacionController extends Controller
             'css3' => 'fundamentos_css.espacios_bordes_cajas',
             'css4' => 'fundamentos_css.disenos_flexibles',
             'js1' => 'javascript_basico.que_es_javascript',
+            'js2' => 'javascript_basico.variables_decisiones',
         ];
 
         if (array_key_exists($documento, $documentos)) {
@@ -31,7 +32,6 @@ class DocumentacionController extends Controller
         }
 
         $modulosEnPreparacion = [
-            'js2' => ['numero' => 10, 'titulo' => 'Variables y Decisiones', 'descripcion' => 'Guardar datos, comparar respuestas y usar condiciones simples'],
             'js3' => ['numero' => 11, 'titulo' => 'Botones y Eventos', 'descripcion' => 'Hacer que una pagina reaccione a clics y acciones del usuario'],
             'js4' => ['numero' => 12, 'titulo' => 'Mini Quiz con JavaScript', 'descripcion' => 'Primer ejercicio interactivo con preguntas, respuestas y puntaje'],
             'mundo1' => ['numero' => 13, 'titulo' => 'Tipos de Lenguajes', 'descripcion' => 'Diferencias entre HTML, CSS, JavaScript, Python, Java, PHP y otros'],
