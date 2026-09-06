@@ -261,7 +261,7 @@
                             <h5 class="progress-text">
                                 <i class="fas fa-star me-2"></i>
                                 Desafíos completados: 
-                                <span id="completedChallenges">0</span>/20
+                                <span id="completedChallenges">{{ $desafiosCompletados ?? 0 }}</span>/20
                             </h5>
                         </div>
                     </div>
@@ -486,7 +486,7 @@
             document.getElementById('userLevel').textContent = nivel;
             
             // Por ahora, simular datos (luego vendrán de la base de datos)
-            document.getElementById('completedChallenges').textContent = '0';
+            document.getElementById('completedChallenges').textContent = {{ $desafiosCompletados ?? 0 }};
             document.getElementById('availableChallenges').textContent = Math.min(nivel, 20);
             document.getElementById('availableZones').textContent = Math.min(Math.floor(nivel / 5) + 1, 5);
         }

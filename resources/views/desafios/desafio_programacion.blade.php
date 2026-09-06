@@ -430,8 +430,13 @@
                         
                         <!-- Nivel 2: Etiquetas HTML -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-easy" onclick="navigateToLevel(2)">
+                            <div class="level-card level-easy {{ in_array(2, $nivelesCompletados ?? []) ? 'completed' : '' }}" onclick="navigateToLevel(2)">
                                 <div class="level-card-content">
+                                    @if(in_array(2, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">02</div>
                                     <div class="level-title">Etiquetas Fundamentales</div>
                                     <div class="level-stars">50 puntos
@@ -816,7 +821,8 @@ function navigateWithAnimation(url) {
 // Función para navegar a un nivel específico
 function navigateToLevel(levelNumber) {
     const rutas = {
-        1: "{{ route('alumno.desafios.nivel1') }}"
+        1: "{{ route('alumno.desafios.nivel1') }}",
+        2: "{{ route('alumno.desafios.nivel2') }}"
         // Agregar más niveles aquí cuando los crees
     };
 
