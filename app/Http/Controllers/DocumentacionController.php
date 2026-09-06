@@ -30,6 +30,7 @@ class DocumentacionController extends Controller
             'mundo1' => 'mundos_programacion.tipos_lenguajes',
             'mundo2' => 'mundos_programacion.frontend_backend_bases_datos',
             'mundo3' => 'mundos_programacion.programacion_software',
+            'mundo4' => 'mundos_programacion.programacion_robots_componentes',
         ];
 
         if (array_key_exists($documento, $documentos)) {
@@ -37,7 +38,6 @@ class DocumentacionController extends Controller
         }
 
         $modulosEnPreparacion = [
-            'mundo4' => ['numero' => 16, 'titulo' => 'Programacion de Robots y Componentes', 'descripcion' => 'Sensores, motores, placas y codigo que mueve cosas reales'],
             'mundo5' => ['numero' => 17, 'titulo' => 'Videojuegos e Interactividad', 'descripcion' => 'Personajes, reglas, colisiones, puntos y controles'],
             'proyecto1' => ['numero' => 18, 'titulo' => 'Pagina Web Personal', 'descripcion' => 'Crear una pagina propia con HTML y CSS'],
             'proyecto2' => ['numero' => 19, 'titulo' => 'Menu de VideoJuego', 'descripcion' => 'Diseñar una pantalla inicial con opciones y estilo gamer'],
