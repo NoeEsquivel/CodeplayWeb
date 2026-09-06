@@ -21,6 +21,7 @@ class DocumentacionController extends Controller
             'html4' => 'fundamentos_html.formularios_html',
             'css1' => 'fundamentos_css.introduccion_css',
             'css2' => 'fundamentos_css.colores_fuentes_fondos',
+            'css3' => 'fundamentos_css.espacios_bordes_cajas',
         ];
 
         if (array_key_exists($documento, $documentos)) {
@@ -28,7 +29,6 @@ class DocumentacionController extends Controller
         }
 
         $modulosEnPreparacion = [
-            'css3' => ['numero' => 7, 'titulo' => 'Espacios, Bordes y Cajas', 'descripcion' => 'Como se acomodan los elementos usando margin, padding y border'],
             'css4' => ['numero' => 8, 'titulo' => 'Diseños Flexibles', 'descripcion' => 'Organizar tarjetas, menus y secciones con Flexbox'],
             'js1' => ['numero' => 9, 'titulo' => '¿Que es JavaScript?', 'descripcion' => 'La parte que permite que una pagina responda y cambie'],
             'js2' => ['numero' => 10, 'titulo' => 'Variables y Decisiones', 'descripcion' => 'Guardar datos, comparar respuestas y usar condiciones simples'],
