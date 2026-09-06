@@ -25,6 +25,8 @@ class DocumentacionController extends Controller
             'css4' => 'fundamentos_css.disenos_flexibles',
             'js1' => 'javascript_basico.que_es_javascript',
             'js2' => 'javascript_basico.variables_decisiones',
+            'js3' => 'javascript_basico.botones_eventos',
+            'js4' => 'javascript_basico.mini_quiz_javascript',
         ];
 
         if (array_key_exists($documento, $documentos)) {
@@ -32,8 +34,6 @@ class DocumentacionController extends Controller
         }
 
         $modulosEnPreparacion = [
-            'js3' => ['numero' => 11, 'titulo' => 'Botones y Eventos', 'descripcion' => 'Hacer que una pagina reaccione a clics y acciones del usuario'],
-            'js4' => ['numero' => 12, 'titulo' => 'Mini Quiz con JavaScript', 'descripcion' => 'Primer ejercicio interactivo con preguntas, respuestas y puntaje'],
             'mundo1' => ['numero' => 13, 'titulo' => 'Tipos de Lenguajes', 'descripcion' => 'Diferencias entre HTML, CSS, JavaScript, Python, Java, PHP y otros'],
             'mundo2' => ['numero' => 14, 'titulo' => 'Frontend, Backend y Bases de Datos', 'descripcion' => 'Que parte ve el usuario y que parte trabaja por detras'],
             'mundo3' => ['numero' => 15, 'titulo' => 'Programacion de Software', 'descripcion' => 'Como se crean aplicaciones para computadora y celular'],
