@@ -451,8 +451,13 @@
                         
                         <!-- Nivel 3: Enlaces e Imágenes -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-easy" onclick="navigateToLevel(3)">
+                            <div class="level-card level-easy {{ in_array(3, $nivelesCompletados ?? []) ? 'completed' : '' }}" onclick="navigateToLevel(3)">
                                 <div class="level-card-content">
+                                    @if(in_array(3, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">03</div>
                                     <div class="level-title">Enlaces e Imágenes</div>
                                     <div class="level-stars">50 puntos
@@ -822,7 +827,8 @@ function navigateWithAnimation(url) {
 function navigateToLevel(levelNumber) {
     const rutas = {
         1: "{{ route('alumno.desafios.nivel1') }}",
-        2: "{{ route('alumno.desafios.nivel2') }}"
+        2: "{{ route('alumno.desafios.nivel2') }}",
+        3: "{{ route('alumno.desafios.nivel3') }}"
         // Agregar más niveles aquí cuando los crees
     };
 
