@@ -266,7 +266,7 @@
                                 <i class="fas fa-clock me-1"></i>5-10 minutos
                             </span>
                             <span class="badge bg-info ms-2">
-                                <i class="fas fa-coins me-1"></i>+25 puntos
+                                <i class="fas fa-coins me-1"></i>+{{ $tutorial->puntos_otorgados }} puntos
                             </span>
                         </div>
                     </div>
@@ -451,7 +451,7 @@
                     <div class="text-center">
                         <div class="alert alert-success">
                             <i class="fas fa-trophy me-2"></i>
-                            <strong>¡Tutorial Completado!</strong> Ya ganaste +25 puntos por este tutorial.
+                            <strong>¡Tutorial Completado!</strong> Ya ganaste +{{ $tutorial->puntos_otorgados }} puntos por este tutorial.
                         </div>
                         <a href="{{ route('alumno.tutoriales') }}" class="btn btn-complete">
                             <i class="fas fa-arrow-left me-2"></i>Volver a Tutoriales
@@ -525,7 +525,7 @@
                 <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
                 <h3 style="color: var(--accent-color); margin-bottom: 1rem;">¿Completar Tutorial?</h3>
                 <p style="color: #ddd; margin-bottom: 2rem;">
-                    Al completar este tutorial ganarás <strong style="color: var(--accent-color);">25 puntos</strong> 
+                    Al completar este tutorial ganarás <strong style="color: var(--accent-color);">{{ $tutorial->puntos_otorgados }} puntos</strong> 
                     que se sumarán a tu total. ¡Solo puedes completarlo una vez!
                 </p>
                 <div style="display: flex; gap: 1rem; justify-content: center;">

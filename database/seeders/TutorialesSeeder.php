@@ -18,6 +18,8 @@ class TutorialesSeeder extends Seeder
             ['titulo' => 'Creando Formularios Web', 'slug' => 'formularios-web', 'dificultad' => 'medio', 'puntos_otorgados' => 45],
             ['titulo' => 'JavaScript para Principiantes', 'slug' => 'javascript-basico', 'dificultad' => 'medio', 'puntos_otorgados' => 60],
             ['titulo' => 'Configurar Entorno de Desarrollo', 'slug' => 'entorno-desarrollo', 'dificultad' => 'medio', 'puntos_otorgados' => 40],
+            ['titulo' => 'Diseño Web Responsivo', 'slug' => 'diseno-responsivo', 'dificultad' => 'dificil', 'puntos_otorgados' => 80],
+            ['titulo' => 'Tu Primer Proyecto Completo', 'slug' => 'proyecto-completo', 'dificultad' => 'dificil', 'puntos_otorgados' => 100],
         ];
 
         foreach ($tutoriales as $tutorial) {

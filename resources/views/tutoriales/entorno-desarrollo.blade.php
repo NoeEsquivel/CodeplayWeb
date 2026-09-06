@@ -395,7 +395,7 @@
                 <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
                 <h3 style="color: var(--accent-color); margin-bottom: 1rem;">¿Completar Tutorial?</h3>
                 <p style="color: #ddd; margin-bottom: 2rem;">
-                    Al completar este tutorial ganarás <strong style="color: var(--accent-color);">25 puntos</strong> 
+                    Al completar este tutorial ganarás <strong style="color: var(--accent-color);">{{ $tutorial->puntos_otorgados }} puntos</strong> 
                     que se sumarán a tu total. ¡Solo puedes completarlo una vez!
                 </p>
                 <div style="display: flex; gap: 1rem; justify-content: center;">
@@ -704,3 +704,4 @@ function cerrarModal() {
 </script>
 </body>
 </html>
+
