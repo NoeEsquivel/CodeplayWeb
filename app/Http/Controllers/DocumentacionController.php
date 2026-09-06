@@ -31,6 +31,7 @@ class DocumentacionController extends Controller
             'mundo2' => 'mundos_programacion.frontend_backend_bases_datos',
             'mundo3' => 'mundos_programacion.programacion_software',
             'mundo4' => 'mundos_programacion.programacion_robots_componentes',
+            'mundo5' => 'mundos_programacion.videojuegos_interactividad',
         ];
 
         if (array_key_exists($documento, $documentos)) {
@@ -38,7 +39,6 @@ class DocumentacionController extends Controller
         }
 
         $modulosEnPreparacion = [
-            'mundo5' => ['numero' => 17, 'titulo' => 'Videojuegos e Interactividad', 'descripcion' => 'Personajes, reglas, colisiones, puntos y controles'],
             'proyecto1' => ['numero' => 18, 'titulo' => 'Pagina Web Personal', 'descripcion' => 'Crear una pagina propia con HTML y CSS'],
             'proyecto2' => ['numero' => 19, 'titulo' => 'Menu de VideoJuego', 'descripcion' => 'Diseñar una pantalla inicial con opciones y estilo gamer'],
             'proyecto3' => ['numero' => 20, 'titulo' => 'Tarjeta Interactiva', 'descripcion' => 'Crear una tarjeta que cambie al hacer clic'],
