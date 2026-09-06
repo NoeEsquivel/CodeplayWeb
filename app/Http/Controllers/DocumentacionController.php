@@ -32,6 +32,7 @@ class DocumentacionController extends Controller
             'mundo3' => 'mundos_programacion.programacion_software',
             'mundo4' => 'mundos_programacion.programacion_robots_componentes',
             'mundo5' => 'mundos_programacion.videojuegos_interactividad',
+            'proyecto1' => 'proyectos_integradores.pagina_web_personal',
         ];
 
         if (array_key_exists($documento, $documentos)) {
@@ -39,7 +40,6 @@ class DocumentacionController extends Controller
         }
 
         $modulosEnPreparacion = [
-            'proyecto1' => ['numero' => 18, 'titulo' => 'Pagina Web Personal', 'descripcion' => 'Crear una pagina propia con HTML y CSS'],
             'proyecto2' => ['numero' => 19, 'titulo' => 'Menu de VideoJuego', 'descripcion' => 'Diseñar una pantalla inicial con opciones y estilo gamer'],
             'proyecto3' => ['numero' => 20, 'titulo' => 'Tarjeta Interactiva', 'descripcion' => 'Crear una tarjeta que cambie al hacer clic'],
             'proyecto4' => ['numero' => 21, 'titulo' => 'Mini Quiz con JavaScript', 'descripcion' => 'Construir un juego corto de preguntas con puntaje'],
