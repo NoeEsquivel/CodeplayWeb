@@ -1,3 +1,10 @@
+@php
+    $nivelesCompletadosColeccion = collect($nivelesCompletados ?? []);
+    $desafiosInicialesCompletados = $nivelesCompletadosColeccion->filter(fn($nivel) => $nivel >= 1 && $nivel <= 10)->count();
+    $desafiosDificilesCompletados = $nivelesCompletadosColeccion->filter(fn($nivel) => $nivel >= 11 && $nivel <= 15)->count();
+    $desbloquearDificiles = $desafiosInicialesCompletados >= 7;
+    $desbloquearMaestros = $desafiosDificilesCompletados >= 2;
+@endphp
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -256,6 +263,90 @@
         .locked-level {
             filter: brightness(0.5);
             position: relative;
+        }
+        
+        .unlock-celebration-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.82);
+            z-index: 20000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(6px);
+        }
+
+        .unlock-celebration-overlay.show {
+            display: flex;
+        }
+
+        .unlock-celebration-card {
+            width: min(680px, 95vw);
+            background: linear-gradient(135deg, rgba(20, 20, 35, 0.98), rgba(35, 12, 64, 0.98));
+            border: 3px solid var(--accent-color);
+            border-radius: 24px;
+            box-shadow: 0 0 35px rgba(0, 255, 157, 0.35);
+            padding: 34px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .unlock-celebration-card::before {
+            content: '';
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: rgba(0, 255, 157, 0.16);
+            top: -70px;
+            right: -60px;
+        }
+
+        .unlock-celebration-title {
+            font-family: 'Press Start 2P', cursive;
+            color: var(--accent-color);
+            font-size: 1.35rem;
+            line-height: 1.7;
+            text-shadow: 3px 3px 0 #000;
+        }
+
+        .unlock-level-list {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 24px 0;
+        }
+
+        .unlock-level-pill {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            color: #111;
+            font-weight: 900;
+            font-size: 1.2rem;
+            background: var(--accent-color);
+            box-shadow: 0 0 18px rgba(0, 255, 157, 0.55);
+            animation: unlockPop 0.7s ease both;
+        }
+
+        .unlock-pulse {
+            animation: unlockGlow 1.3s ease-in-out 3;
+        }
+
+        @keyframes unlockPop {
+            0% { transform: scale(0.2) rotate(-18deg); opacity: 0; }
+            70% { transform: scale(1.15) rotate(4deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0); opacity: 1; }
+        }
+
+        @keyframes unlockGlow {
+            0%, 100% { box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+            50% { box-shadow: 0 0 28px rgba(0, 255, 157, 0.95); transform: translateY(-6px) scale(1.03); }
         }
         
         .locked-icon {
@@ -562,8 +653,13 @@
                         
                         <!-- Nivel 8: JavaScript Básico -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-medium" onclick="navigateToLevel(8)">
+                            <div class="level-card level-medium {{ in_array(8, $nivelesCompletados ?? []) ? 'completed' : '' }}" onclick="navigateToLevel(8)">
                                 <div class="level-card-content">
+                                    @if(in_array(8, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">08</div>
                                     <div class="level-title">JavaScript Básico</div>
                                     <div class="level-stars">100 puntos
@@ -578,8 +674,13 @@
                         
                         <!-- Nivel 9: Eventos DOM -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-medium" onclick="navigateToLevel(9)">
+                            <div class="level-card level-medium {{ in_array(9, $nivelesCompletados ?? []) ? 'completed' : '' }}" onclick="navigateToLevel(9)">
                                 <div class="level-card-content">
+                                    @if(in_array(9, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">09</div>
                                     <div class="level-title">Eventos del DOM</div>
                                     <div class="level-stars">100 puntos
@@ -594,8 +695,13 @@
                         
                         <!-- Nivel 10: Formularios JS -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-medium" onclick="navigateToLevel(10)">
+                            <div class="level-card level-medium {{ in_array(10, $nivelesCompletados ?? []) ? 'completed' : '' }}" onclick="navigateToLevel(10)">
                                 <div class="level-card-content">
+                                    @if(in_array(10, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">10</div>
                                     <div class="level-title">Formularios Interactivos</div>
                                     <div class="level-stars">150 puntos+Item R
@@ -616,8 +722,13 @@
                     <div class="row">
                         <!-- Nivel 11: Bootstrap Grid -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-hard locked-level" id="level11">
+                            <div class="level-card level-hard {{ in_array(11, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearDificiles ? '' : 'locked-level' }}" id="level11" @if($desbloquearDificiles) onclick="navigateToLevel(11)" @endif>
                                 <div class="level-card-content">
+                                    @if(in_array(11, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">11</div>
                                     <div class="level-title">Bootstrap Grid System</div>
                                     <div class="level-stars">200 puntos
@@ -626,7 +737,7 @@
                                         <i class="fas fa-star"></i>
                                     </div>
                                     <span class="level-badge badge-hard">DIFÍCIL</span>
-                                    <div class="locked-icon">
+                                    <div class="locked-icon" @if($desbloquearDificiles) style="display: none;" @endif>
                                         <i class="fas fa-lock"></i>
                                     </div>
                                 </div>
@@ -635,8 +746,13 @@
                         
                         <!-- Nivel 12: Componentes Bootstrap -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-hard locked-level" id="level12">
+                            <div class="level-card level-hard {{ in_array(12, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearDificiles ? '' : 'locked-level' }}" id="level12" @if($desbloquearDificiles) onclick="navigateToLevel(12)" @endif>
                                 <div class="level-card-content">
+                                    @if(in_array(12, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">12</div>
                                     <div class="level-title">Componentes Bootstrap</div>
                                     <div class="level-stars">200 puntos
@@ -645,7 +761,7 @@
                                         <i class="fas fa-star"></i>
                                     </div>
                                     <span class="level-badge badge-hard">DIFÍCIL</span>
-                                    <div class="locked-icon">
+                                    <div class="locked-icon" @if($desbloquearDificiles) style="display: none;" @endif>
                                         <i class="fas fa-lock"></i>
                                     </div>
                                 </div>
@@ -654,8 +770,13 @@
                         
                         <!-- Nivel 13: Introducción PHP -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-hard locked-level" id="level13">
+                            <div class="level-card level-hard {{ in_array(13, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearDificiles ? '' : 'locked-level' }}" id="level13" @if($desbloquearDificiles) onclick="navigateToLevel(13)" @endif>
                                 <div class="level-card-content">
+                                    @if(in_array(13, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">13</div>
                                     <div class="level-title">Introducción a PHP</div>
                                     <div class="level-stars">200 puntos
@@ -664,7 +785,7 @@
                                         <i class="fas fa-star"></i>
                                     </div>
                                     <span class="level-badge badge-hard">DIFÍCIL</span>
-                                    <div class="locked-icon">
+                                    <div class="locked-icon" @if($desbloquearDificiles) style="display: none;" @endif>
                                         <i class="fas fa-lock"></i>
                                     </div>
                                 </div>
@@ -673,8 +794,13 @@
                         
                         <!-- Nivel 14: Formularios PHP -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-hard locked-level" id="level14">
+                            <div class="level-card level-hard {{ in_array(14, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearDificiles ? '' : 'locked-level' }}" id="level14" @if($desbloquearDificiles) onclick="navigateToLevel(14)" @endif>
                                 <div class="level-card-content">
+                                    @if(in_array(14, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">14</div>
                                     <div class="level-title">Formularios con PHP</div>
                                     <div class="level-stars">200 puntos
@@ -683,7 +809,7 @@
                                         <i class="fas fa-star"></i>
                                     </div>
                                     <span class="level-badge badge-hard">DIFÍCIL</span>
-                                    <div class="locked-icon">
+                                    <div class="locked-icon" @if($desbloquearDificiles) style="display: none;" @endif>
                                         <i class="fas fa-lock"></i>
                                     </div>
                                 </div>
@@ -692,8 +818,13 @@
                         
                         <!-- Nivel 15: Sesiones PHP -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-hard locked-level" id="level15">
+                            <div class="level-card level-hard {{ in_array(15, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearDificiles ? '' : 'locked-level' }}" id="level15" @if($desbloquearDificiles) onclick="navigateToLevel(15)" @endif>
                                 <div class="level-card-content">
+                                    @if(in_array(15, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">15</div>
                                     <div class="level-title">Sesiones y Cookies</div>
                                     <div class="level-stars">300 puntos+Item SR
@@ -702,7 +833,7 @@
                                         <i class="fas fa-star"></i>
                                     </div>
                                     <span class="level-badge badge-hard">DIFÍCIL</span>
-                                    <div class="locked-icon">
+                                    <div class="locked-icon" @if($desbloquearDificiles) style="display: none;" @endif>
                                         <i class="fas fa-lock"></i>
                                     </div>
                                 </div>
@@ -717,8 +848,13 @@
                     <div class="row">
                         <!-- Nivel 16: Página Personal -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-master locked-level" id="level16">
+                            <div class="level-card level-master {{ in_array(16, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearMaestros ? '' : 'locked-level' }}" id="level16" @if($desbloquearMaestros) onclick="navigateToLevel(16)" @endif>
                                 <div class="level-card-content">
+                                    @if(in_array(16, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">16</div>
                                     <div class="level-title">Página Web Personal</div>
                                     <div class="level-stars">400 puntos
@@ -727,7 +863,7 @@
                                         <i class="fas fa-star"></i>
                                     </div>
                                     <span class="level-badge badge-master">MAESTRO</span>
-                                    <div class="locked-icon">
+                                    <div class="locked-icon" @if($desbloquearMaestros) style="display: none;" @endif>
                                         <i class="fas fa-lock"></i>
                                     </div>
                                 </div>
@@ -736,8 +872,13 @@
                         
                         <!-- Nivel 17: Formulario Completo -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-master locked-level" id="level17">
+                            <div class="level-card level-master {{ in_array(17, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearMaestros ? '' : 'locked-level' }}" id="level17" @if($desbloquearMaestros) onclick="navigateToLevel(17)" @endif>
                                 <div class="level-card-content">
+                                    @if(in_array(17, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">17</div>
                                     <div class="level-title">Formulario Interactivo</div>
                                     <div class="level-stars">400 puntos
@@ -746,7 +887,7 @@
                                         <i class="fas fa-star"></i>
                                     </div>
                                     <span class="level-badge badge-master">MAESTRO</span>
-                                    <div class="locked-icon">
+                                    <div class="locked-icon" @if($desbloquearMaestros) style="display: none;" @endif>
                                         <i class="fas fa-lock"></i>
                                     </div>
                                 </div>
@@ -755,8 +896,13 @@
                         
                         <!-- Nivel 18: Dashboard -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-master locked-level" id="level18">
+                            <div class="level-card level-master {{ in_array(18, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearMaestros ? '' : 'locked-level' }}" id="level18" @if($desbloquearMaestros) onclick="navigateToLevel(18)" @endif>
                                 <div class="level-card-content">
+                                    @if(in_array(18, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">18</div>
                                     <div class="level-title">Dashboard Responsivo</div>
                                     <div class="level-stars">400 puntos
@@ -765,7 +911,7 @@
                                         <i class="fas fa-star"></i>
                                     </div>
                                     <span class="level-badge badge-master">MAESTRO</span>
-                                    <div class="locked-icon">
+                                    <div class="locked-icon" @if($desbloquearMaestros) style="display: none;" @endif>
                                         <i class="fas fa-lock"></i>
                                     </div>
                                 </div>
@@ -774,8 +920,13 @@
                         
                         <!-- Nivel 19: E-commerce -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-master locked-level" id="level19">
+                            <div class="level-card level-master {{ in_array(19, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearMaestros ? '' : 'locked-level' }}" id="level19" @if($desbloquearMaestros) onclick="navigateToLevel(19)" @endif>
                                 <div class="level-card-content">
+                                    @if(in_array(19, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">19</div>
                                     <div class="level-title">Tienda Online Básica</div>
                                     <div class="level-stars">400 puntos
@@ -784,7 +935,7 @@
                                         <i class="fas fa-star"></i>
                                     </div>
                                     <span class="level-badge badge-master">MAESTRO</span>
-                                    <div class="locked-icon">
+                                    <div class="locked-icon" @if($desbloquearMaestros) style="display: none;" @endif>
                                         <i class="fas fa-lock"></i>
                                     </div>
                                 </div>
@@ -793,8 +944,13 @@
                         
                         <!-- Nivel 20: Proyecto Final -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-master locked-level" id="level20">
+                            <div class="level-card level-master {{ in_array(20, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearMaestros ? '' : 'locked-level' }}" id="level20" @if($desbloquearMaestros) onclick="navigateToLevel(20)" @endif>
                                 <div class="level-card-content">
+                                    @if(in_array(20, $nivelesCompletados ?? []))
+                                        <div class="completed-badge">
+                                            <i class="fas fa-check me-1"></i>
+                                        </div>
+                                    @endif
                                     <div class="level-number">20</div>
                                     <div class="level-title">Proyecto Final</div>
                                     <div class="level-stars">1000 puntos+Item Unico
@@ -803,7 +959,7 @@
                                         <i class="fas fa-star"></i>
                                     </div>
                                     <span class="level-badge badge-master">MAESTRO</span>
-                                    <div class="locked-icon">
+                                    <div class="locked-icon" @if($desbloquearMaestros) style="display: none;" @endif>
                                         <i class="fas fa-lock"></i>
                                     </div>
                                 </div>
@@ -822,6 +978,19 @@
                 <span class="visually-hidden">Cargando...</span>
             </div>
             <h3 class="mt-3">Cargando desafío...</h3>
+        </div>
+    </div>
+
+    <!-- Animación de desbloqueo -->
+    <div class="unlock-celebration-overlay" id="unlockCelebrationOverlay">
+        <div class="unlock-celebration-card animate__animated animate__zoomIn">
+            <div style="font-size: 4rem; margin-bottom: 18px;">🔓</div>
+            <h2 class="unlock-celebration-title" id="unlockCelebrationTitle">¡Nuevos desafíos desbloqueados!</h2>
+            <p class="mt-3 mb-0 text-white-50" id="unlockCelebrationMessage"></p>
+            <div class="unlock-level-list" id="unlockLevelList"></div>
+            <button class="btn btn-success rounded-pill px-4 fw-bold" onclick="cerrarCelebracionDesbloqueo()">
+                <i class="fas fa-play me-2"></i>Continuar
+            </button>
         </div>
     </div>
 
@@ -852,7 +1021,10 @@ function navigateToLevel(levelNumber) {
         4: "{{ route('alumno.desafios.nivel4') }}",
         5: "{{ route('alumno.desafios.nivel5') }}",
         6: "{{ route('alumno.desafios.nivel6') }}",
-        7: "{{ route('alumno.desafios.nivel7') }}"
+        7: "{{ route('alumno.desafios.nivel7') }}",
+        8: "{{ route('alumno.desafios.nivel8') }}",
+        9: "{{ route('alumno.desafios.nivel9') }}",
+        10: "{{ route('alumno.desafios.nivel10') }}"
         // Agregar más niveles aquí cuando los crees
     };
 
@@ -957,24 +1129,112 @@ function navigateToLevel(levelNumber) {
             }, 4000);
         }
 
+        const desbloquearDificiles = @json($desbloquearDificiles);
+        const desbloquearMaestros = @json($desbloquearMaestros);
+        const usuarioDesafiosId = @json(session('usuario_id') ?? 'invitado');
+        let celebracionPendiente = null;
+
+        function cerrarCelebracionDesbloqueo() {
+            const overlay = document.getElementById('unlockCelebrationOverlay');
+            overlay.classList.remove('show');
+
+            if (celebracionPendiente) {
+                const siguienteCelebracion = celebracionPendiente;
+                celebracionPendiente = null;
+                setTimeout(() => {
+                    mostrarCelebracionDesbloqueo(
+                        siguienteCelebracion.tipo,
+                        siguienteCelebracion.titulo,
+                        siguienteCelebracion.mensaje,
+                        siguienteCelebracion.niveles
+                    );
+                }, 450);
+            }
+        }
+
+        function resaltarNivelesDesbloqueados(niveles) {
+            niveles.forEach((nivel, index) => {
+                setTimeout(() => {
+                    const card = document.getElementById(`level${nivel}`);
+                    if (card) {
+                        card.classList.add('unlock-pulse');
+                    }
+                }, index * 120);
+            });
+        }
+
+        function celebracionYaVista(tipo) {
+            const storageKey = `codeplay_desbloqueo_${usuarioDesafiosId}_${tipo}`;
+            try {
+                if (localStorage.getItem(storageKey)) {
+                    return true;
+                }
+                localStorage.setItem(storageKey, 'visto');
+            } catch (error) {
+                // Si el navegador bloquea localStorage, solo evitamos romper la vista.
+            }
+
+            return false;
+        }
+
+        function mostrarCelebracionDesbloqueo(tipo, titulo, mensaje, niveles) {
+            if (celebracionYaVista(tipo)) {
+                return false;
+            }
+
+            const overlay = document.getElementById('unlockCelebrationOverlay');
+            const title = document.getElementById('unlockCelebrationTitle');
+            const message = document.getElementById('unlockCelebrationMessage');
+            const levelList = document.getElementById('unlockLevelList');
+
+            title.textContent = titulo;
+            message.textContent = mensaje;
+            levelList.innerHTML = niveles.map((nivel, index) => `
+                <div class="unlock-level-pill" style="animation-delay: ${index * 0.12}s">${nivel}</div>
+            `).join('');
+
+            overlay.classList.add('show');
+            resaltarNivelesDesbloqueados(niveles);
+            return true;
+        }
+
         // Cargar progreso del usuario
         function cargarProgresoUsuario() {
             const puntos = {{ session('puntos_disponibles') ?? 0 }};
             document.getElementById('userPoints').textContent = puntos;
             
-            // Calcular nivel basado en puntos (100 puntos por nivel)
+            // Mantener el nivel visual del usuario basado en puntos.
             const nivel = Math.floor(puntos / 100) + 1;
             document.getElementById('userLevel').textContent = nivel;
-            
-            // Desbloquear niveles según progreso
-            const maxUnlockedLevel = Math.min(nivel + 2, 20);
-            
-            for (let i = 1; i <= maxUnlockedLevel; i++) {
-                const levelElement = document.getElementById(`level${i}`);
-                if (levelElement) {
-                    levelElement.classList.remove('locked-level');
-                    levelElement.querySelector('.locked-icon').style.display = 'none';
-                    levelElement.onclick = function() { navigateToLevel(i); };
+
+            let seMostroCelebracionDificil = false;
+
+            if (desbloquearDificiles) {
+                seMostroCelebracionDificil = mostrarCelebracionDesbloqueo(
+                    'dificiles',
+                    '¡Niveles difíciles desbloqueados!',
+                    'Completaste al menos 7 de los primeros 10 desafíos. Ahora puedes intentar los niveles 11 al 15.',
+                    [11, 12, 13, 14, 15]
+                );
+            }
+
+            if (desbloquearMaestros) {
+                const celebracionMaestra = {
+                    tipo: 'maestros',
+                    titulo: '¡Proyectos integradores desbloqueados!',
+                    mensaje: 'Completaste al menos 2 desafíos difíciles. Ahora puedes intentar los niveles 16 al 20.',
+                    niveles: [16, 17, 18, 19, 20]
+                };
+
+                if (seMostroCelebracionDificil) {
+                    celebracionPendiente = celebracionMaestra;
+                } else {
+                    mostrarCelebracionDesbloqueo(
+                        celebracionMaestra.tipo,
+                        celebracionMaestra.titulo,
+                        celebracionMaestra.mensaje,
+                        celebracionMaestra.niveles
+                    );
                 }
             }
         }

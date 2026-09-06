@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10152b"/><stop offset="1" stop-color="#07111f"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#000" flood-opacity="0.38"/></filter>
+  </defs>
+  <rect width="980" height="560" rx="32" fill="url(#bg)"/>
+  <text x="490" y="60" text-anchor="middle" font-family="Segoe UI, Arial" font-size="34" font-weight="800" fill="#00ff99">Referencia: Eventos del DOM</text>
+  <text x="490" y="96" text-anchor="middle" font-family="Segoe UI, Arial" font-size="17" fill="#d7e4ff">Al hacer clic, una tarjeta cambia su estado visual.</text>
+  <rect x="145" y="155" width="690" height="305" rx="26" fill="#17213b" stroke="#00ff99" stroke-width="4" stroke-dasharray="10 9"/>
+  <g filter="url(#shadow)">
+    <rect x="215" y="240" width="220" height="75" rx="18" fill="#6ea8ff"/>
+    <rect x="540" y="215" width="220" height="150" rx="22" fill="#2cf2a5"/>
+  </g>
+  <text x="325" y="287" text-anchor="middle" font-family="Segoe UI, Arial" font-size="22" font-weight="800" fill="#0b1b35">click</text>
+  <path d="M455 278 C490 250, 505 250, 530 278" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <text x="650" y="280" text-anchor="middle" font-family="Segoe UI, Arial" font-size="22" font-weight="800" fill="#082a20">Tarjeta activa</text>
+  <text x="650" y="315" text-anchor="middle" font-family="Segoe UI, Arial" font-size="16" fill="#06402d">classList / style</text>
+  <text x="490" y="508" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" fill="#fff">Pista: escucha el clic y cambia una clase o un estilo.</text>
+</svg>
