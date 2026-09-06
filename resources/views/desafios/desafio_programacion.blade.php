@@ -1025,7 +1025,9 @@ function navigateToLevel(levelNumber) {
         8: "{{ route('alumno.desafios.nivel8') }}",
         9: "{{ route('alumno.desafios.nivel9') }}",
         10: "{{ route('alumno.desafios.nivel10') }}",
-        11: "{{ route('alumno.desafios.nivel11') }}"
+        11: "{{ route('alumno.desafios.nivel11') }}",
+        12: "{{ route('alumno.desafios.nivel12') }}",
+        13: "{{ route('alumno.desafios.nivel13') }}"
         // Agregar más niveles aquí cuando los crees
     };
 
