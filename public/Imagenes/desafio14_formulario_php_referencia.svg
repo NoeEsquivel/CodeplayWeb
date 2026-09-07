@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a1020"/><stop offset="1" stop-color="#07111f"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#000" flood-opacity="0.42"/></filter>
+  </defs>
+  <rect width="980" height="560" rx="32" fill="url(#bg)"/>
+  <text x="490" y="60" text-anchor="middle" font-family="Segoe UI, Arial" font-size="34" font-weight="800" fill="#00ff99">Referencia: Formulario con PHP</text>
+  <text x="490" y="96" text-anchor="middle" font-family="Segoe UI, Arial" font-size="17" fill="#f2d7ff">El usuario escribe datos, PHP los recibe en el servidor y responde.</text>
+  <rect x="80" y="170" width="240" height="210" rx="22" fill="#ffffff" filter="url(#shadow)"/>
+  <rect x="120" y="230" width="160" height="38" rx="10" fill="#e9edf7"/>
+  <rect x="120" y="290" width="160" height="44" rx="12" fill="#00ff99"/>
+  <text x="200" y="205" text-anchor="middle" font-family="Segoe UI, Arial" font-size="23" font-weight="800" fill="#17213b">Formulario</text>
+  <text x="200" y="318" text-anchor="middle" font-family="Segoe UI, Arial" font-size="17" font-weight="800" fill="#062418">Enviar</text>
+  <rect x="390" y="160" width="200" height="230" rx="22" fill="#7b68ee" filter="url(#shadow)"/>
+  <text x="490" y="224" text-anchor="middle" font-family="Segoe UI, Arial" font-size="25" font-weight="800" fill="#fff">PHP</text>
+  <text x="490" y="270" text-anchor="middle" font-family="Consolas, monospace" font-size="20" fill="#fff">$_POST</text>
+  <text x="490" y="305" text-anchor="middle" font-family="Consolas, monospace" font-size="20" fill="#fff">echo</text>
+  <rect x="660" y="195" width="240" height="155" rx="22" fill="#2cf2a5" filter="url(#shadow)"/>
+  <text x="780" y="258" text-anchor="middle" font-family="Segoe UI, Arial" font-size="24" font-weight="800" fill="#082a20">Respuesta</text>
+  <text x="780" y="292" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" fill="#06402d">Hola, estudiante</text>
+  <path d="M330 275 H382" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+  <path d="M600 275 H652" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+  <text x="490" y="508" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" fill="#ffffff">Pista: el atributo name del input es la llave que PHP busca en $_POST.</text>
+</svg>
