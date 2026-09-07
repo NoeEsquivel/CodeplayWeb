@@ -426,13 +426,10 @@
             iframe.style.width = '100%';
             iframe.style.height = '100%';
             iframe.style.border = 'none';
+            iframe.setAttribute('sandbox', 'allow-scripts allow-modals');
+            iframe.setAttribute('referrerpolicy', 'no-referrer');
             resultFrame.appendChild(iframe);
-            
-            // Escribir el código en el iframe
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            iframeDoc.open();
-            iframeDoc.write(code);
-            iframeDoc.close();
+            iframe.srcdoc = code;
 
             // Evita que los formularios del preview recarguen o cambien la vista del resultado.
             setTimeout(() => {
@@ -545,7 +542,8 @@ async function checkChallenge() {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 body: JSON.stringify({
-                    nivel: 12
+                    nivel: 12,
+                    codigo: code
                 })
             });
 

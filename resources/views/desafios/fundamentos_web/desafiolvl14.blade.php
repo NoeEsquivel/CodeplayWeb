@@ -560,7 +560,8 @@ async function checkChallenge() {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 body: JSON.stringify({
-                    nivel: 14
+                    nivel: 14,
+                    codigo: code
                 })
             });
 

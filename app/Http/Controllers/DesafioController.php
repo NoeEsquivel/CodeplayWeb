@@ -168,6 +168,14 @@ class DesafioController extends Controller
     }
 
     // Función para obtener información de recompensa
+    public function nivel16()
+    {
+        $usuarioId = session('usuario_id');
+        $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 16);
+
+        return view('desafios.fundamentos_web.desafiolvl16', compact('infoRecompensa'));
+    }
+
     private function obtenerInfoRecompensa($usuarioId, $nivel)
     {
         $recompensa = DB::table('desafio_recompensas')
@@ -228,10 +236,24 @@ class DesafioController extends Controller
     public function procesarRecompensa(Request $request)
     {
         $usuarioId = session('usuario_id');
-        $nivel = $request->input('nivel');
+        $datos = $request->validate([
+            'nivel' => ['required', 'integer', 'between:1,16'],
+            'codigo' => ['required', 'string', 'max:60000'],
+        ]);
+
+        $nivel = (int) $datos['nivel'];
+        $codigo = $datos['codigo'];
         
         if (!$usuarioId) {
             return response()->json(['success' => false, 'error' => 'Usuario no autenticado']);
+        }
+
+        if (!$this->codigoCumpleRequisitos($nivel, $codigo)) {
+            return response()->json([
+                'success' => false,
+                'error' => 'El código no cumple los requisitos del desafío.',
+                'message' => 'El código no cumple los requisitos del desafío.',
+            ], 422);
         }
 
         try {
@@ -319,5 +341,131 @@ class DesafioController extends Controller
             DB::rollBack();
             return response()->json(['success' => false, 'error' => 'Error al procesar recompensa: ' . $e->getMessage()]);
         }
+    }
+
+    /**
+     * Repite en el servidor los requisitos educativos de cada desafío.
+     * El código se analiza como texto: nunca se evalúa ni se envía a SQL.
+     */
+    private function codigoCumpleRequisitos(int $nivel, string $codigo): bool
+    {
+        $lower = mb_strtolower($codigo, 'UTF-8');
+        $compact = preg_replace('/\s+/', '', $lower) ?? '';
+
+        $contieneTodos = static function (array $fragmentos) use ($lower): bool {
+            foreach ($fragmentos as $fragmento) {
+                if (!str_contains($lower, $fragmento)) {
+                    return false;
+                }
+            }
+
+            return true;
+        };
+
+        return match ($nivel) {
+            1 => $contieneTodos(['<h1', '<p', '<strong', '<em']),
+            2 => $contieneTodos(['<h1', '<h2', '<p', '<ul', '<li']),
+            3 => $contieneTodos(['<h1', '<a', 'href=', '<img', 'src=']),
+            4 => $contieneTodos(['<style', 'color:', 'background-color:', '<h1', '<p']),
+            5 => $contieneTodos(['<style', '<div', 'width:', 'padding:', 'border:', 'margin:']),
+            6 => $contieneTodos(['display:flex', 'gap', 'justify-content', 'padding', 'border', 'background-color']),
+            7 => $contieneTodos(['display:grid', 'grid-template-columns', 'gap', 'padding', 'background-color', 'border-radius']),
+            8 => (str_contains($lower, 'let ') || str_contains($lower, 'const '))
+                && $contieneTodos(['if', 'getelementbyid', 'textcontent', 'addeventlistener']),
+            9 => $contieneTodos(['getelementbyid', 'addeventlistener', 'click', 'textcontent'])
+                && (str_contains($lower, 'classlist') || str_contains($lower, '.style')),
+            10 => $contieneTodos(['submit', 'preventdefault', 'if', 'textcontent'])
+                && (str_contains($lower, '.value') || str_contains($lower, 'value')),
+            11 => str_contains($lower, 'bootstrap')
+                && str_contains($lower, 'stylesheet')
+                && preg_match('/class\s*=\s*["\'][^"\']*\bcontainer\b/i', $codigo) === 1
+                && preg_match('/class\s*=\s*["\'][^"\']*\brow\b/i', $codigo) === 1
+                && preg_match_all('/class\s*=\s*["\'][^"\']*\bcol(?:-[a-z0-9]+)?\b[^"\']*["\']/i', $codigo) >= 3
+                && (str_contains($lower, 'card') || str_contains($lower, 'tarjeta')),
+            12 => str_contains($lower, 'bootstrap')
+                && str_contains($lower, 'stylesheet')
+                && preg_match('/class\s*=\s*["\'][^"\']*\bcard\b/i', $codigo) === 1
+                && preg_match('/class\s*=\s*["\'][^"\']*\bbtn\b/i', $codigo) === 1
+                && preg_match('/class\s*=\s*["\'][^"\']*\bbadge\b/i', $codigo) === 1
+                && preg_match('/class\s*=\s*["\'][^"\']*\balert\b/i', $codigo) === 1,
+            13 => $this->phpBasicoValido($codigo, ['<?php', '$', 'echo', '?>']),
+            14 => $contieneTodos(['<form', 'name=', '$_post', 'echo', 'nombre'])
+                && (str_contains($compact, 'method="post"') || str_contains($compact, "method='post'") || str_contains($compact, 'method=post'))
+                && (str_contains($lower, 'isset') || str_contains($lower, 'if')),
+            15 => $contieneTodos(['<?php', 'session_start', '$_session', 'setcookie', 'echo']),
+            16 => $this->codigoProyectoPersonalValido($codigo),
+            default => false,
+        };
+    }
+
+    private function phpBasicoValido(string $codigo, array $fragmentos): bool
+    {
+        $lower = mb_strtolower($codigo, 'UTF-8');
+
+        foreach ($fragmentos as $fragmento) {
+            if (!str_contains($lower, mb_strtolower($fragmento, 'UTF-8'))) {
+                return false;
+            }
+        }
+
+        return $this->simularSalidaPhp($codigo) !== null;
+    }
+
+    private function simularSalidaPhp(string $codigo): ?string
+    {
+        $contenido = preg_replace(['/^\s*<\?php/i', '/\?>\s*$/'], '', trim($codigo)) ?? '';
+        $variables = [];
+
+        foreach (preg_split('/\R/', $contenido) ?: [] as $linea) {
+            $linea = trim($linea);
+            if (preg_match('/^\$([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(["\'])(.*?)\2\s*;?$/', $linea, $coincidencia)) {
+                $variables[$coincidencia[1]] = $coincidencia[3];
+            }
+        }
+
+        foreach (preg_split('/\R/', $contenido) ?: [] as $linea) {
+            $linea = trim($linea);
+            if (preg_match('/^echo\s+(["\'])(.*?)\1\s*;?$/i', $linea, $coincidencia)) {
+                return $coincidencia[2];
+            }
+
+            if (preg_match('/^echo\s+\$([a-zA-Z_][a-zA-Z0-9_]*)\s*;?$/i', $linea, $coincidencia)
+                && array_key_exists($coincidencia[1], $variables)) {
+                return $variables[$coincidencia[1]];
+            }
+        }
+
+        return null;
+    }
+
+    private function codigoProyectoPersonalValido(string $codigo): bool
+    {
+        $lower = mb_strtolower($codigo, 'UTF-8');
+        $projectCards = preg_match_all('/class\s*=\s*["\'][^"\']*(proyecto|project|card|tarjeta)[^"\']*["\']/i', $codigo);
+        $articles = preg_match_all('/<article[\s>]/i', $codigo);
+
+        return str_contains($lower, '<nav')
+            && str_contains($lower, '<a')
+            && str_contains($lower, 'href=')
+            && (str_contains($lower, '<header') || str_contains($lower, 'class="hero') || str_contains($lower, "class='hero") || str_contains($lower, 'id="inicio') || str_contains($lower, "id='inicio"))
+            && str_contains($lower, '<img')
+            && str_contains($lower, 'src=')
+            && str_contains($lower, 'alt=')
+            && (str_contains($lower, 'sobre mí') || str_contains($lower, 'sobre mi') || str_contains($lower, 'about'))
+            && substr_count($lower, '<ul') >= 1
+            && substr_count($lower, '<li') >= 3
+            && (($projectCards ?: 0) >= 2 || ($articles ?: 0) >= 2)
+            && str_contains($lower, '<form')
+            && str_contains($lower, '<input')
+            && str_contains($lower, '<textarea')
+            && str_contains($lower, '<button')
+            && str_contains($lower, 'background-color')
+            && str_contains($lower, 'color:')
+            && str_contains($lower, 'padding')
+            && str_contains($lower, 'border-radius')
+            && (str_contains($lower, 'display: flex') || str_contains($lower, 'display:flex') || str_contains($lower, 'display: grid') || str_contains($lower, 'display:grid'))
+            && (str_contains($lower, 'gap') || str_contains($lower, 'margin'))
+            && (str_contains($lower, '@media') || str_contains($lower, 'flex-wrap') || str_contains($lower, 'grid-template-columns'))
+            && (str_contains($lower, 'addeventlistener') || str_contains($lower, 'onclick=') || str_contains($lower, 'alert(') || str_contains($lower, 'textcontent'));
     }
 }
