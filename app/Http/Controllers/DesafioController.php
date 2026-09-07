@@ -192,6 +192,14 @@ class DesafioController extends Controller
         return view('desafios.fundamentos_web.desafiolvl18', compact('infoRecompensa'));
     }
 
+    public function nivel19()
+    {
+        $usuarioId = session('usuario_id');
+        $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 19);
+
+        return view('desafios.fundamentos_web.desafiolvl19', compact('infoRecompensa'));
+    }
+
     private function obtenerInfoRecompensa($usuarioId, $nivel)
     {
         $recompensa = DB::table('desafio_recompensas')
@@ -241,7 +249,7 @@ class DesafioController extends Controller
             10 => 150,                                // Nivel 10: 150 puntos
             11 => 200, 12 => 200, 13 => 200, 14 => 200, // Niveles 11-14: 200 puntos
             15 => 300,                                // Nivel 15: 300 puntos
-            16 => 400, 17 => 400, 18 => 400, 19 => 400, // Niveles 16-19: 400 puntos
+            16 => 400, 17 => 400, 18 => 400, 19 => 500, // Nivel 19: 500 puntos
             20 => 1000                                // Nivel 20: 1000 puntos
         ];
 
@@ -253,7 +261,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $datos = $request->validate([
-            'nivel' => ['required', 'integer', 'between:1,18'],
+            'nivel' => ['required', 'integer', 'between:1,19'],
             'codigo' => ['required', 'string', 'max:60000'],
         ]);
 
@@ -412,6 +420,7 @@ class DesafioController extends Controller
             16 => $this->codigoProyectoPersonalValido($codigo),
             17 => $this->codigoFormularioInteractivoValido($codigo),
             18 => $this->codigoDashboardResponsivoValido($codigo),
+            19 => $this->codigoTiendaOnlineValido($codigo),
             default => false,
         };
     }
@@ -528,5 +537,25 @@ class DesafioController extends Controller
             && str_contains($lower, '<button')
             && str_contains($lower, 'addeventlistener')
             && str_contains($lower, 'textcontent');
+    }
+
+    private function codigoTiendaOnlineValido(string $codigo): bool
+    {
+        $lower = mb_strtolower($codigo, 'UTF-8');
+        $compact = preg_replace('/\s+/', '', $lower) ?? '';
+        $productCards = preg_match_all('/class\s*=\s*["\'][^"\']*\b(producto|product|card)\b[^"\']*["\']/i', $codigo);
+
+        return (str_contains($lower, 'productos') || str_contains($lower, 'catalogo') || str_contains($lower, 'catalog'))
+            && (str_contains($lower, 'checkout') || str_contains($lower, 'pago') || str_contains($lower, 'carrito'))
+            && ($productCards ?: 0) >= 2
+            && (str_contains($lower, 'sessionstorage') || str_contains($lower, 'localstorage'))
+            && (str_contains($lower, 'setitem') && str_contains($lower, 'getitem'))
+            && (str_contains($lower, 'href="#checkout"') || str_contains($lower, "href='#checkout'") || str_contains($lower, 'showcheckout') || str_contains($lower, 'checkoutview') || str_contains($lower, 'location.hash'))
+            && str_contains($lower, '<button')
+            && str_contains($lower, 'addeventlistener')
+            && str_contains($lower, 'textcontent')
+            && (str_contains($compact, 'display:grid') || str_contains($compact, 'display:flex'))
+            && (str_contains($lower, 'background:') || str_contains($lower, 'background-color'))
+            && str_contains($lower, 'border-radius');
     }
 }

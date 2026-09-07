@@ -29,7 +29,7 @@ class DesafioSecurityTest extends TestCase
         ));
     }
 
-    public function test_server_reproduces_the_requirements_for_all_eighteen_levels(): void
+    public function test_server_reproduces_the_requirements_for_all_nineteen_levels(): void
     {
         $controller = new DesafioController();
         $reflection = new \ReflectionClass($controller);
@@ -70,6 +70,7 @@ PHP,
             16 => '<nav><a href="#inicio">Inicio</a></nav><header id="inicio">Hola</header><img src="foto.jpg" alt="Foto"><section>Sobre mí</section><ul><li>HTML</li><li>CSS</li><li>JS</li></ul><article class="project card"></article><article class="project card"></article><form><input><textarea></textarea><button>Enviar</button></form><style>body{background-color:#000;color:#fff;padding:20px;border-radius:8px;display:flex;gap:10px}@media(max-width:600px){body{flex-wrap:wrap}}</style><script>document.body.addEventListener("click",()=>{});</script>',
             17 => '<form id="registro"><label for="correo">Correo</label><input name="correo" id="correo" type="email" required><select><option>Uno</option></select><textarea></textarea><button>Enviar</button></form><style>.form{background:linear-gradient(#fff,#eee);border-radius:8px;display:flex}</style><script>registro.addEventListener("submit",event=>{event.preventDefault();const valor=correo.value;mensaje.textContent=valor;});</script>',
             18 => '<aside><nav>Menu</nav></aside><main><header>Panel</header><div class="card">Uno</div><div class="stat">Dos</div><div class="metric">Tres</div><button id="modo">Cambiar</button></main><style>main{display:grid;grid-template-columns:1fr;background:linear-gradient(#fff,#eee);border-radius:12px}@media(max-width:600px){main{display:flex;flex-wrap:wrap}}</style><script>document.getElementById("modo").addEventListener("click",()=>{document.querySelector("header").textContent="Actualizado";});</script>',
+            19 => '<section id="productos" class="catalogo"><div class="producto card">Uno</div><div class="producto card">Dos</div><button id="carrito">Carrito</button></section><section id="checkout"><form><button>Confirmar</button></form><p id="mensaje"></p></section><style>.catalogo{display:grid;background-color:#eef;border-radius:12px}</style><script>sessionStorage.setItem("carrito",JSON.stringify([]));const items=sessionStorage.getItem("carrito");document.getElementById("carrito").addEventListener("click",()=>{location.hash="checkout";});document.getElementById("mensaje").textContent=items;</script>',
         ];
 
         foreach ($soluciones as $nivel => $codigo) {
@@ -95,6 +96,10 @@ PHP,
         $nivel18 = file_get_contents($this->projectPath('resources/views/desafios/fundamentos_web/desafiolvl18.blade.php'));
         self::assertStringContainsString('sandbox="allow-scripts allow-modals"', $nivel18);
         self::assertStringNotContainsString('iframeDoc.write', $nivel18);
+
+        $nivel19 = file_get_contents($this->projectPath('resources/views/desafios/fundamentos_web/desafiolvl19.blade.php'));
+        self::assertStringContainsString('sandbox="allow-scripts allow-forms allow-modals"', $nivel19);
+        self::assertStringNotContainsString('iframeDoc.write', $nivel19);
     }
 
     public function test_reward_controller_requires_code_and_a_valid_level(): void
@@ -102,7 +107,7 @@ PHP,
         $contenido = file_get_contents($this->projectPath('app/Http/Controllers/DesafioController.php'));
 
         self::assertStringContainsString("'codigo' => ['required', 'string', 'max:60000']", $contenido);
-        self::assertStringContainsString("'nivel' => ['required', 'integer', 'between:1,18']", $contenido);
+        self::assertStringContainsString("'nivel' => ['required', 'integer', 'between:1,19']", $contenido);
         self::assertStringContainsString('$this->codigoCumpleRequisitos($nivel, $codigo)', $contenido);
     }
 }

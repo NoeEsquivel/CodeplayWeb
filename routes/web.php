@@ -74,6 +74,7 @@ Route::prefix('alumno')->group(function () {
     Route::get('/desafios/nivel16', [DesafioController::class, 'nivel16'])->name('alumno.desafios.nivel16');
     Route::get('/desafios/nivel17', [DesafioController::class, 'nivel17'])->name('alumno.desafios.nivel17');
     Route::get('/desafios/nivel18', [DesafioController::class, 'nivel18'])->name('alumno.desafios.nivel18');
+    Route::get('/desafios/nivel19', [DesafioController::class, 'nivel19'])->name('alumno.desafios.nivel19');
     Route::get('/aventura', [AventuraController::class, 'index'])->name('alumno.aventura');
     // Mantén las demás rutas igual
     

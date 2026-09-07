@@ -929,7 +929,8 @@
                                     @endif
                                     <div class="level-number">19</div>
                                     <div class="level-title">Tienda Online Básica</div>
-                                    <div class="level-stars">400 puntos
+                                    <div class="level-stars">500 puntos
+                                        <i class="fas fa-star"></i>
                                         <i class="fas fa-star"></i>
                                         <i class="fas fa-star"></i>
                                         <i class="fas fa-star"></i>
@@ -1032,7 +1033,8 @@ function navigateToLevel(levelNumber) {
         15: "{{ route('alumno.desafios.nivel15') }}",
         16: "{{ route('alumno.desafios.nivel16') }}",
         17: "{{ route('alumno.desafios.nivel17') }}",
-        18: "{{ route('alumno.desafios.nivel18') }}"
+        18: "{{ route('alumno.desafios.nivel18') }}",
+        19: "{{ route('alumno.desafios.nivel19') }}"
         // Agregar más niveles aquí cuando los crees
     };
 
