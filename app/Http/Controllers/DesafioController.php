@@ -184,6 +184,14 @@ class DesafioController extends Controller
         return view('desafios.fundamentos_web.desafiolvl17', compact('infoRecompensa'));
     }
 
+    public function nivel18()
+    {
+        $usuarioId = session('usuario_id');
+        $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 18);
+
+        return view('desafios.fundamentos_web.desafiolvl18', compact('infoRecompensa'));
+    }
+
     private function obtenerInfoRecompensa($usuarioId, $nivel)
     {
         $recompensa = DB::table('desafio_recompensas')
@@ -245,7 +253,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $datos = $request->validate([
-            'nivel' => ['required', 'integer', 'between:1,17'],
+            'nivel' => ['required', 'integer', 'between:1,18'],
             'codigo' => ['required', 'string', 'max:60000'],
         ]);
 
@@ -403,6 +411,7 @@ class DesafioController extends Controller
             15 => $contieneTodos(['<?php', 'session_start', '$_session', 'setcookie', 'echo']),
             16 => $this->codigoProyectoPersonalValido($codigo),
             17 => $this->codigoFormularioInteractivoValido($codigo),
+            18 => $this->codigoDashboardResponsivoValido($codigo),
             default => false,
         };
     }
@@ -500,5 +509,24 @@ class DesafioController extends Controller
             && (str_contains($lower, 'background-color') || str_contains($lower, 'background:'))
             && str_contains($lower, 'border-radius')
             && (str_contains($compact, 'display:flex') || str_contains($compact, 'display:grid'));
+    }
+
+    private function codigoDashboardResponsivoValido(string $codigo): bool
+    {
+        $lower = mb_strtolower($codigo, 'UTF-8');
+        $compact = preg_replace('/\s+/', '', $lower) ?? '';
+        $cards = preg_match_all('/class\s*=\s*["\'][^"\']*\b(card|stat|metric|tarjeta)\b[^"\']*["\']/i', $codigo);
+
+        return (str_contains($lower, '<main') || str_contains($lower, '<section'))
+            && (str_contains($lower, '<aside') || str_contains($lower, '<nav'))
+            && str_contains($lower, '<header')
+            && ($cards ?: 0) >= 3
+            && (str_contains($compact, 'display:grid') || str_contains($compact, 'display:flex'))
+            && (str_contains($lower, '@media') || str_contains($lower, 'grid-template-columns') || str_contains($lower, 'flex-wrap'))
+            && (str_contains($lower, 'background:') || str_contains($lower, 'background-color'))
+            && str_contains($lower, 'border-radius')
+            && str_contains($lower, '<button')
+            && str_contains($lower, 'addeventlistener')
+            && str_contains($lower, 'textcontent');
     }
 }
