@@ -176,6 +176,14 @@ class DesafioController extends Controller
         return view('desafios.fundamentos_web.desafiolvl16', compact('infoRecompensa'));
     }
 
+    public function nivel17()
+    {
+        $usuarioId = session('usuario_id');
+        $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 17);
+
+        return view('desafios.fundamentos_web.desafiolvl17', compact('infoRecompensa'));
+    }
+
     private function obtenerInfoRecompensa($usuarioId, $nivel)
     {
         $recompensa = DB::table('desafio_recompensas')
@@ -237,7 +245,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $datos = $request->validate([
-            'nivel' => ['required', 'integer', 'between:1,16'],
+            'nivel' => ['required', 'integer', 'between:1,17'],
             'codigo' => ['required', 'string', 'max:60000'],
         ]);
 
@@ -394,6 +402,7 @@ class DesafioController extends Controller
                 && (str_contains($lower, 'isset') || str_contains($lower, 'if')),
             15 => $contieneTodos(['<?php', 'session_start', '$_session', 'setcookie', 'echo']),
             16 => $this->codigoProyectoPersonalValido($codigo),
+            17 => $this->codigoFormularioInteractivoValido($codigo),
             default => false,
         };
     }
@@ -459,7 +468,7 @@ class DesafioController extends Controller
             && str_contains($lower, '<input')
             && str_contains($lower, '<textarea')
             && str_contains($lower, '<button')
-            && str_contains($lower, 'background-color')
+            && (str_contains($lower, 'background-color') || str_contains($lower, 'background:'))
             && str_contains($lower, 'color:')
             && str_contains($lower, 'padding')
             && str_contains($lower, 'border-radius')
@@ -467,5 +476,29 @@ class DesafioController extends Controller
             && (str_contains($lower, 'gap') || str_contains($lower, 'margin'))
             && (str_contains($lower, '@media') || str_contains($lower, 'flex-wrap') || str_contains($lower, 'grid-template-columns'))
             && (str_contains($lower, 'addeventlistener') || str_contains($lower, 'onclick=') || str_contains($lower, 'alert(') || str_contains($lower, 'textcontent'));
+    }
+
+    private function codigoFormularioInteractivoValido(string $codigo): bool
+    {
+        $lower = mb_strtolower($codigo, 'UTF-8');
+        $compact = preg_replace('/\s+/', '', $lower) ?? '';
+
+        return str_contains($lower, '<form')
+            && str_contains($lower, '</form>')
+            && str_contains($lower, '<label')
+            && str_contains($lower, 'for=')
+            && str_contains($lower, 'name=')
+            && (str_contains($lower, 'type="email"') || str_contains($lower, "type='email'"))
+            && str_contains($lower, 'required')
+            && str_contains($lower, '<select')
+            && str_contains($lower, '<textarea')
+            && str_contains($lower, 'addeventlistener')
+            && str_contains($lower, 'submit')
+            && str_contains($lower, 'preventdefault')
+            && str_contains($lower, 'value')
+            && str_contains($lower, 'textcontent')
+            && (str_contains($lower, 'background-color') || str_contains($lower, 'background:'))
+            && str_contains($lower, 'border-radius')
+            && (str_contains($compact, 'display:flex') || str_contains($compact, 'display:grid'));
     }
 }

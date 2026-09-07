@@ -29,7 +29,7 @@ class DesafioSecurityTest extends TestCase
         ));
     }
 
-    public function test_server_reproduces_the_requirements_for_all_sixteen_levels(): void
+    public function test_server_reproduces_the_requirements_for_all_seventeen_levels(): void
     {
         $controller = new DesafioController();
         $reflection = new \ReflectionClass($controller);
@@ -68,6 +68,7 @@ echo "ok";
 ?>
 PHP,
             16 => '<nav><a href="#inicio">Inicio</a></nav><header id="inicio">Hola</header><img src="foto.jpg" alt="Foto"><section>Sobre mí</section><ul><li>HTML</li><li>CSS</li><li>JS</li></ul><article class="project card"></article><article class="project card"></article><form><input><textarea></textarea><button>Enviar</button></form><style>body{background-color:#000;color:#fff;padding:20px;border-radius:8px;display:flex;gap:10px}@media(max-width:600px){body{flex-wrap:wrap}}</style><script>document.body.addEventListener("click",()=>{});</script>',
+            17 => '<form id="registro"><label for="correo">Correo</label><input name="correo" id="correo" type="email" required><select><option>Uno</option></select><textarea></textarea><button>Enviar</button></form><style>.form{background:linear-gradient(#fff,#eee);border-radius:8px;display:flex}</style><script>registro.addEventListener("submit",event=>{event.preventDefault();const valor=correo.value;mensaje.textContent=valor;});</script>',
         ];
 
         foreach ($soluciones as $nivel => $codigo) {
@@ -84,6 +85,11 @@ PHP,
             self::assertStringContainsString("sandbox', 'allow-scripts allow-modals", $contenido, "Nivel {$nivel} sin sandbox");
             self::assertStringNotContainsString('iframeDoc.write', $contenido, "Nivel {$nivel} todavía usa document.write");
         }
+
+        $nivel17 = file_get_contents($this->projectPath('resources/views/desafios/fundamentos_web/desafiolvl17.blade.php'));
+        self::assertStringContainsString('sandbox="allow-scripts allow-modals"', $nivel17);
+        self::assertStringContainsString('desafio17_formulario_interactivo_referencia.svg', $nivel17);
+        self::assertStringNotContainsString('iframeDoc.write', $nivel17);
     }
 
     public function test_reward_controller_requires_code_and_a_valid_level(): void
@@ -91,7 +97,7 @@ PHP,
         $contenido = file_get_contents($this->projectPath('app/Http/Controllers/DesafioController.php'));
 
         self::assertStringContainsString("'codigo' => ['required', 'string', 'max:60000']", $contenido);
-        self::assertStringContainsString("'nivel' => ['required', 'integer', 'between:1,16']", $contenido);
+        self::assertStringContainsString("'nivel' => ['required', 'integer', 'between:1,17']", $contenido);
         self::assertStringContainsString('$this->codigoCumpleRequisitos($nivel, $codigo)', $contenido);
     }
 }
