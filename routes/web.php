@@ -76,7 +76,8 @@ Route::prefix('alumno')->group(function () {
     Route::get('/desafios/nivel18', [DesafioController::class, 'nivel18'])->name('alumno.desafios.nivel18');
     Route::get('/desafios/nivel19', [DesafioController::class, 'nivel19'])->name('alumno.desafios.nivel19');
     Route::get('/desafios/nivel20', [DesafioController::class, 'nivel20'])->middleware('auth.custom')->name('alumno.desafios.nivel20');
-    Route::get('/aventura', [AventuraController::class, 'index'])->name('alumno.aventura');
+    Route::get('/aventura', [AventuraController::class, 'index'])->middleware('auth.custom')->name('alumno.aventura');
+    Route::post('/aventura/equipamiento', [AventuraController::class, 'guardar'])->middleware(['auth.custom', 'throttle:30,1'])->name('alumno.aventura.equipamiento');
     // Mantén las demás rutas igual
     
     Route::get('/tests', function () {

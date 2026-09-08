@@ -593,7 +593,7 @@
                                     @endif
                                     <div class="level-number">05</div>
                                     <div class="level-title">Modelo de Caja CSS</div>
-                                    <div class="level-stars">100 puntos+item R
+                                    <div class="level-stars" title="Desbloquea la compra de Coraza del modelo de caja en Aventura">100 puntos + Coraza rara
                                         <i class="fas fa-star"></i>
                                         <i class="far fa-star"></i>
                                         <i class="far fa-star"></i>
@@ -704,7 +704,7 @@
                                     @endif
                                     <div class="level-number">10</div>
                                     <div class="level-title">Formularios Interactivos</div>
-                                    <div class="level-stars">150 puntos+Item R
+                                    <div class="level-stars" title="Desbloquea la compra de Filo de la validación en Aventura">150 puntos + Arma rara
                                         <i class="fas fa-star"></i>
                                         <i class="fas fa-star"></i>
                                         <i class="far fa-star"></i>
@@ -827,7 +827,7 @@
                                     @endif
                                     <div class="level-number">15</div>
                                     <div class="level-title">Sesiones y Cookies</div>
-                                    <div class="level-stars">300 puntos+Item SR
+                                    <div class="level-stars" title="Desbloquea la compra de Manto de la memoria en Aventura">300 puntos + Manto super raro
                                         <i class="fas fa-star"></i>
                                         <i class="fas fa-star"></i>
                                         <i class="fas fa-star"></i>
@@ -954,7 +954,7 @@
                                     @endif
                                     <div class="level-number">20</div>
                                     <div class="level-title">Proyecto Final</div>
-                                    <div class="level-stars">1000 puntos+Item Unico
+                                    <div class="level-stars" title="Desbloquea la compra de Compilador del origen, arma legendaria única de Aventura">1000 puntos + Arma única
                                         <span class="d-flex justify-content-center flex-nowrap gap-1 mt-1" role="img" aria-label="Dificultad: 5 estrellas">
                                             <i class="fas fa-star" aria-hidden="true"></i>
                                             <i class="fas fa-star" aria-hidden="true"></i>
