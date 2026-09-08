@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>La culebrita</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 20px; color: #f5f7ff; background: #101225; font-family: system-ui, sans-serif; }
+    main { max-width: 520px; margin: auto; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    h1 { margin: 25px 0 8px; font-size: clamp(1.7rem, 6vw, 2.4rem); }
+    .guia { line-height: 1.6; color: #c2c7e2; }
+    button { min-height: 44px; padding: 10px 16px; border: 1px solid #475074; border-radius: 12px; background: #242b4b; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+    button:focus-visible, canvas:focus-visible { outline: 3px solid #63eed4; outline-offset: 3px; }
+    .puntaje { color: #63eed4; font-weight: 800; white-space: nowrap; }
+    canvas { display: block; width: 100%; max-width: 432px; aspect-ratio: 1; margin: 20px auto; border: 2px solid #475074; border-radius: 12px; background: #171c34; }
+    #iniciar { background: #63eed4; color: #101225; border: none; }
+    #mensaje { min-height: 3em; line-height: 1.5; color: #d5dcf8; }
+    .controles { display: grid; grid-template-columns: repeat(3, 52px); gap: 6px; justify-content: center; margin: 15px 0; }
+    .controles button:first-child { grid-column: 2; }
+    .controles button:nth-child(2) { grid-column: 1; }
+    .acciones { text-align: center; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <button type="button" data-vista="menu">← Menú</button>
+      <span class="puntaje">Puntos: <span id="puntos">0</span></span>
+    </header>
+    <h1>🐍 La culebrita</h1>
+    <p class="guia">Usa las flechas o los botones. Come el cuadrado rosa para crecer y sumar 10 puntos. Pierdes si chocas con una pared o contigo mismo.</p>
+    <canvas id="tableroSerpiente" width="432" height="432" tabindex="0" aria-label="Tablero de culebrita de 12 por 12 casillas"></canvas>
+    <div class="acciones"><button id="iniciar" type="button">Iniciar / Reiniciar</button></div>
+    <div class="controles" aria-label="Dirección de la culebrita">
+      <button type="button" data-direccion="arriba" aria-label="Arriba">↑</button>
+      <button type="button" data-direccion="izquierda" aria-label="Izquierda">←</button>
+      <button type="button" data-direccion="abajo" aria-label="Abajo">↓</button>
+      <button type="button" data-direccion="derecha" aria-label="Derecha">→</button>
+    </div>
+    <p id="mensaje" role="status" aria-live="polite">Completa las tres funciones y pulsa Iniciar.</p>
+  </main>
+  <script>
+    // =====================================================
+    // TU ZONA DE TRABAJO: completa estas TRES funciones.
+    // Cambia cada "return null;" por una única expresión return.
+    // No necesitas variables, bucles ni if dentro de estas funciones.
+    // El resto del juego ya está preparado como ayuda.
+    // =====================================================
+
+    // 1. Devuelve un NUEVO objeto con la próxima posición.
+    // cabeza y direccion tienen x e y. Ejemplo:
+    // {x: 4, y: 3} + {x: 1, y: 0} debe dar {x: 5, y: 3}.
+    function siguienteCabeza(cabeza, direccion) {
+      // TODO: suma cada coordenada y devuelve {x: ..., y: ...}.
+      return null;
+    }
+
+    // 2. Devuelve true fuera del tablero y false dentro.
+    // Si limite es 12, las coordenadas válidas van de 0 a 11.
+    function chocaConPared(cabeza, limite) {
+      // TODO: comprueba x e y con < 0 y >= limite. Une con ||.
+      return null;
+    }
+
+    // 3. Devuelve los puntos actuales más 10.
+    function puntosPorComida(puntos) {
+      // TODO: devuelve una suma; puntos es un número.
+      return null;
+    }
+
+    // =====================================================
+    // MOTOR ENTREGADO: dibuja, mueve, crece y reinicia.
+    // No necesitas modificarlo para resolver las misiones.
+    // =====================================================
+    const canvas = document.getElementById('tableroSerpiente');
+    const contexto = canvas.getContext('2d');
+    const limite = 12;
+    const casilla = canvas.width / limite;
+    const mensaje = document.getElementById('mensaje');
+    const puntosTexto = document.getElementById('puntos');
+    const direcciones = {
+      arriba: {x: 0, y: -1}, abajo: {x: 0, y: 1},
+      izquierda: {x: -1, y: 0}, derecha: {x: 1, y: 0}
+    };
+    let cuerpo = [];
+    let direccion = direcciones.derecha;
+    let siguienteDireccion = direccion;
+    let comida = {x: 7, y: 5};
+    let puntos = 0;
+    let intervalo = null;
+    let jugando = false;
+
+    function mismaCasilla(a, b) { return a.x === b.x && a.y === b.y; }
+
+    function dibujar() {
+      contexto.fillStyle = '#171c34';
+      contexto.fillRect(0, 0, canvas.width, canvas.height);
+      contexto.strokeStyle = '#242b49';
+      for (let i = 0; i <= limite; i++) {
+        contexto.beginPath();
+        contexto.moveTo(i * casilla, 0);
+        contexto.lineTo(i * casilla, canvas.height);
+        contexto.moveTo(0, i * casilla);
+        contexto.lineTo(canvas.width, i * casilla);
+        contexto.stroke();
+      }
+      contexto.fillStyle = '#ff7faf';
+      contexto.fillRect(comida.x * casilla + 6, comida.y * casilla + 6, casilla - 12, casilla - 12);
+      cuerpo.forEach((parte, indice) => {
+        contexto.fillStyle = indice === 0 ? '#c5fff3' : '#63eed4';
+        contexto.fillRect(parte.x * casilla + 3, parte.y * casilla + 3, casilla - 6, casilla - 6);
+      });
+    }
+
+    function detener(texto) {
+      clearInterval(intervalo);
+      intervalo = null;
+      jugando = false;
+      mensaje.textContent = texto;
+    }
+
+    function colocarComida() {
+      const libres = [];
+      for (let y = 0; y < limite; y++) {
+        for (let x = 0; x < limite; x++) {
+          if (!cuerpo.some(parte => mismaCasilla(parte, {x, y}))) libres.push({x, y});
+        }
+      }
+      if (!libres.length) {
+        detener('¡Llenaste el tablero! Puntuación: ' + puntos + '.');
+        return;
+      }
+      comida = libres[Math.floor(Math.random() * libres.length)];
+    }
+
+    function paso() {
+      direccion = siguienteDireccion;
+      let nueva, pared;
+      try {
+        nueva = siguienteCabeza({...cuerpo[0]}, {...direccion});
+        if (!nueva || !Number.isInteger(nueva.x) || !Number.isInteger(nueva.y)) {
+          detener('Revisa siguienteCabeza: debe devolver un objeto con x e y numéricos.');
+          return;
+        }
+        pared = chocaConPared(nueva, limite);
+        if (typeof pared !== 'boolean') {
+          detener('Completa chocaConPared: devuelve true o false.');
+          return;
+        }
+      } catch (error) {
+        detener('Revisa tus funciones: ' + error.message);
+        return;
+      }
+      if (pared || nueva.x < 0 || nueva.y < 0 || nueva.x >= limite || nueva.y >= limite) {
+        detener('Fin de la partida: chocaste con la pared. Puntos: ' + puntos + '.');
+        return;
+      }
+      const comio = mismaCasilla(nueva, comida);
+      const obstaculos = comio ? cuerpo : cuerpo.slice(0, -1);
+      if (obstaculos.some(parte => mismaCasilla(parte, nueva))) {
+        detener('Fin de la partida: chocaste con tu cuerpo. Puntos: ' + puntos + '.');
+        return;
+      }
+      cuerpo.unshift(nueva);
+      if (comio) {
+        try {
+          const nuevoPuntaje = puntosPorComida(puntos);
+          if (!Number.isFinite(nuevoPuntaje)) throw new Error('puntosPorComida debe devolver un número.');
+          puntos = nuevoPuntaje;
+          puntosTexto.textContent = puntos;
+          colocarComida();
+        } catch (error) {
+          detener('Revisa puntosPorComida: ' + error.message);
+          return;
+        }
+      } else {
+        cuerpo.pop();
+      }
+      dibujar();
+    }
+
+    function cambiarDireccion(nombre) {
+      const nueva = direcciones[nombre];
+      // Compara con la dirección del último paso: no permite girar 180°.
+      if (nueva && !(nueva.x === -direccion.x && nueva.y === -direccion.y)) siguienteDireccion = nueva;
+    }
+
+    function preparar() {
+      clearInterval(intervalo);
+      jugando = false;
+      puntos = 0;
+      puntosTexto.textContent = puntos;
+      cuerpo = [{x: 4, y: 5}, {x: 3, y: 5}, {x: 2, y: 5}];
+      direccion = direcciones.derecha;
+      siguienteDireccion = direccion;
+      comida = {x: 7, y: 5};
+      dibujar();
+    }
+
+    document.getElementById('iniciar').addEventListener('click', () => {
+      preparar();
+      jugando = true;
+      mensaje.textContent = '¡En marcha! Las flechas o los botones cambian la dirección.';
+      canvas.focus();
+      intervalo = setInterval(paso, 320);
+    });
+    document.addEventListener('keydown', evento => {
+      const teclas = {ArrowUp: 'arriba', ArrowDown: 'abajo', ArrowLeft: 'izquierda', ArrowRight: 'derecha'};
+      if (teclas[evento.key]) {
+        evento.preventDefault();
+        if (jugando) cambiarDireccion(teclas[evento.key]);
+      }
+    });
+    document.querySelectorAll('[data-direccion]').forEach(boton => {
+      boton.addEventListener('click', () => cambiarDireccion(boton.dataset.direccion));
+    });
+    preparar();
+  </script>
+</body>
+</html>

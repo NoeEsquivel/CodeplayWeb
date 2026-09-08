@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Services\MiniArcadeValidator;
 
 class DesafioController extends Controller
 {
@@ -200,6 +201,28 @@ class DesafioController extends Controller
         return view('desafios.fundamentos_web.desafiolvl19', compact('infoRecompensa'));
     }
 
+    public function nivel20()
+    {
+        $infoRecompensa = $this->obtenerInfoRecompensa(session('usuario_id'), 20);
+        $plantillas = [];
+        foreach (['menu', 'culebrita', 'memoria'] as $vista) {
+            $plantillas[$vista] = file_get_contents(public_path("desafios/mini-arcade/{$vista}.html"));
+        }
+
+        return view('desafios.fundamentos_web.desafiolvl20', compact('infoRecompensa', 'plantillas'));
+    }
+
+    public function validarProyectoFinal(Request $request)
+    {
+        $datos = $request->validate(['codigo' => ['required', 'string', 'max:60000']]);
+        $validador = new MiniArcadeValidator();
+        if (!$validador->documents($datos['codigo'])) {
+            return response()->json(['success' => false, 'message' => 'Envía las tres vistas del proyecto.'], 422);
+        }
+
+        return response()->json(['success' => true, 'checks' => $validador->checks($datos['codigo'])]);
+    }
+
     private function obtenerInfoRecompensa($usuarioId, $nivel)
     {
         $recompensa = DB::table('desafio_recompensas')
@@ -261,7 +284,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $datos = $request->validate([
-            'nivel' => ['required', 'integer', 'between:1,19'],
+            'nivel' => ['required', 'integer', 'between:1,20'],
             'codigo' => ['required', 'string', 'max:60000'],
         ]);
 
@@ -421,6 +444,7 @@ class DesafioController extends Controller
             17 => $this->codigoFormularioInteractivoValido($codigo),
             18 => $this->codigoDashboardResponsivoValido($codigo),
             19 => $this->codigoTiendaOnlineValido($codigo),
+            20 => (new MiniArcadeValidator())->passes($codigo),
             default => false,
         };
     }

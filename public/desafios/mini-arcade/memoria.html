@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Encuentra las parejas</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 20px; color: #f5f7ff; background: #101225; font-family: system-ui, sans-serif; }
+    main { max-width: 520px; margin: auto; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    h1 { margin: 25px 0 8px; font-size: clamp(1.65rem, 6vw, 2.3rem); }
+    .guia { color: #c2c7e2; line-height: 1.6; }
+    button { min-height: 44px; padding: 10px 16px; border: 1px solid #475074; border-radius: 12px; background: #242b4b; color: white; font: inherit; font-weight: 700; cursor: pointer; }
+    button:focus-visible { outline: 3px solid #63eed4; outline-offset: 3px; }
+    .puntaje { color: #63eed4; font-weight: 800; }
+    #tableroMemoria { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 24px 0; }
+    .carta { aspect-ratio: 1; padding: 0; min-width: 0; font-size: clamp(1.5rem, 7vw, 2.4rem); background: #343264; }
+    .carta.abierta { background: #f4f0ff; color: #222; }
+    .carta.encontrada { background: #174f48; border-color: #63eed4; opacity: 1; }
+    #reiniciar { background: #63eed4; color: #101225; border: 0; }
+    #mensaje { min-height: 3em; line-height: 1.5; }
+    .estado { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; color: #c2c7e2; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <button type="button" data-vista="menu">← Menú</button>
+      <span class="puntaje">Puntos: <span id="puntos">0</span></span>
+    </header>
+    <h1>🃏 Encuentra las parejas</h1>
+    <p class="guia">Descubre dos cartas. Si son iguales, ganas 20 puntos; si son distintas, vuelven a ocultarse. Encuentra las 6 parejas del tablero de 3 filas y 4 columnas.</p>
+    <div id="tableroMemoria" aria-label="Tablero de memoria: tres filas y cuatro columnas"></div>
+    <div class="estado">
+      <span>Parejas: <span id="parejas">0</span> / 6</span>
+      <button id="reiniciar" type="button">Reiniciar partida</button>
+    </div>
+    <p id="mensaje" role="status" aria-live="polite">Completa las tres funciones y prueba las cartas.</p>
+  </main>
+  <script>
+    // =====================================================
+    // TU ZONA DE TRABAJO: completa estas TRES funciones.
+    // Cambia cada "return null;" por una única expresión return.
+    // No necesitas variables, bucles ni if dentro de estas funciones.
+    // Recibes valores sencillos, no elementos HTML.
+    // =====================================================
+
+    // 1. primera y segunda son textos como "🍒" y "🍒".
+    // Devuelve true si son iguales; false si son diferentes.
+    function sonPareja(primera, segunda) {
+      // TODO: compara ambos valores con ===.
+      return null;
+    }
+
+    // 2. Cada pareja encontrada vale 20 puntos.
+    function puntosPorPareja(puntos) {
+      // TODO: devuelve los puntos actuales más 20.
+      return null;
+    }
+
+    // 3. Devuelve true cuando parejas sea 6; false antes.
+    function partidaTerminada(parejas) {
+      // TODO: compara el número de parejas con 6.
+      return null;
+    }
+
+    // =====================================================
+    // MOTOR ENTREGADO: mezcla, descubre, oculta y reinicia.
+    // =====================================================
+    const tablero = document.getElementById('tableroMemoria');
+    const mensaje = document.getElementById('mensaje');
+    const puntosTexto = document.getElementById('puntos');
+    const parejasTexto = document.getElementById('parejas');
+    const simbolos = ['🍒', '🚀', '🌈', '🐸', '⭐', '🎮'];
+    let primeraCarta = null;
+    let bloqueado = false;
+    let puntos = 0;
+    let parejas = 0;
+    let espera = null;
+
+    function mezclar(cartas) {
+      for (let i = cartas.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cartas[i], cartas[j]] = [cartas[j], cartas[i]];
+      }
+      return cartas;
+    }
+
+    function ocultar(carta) {
+      carta.textContent = '?';
+      carta.classList.remove('abierta');
+      carta.setAttribute('aria-label', 'Carta oculta ' + carta.dataset.indice);
+    }
+
+    function elegir(carta) {
+      if (bloqueado || carta === primeraCarta || carta.disabled) return;
+      carta.textContent = carta.dataset.valor;
+      carta.classList.add('abierta');
+      carta.setAttribute('aria-label', 'Carta ' + carta.dataset.valor);
+      if (!primeraCarta) {
+        primeraCarta = carta;
+        mensaje.textContent = 'Elige otra carta.';
+        return;
+      }
+      bloqueado = true;
+      const anterior = primeraCarta;
+      primeraCarta = null;
+      try {
+        const coinciden = sonPareja(anterior.dataset.valor, carta.dataset.valor);
+        if (typeof coinciden !== 'boolean') throw new Error('sonPareja debe devolver true o false.');
+        if (coinciden) {
+          const nuevosPuntos = puntosPorPareja(puntos);
+          const termino = partidaTerminada(parejas + 1);
+          if (!Number.isFinite(nuevosPuntos)) throw new Error('puntosPorPareja debe devolver un número.');
+          if (typeof termino !== 'boolean') throw new Error('partidaTerminada debe devolver true o false.');
+          puntos = nuevosPuntos;
+          parejas++;
+          puntosTexto.textContent = puntos;
+          parejasTexto.textContent = parejas;
+          [anterior, carta].forEach(encontrada => {
+            encontrada.disabled = true;
+            encontrada.classList.add('encontrada');
+          });
+          bloqueado = termino;
+          mensaje.textContent = termino
+            ? '¡Encontraste todas las parejas! Ganaste ' + puntos + ' puntos.'
+            : '¡Pareja encontrada! Sigue buscando.';
+        } else {
+          mensaje.textContent = 'Son diferentes. Recuerda sus posiciones.';
+          espera = setTimeout(() => {
+            ocultar(anterior);
+            ocultar(carta);
+            bloqueado = false;
+            espera = null;
+          }, 850);
+        }
+      } catch (error) {
+        ocultar(anterior);
+        ocultar(carta);
+        bloqueado = false;
+        mensaje.textContent = 'Completa tus funciones: ' + error.message;
+      }
+    }
+
+    function reiniciar() {
+      clearTimeout(espera);
+      espera = null;
+      primeraCarta = null;
+      bloqueado = false;
+      puntos = 0;
+      parejas = 0;
+      puntosTexto.textContent = puntos;
+      parejasTexto.textContent = parejas;
+      tablero.replaceChildren();
+      mezclar([...simbolos, ...simbolos]).forEach((simbolo, indice) => {
+        const carta = document.createElement('button');
+        carta.type = 'button';
+        carta.className = 'carta';
+        carta.dataset.valor = simbolo;
+        carta.dataset.indice = indice + 1;
+        ocultar(carta);
+        carta.addEventListener('click', () => elegir(carta));
+        tablero.appendChild(carta);
+      });
+      mensaje.textContent = 'Descubre dos cartas. Completa las funciones si todavía no lo has hecho.';
+    }
+
+    document.getElementById('reiniciar').addEventListener('click', reiniciar);
+    reiniciar();
+  </script>
+</body>
+</html>

@@ -107,7 +107,7 @@ PHP,
         $contenido = file_get_contents($this->projectPath('app/Http/Controllers/DesafioController.php'));
 
         self::assertStringContainsString("'codigo' => ['required', 'string', 'max:60000']", $contenido);
-        self::assertStringContainsString("'nivel' => ['required', 'integer', 'between:1,19']", $contenido);
+        self::assertStringContainsString("'nivel' => ['required', 'integer', 'between:1,20']", $contenido);
         self::assertStringContainsString('$this->codigoCumpleRequisitos($nivel, $codigo)', $contenido);
     }
 }

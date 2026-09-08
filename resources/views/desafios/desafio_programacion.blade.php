@@ -955,9 +955,13 @@
                                     <div class="level-number">20</div>
                                     <div class="level-title">Proyecto Final</div>
                                     <div class="level-stars">1000 puntos+Item Unico
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
+                                        <span class="d-flex justify-content-center flex-nowrap gap-1 mt-1" role="img" aria-label="Dificultad: 5 estrellas">
+                                            <i class="fas fa-star" aria-hidden="true"></i>
+                                            <i class="fas fa-star" aria-hidden="true"></i>
+                                            <i class="fas fa-star" aria-hidden="true"></i>
+                                            <i class="fas fa-star" aria-hidden="true"></i>
+                                            <i class="fas fa-star" aria-hidden="true"></i>
+                                        </span>
                                     </div>
                                     <span class="level-badge badge-master">MAESTRO</span>
                                     <div class="locked-icon" @if($desbloquearMaestros) style="display: none;" @endif>
@@ -1034,7 +1038,8 @@ function navigateToLevel(levelNumber) {
         16: "{{ route('alumno.desafios.nivel16') }}",
         17: "{{ route('alumno.desafios.nivel17') }}",
         18: "{{ route('alumno.desafios.nivel18') }}",
-        19: "{{ route('alumno.desafios.nivel19') }}"
+        19: "{{ route('alumno.desafios.nivel19') }}",
+        20: "{{ route('alumno.desafios.nivel20') }}"
         // Agregar más niveles aquí cuando los crees
     };
 

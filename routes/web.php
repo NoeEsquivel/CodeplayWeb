@@ -75,6 +75,7 @@ Route::prefix('alumno')->group(function () {
     Route::get('/desafios/nivel17', [DesafioController::class, 'nivel17'])->name('alumno.desafios.nivel17');
     Route::get('/desafios/nivel18', [DesafioController::class, 'nivel18'])->name('alumno.desafios.nivel18');
     Route::get('/desafios/nivel19', [DesafioController::class, 'nivel19'])->name('alumno.desafios.nivel19');
+    Route::get('/desafios/nivel20', [DesafioController::class, 'nivel20'])->middleware('auth.custom')->name('alumno.desafios.nivel20');
     Route::get('/aventura', [AventuraController::class, 'index'])->name('alumno.aventura');
     // Mantén las demás rutas igual
     
@@ -137,3 +138,7 @@ Route::get('/tutoriales/progreso', [TutorialController::class, 'getProgreso'])->
 Route::post('/desafios/procesar-recompensa', [DesafioController::class, 'procesarRecompensa'])
     ->middleware(['auth.custom', 'throttle:30,1'])
     ->name('desafios.procesar-recompensa');
+
+Route::post('/desafios/validar-proyecto-final', [DesafioController::class, 'validarProyectoFinal'])
+    ->middleware(['auth.custom', 'throttle:30,1'])
+    ->name('desafios.validar-proyecto-final');
