@@ -12,6 +12,54 @@ class DesafioSecurityTest extends TestCase
         return dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relativePath);
     }
 
+    public function test_flexbox_and_grid_accept_formatted_css_without_skipping_requirements(): void
+    {
+        $controller = new DesafioController();
+        $method = (new \ReflectionClass($controller))->getMethod('codigoCumpleRequisitos');
+        $method->setAccessible(true);
+        $flex = <<<'HTML'
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diseño con Flexbox</title>
+    <style>
+        .fila-tarjetas {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        .tarjeta {
+            padding: 20px 30px;
+            border: 2px solid #4CAF50;
+            background-color: #f0f8f0;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mis poderes CSS</h1>
+    <div class="fila-tarjetas">
+        <div class="tarjeta">HTML</div>
+        <div class="tarjeta">CSS</div>
+        <div class="tarjeta">JavaScript</div>
+    </div>
+</body>
+</html>
+HTML;
+        $grid = '<style>.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 20px; background-color: white; border-radius: 10px; }</style>';
+        foreach ([6 => [$flex, 'flex'], 7 => [$grid, 'grid']] as $level => [$code, $layout]) {
+            foreach (["display:{$layout}", "display: {$layout}", "display \t:\n {$layout}"] as $declaration) {
+                self::assertTrue($method->invoke($controller, $level, str_replace("display: {$layout}", $declaration, $code)));
+            }
+            self::assertFalse($method->invoke($controller, $level, str_replace("display: {$layout}", 'display: block', $code)));
+            self::assertFalse($method->invoke($controller, $level, str_replace('gap: 20px;', '', $code)));
+            self::assertFalse($method->invoke($controller, $level, '<style>body { display: ' . $layout . '; }</style>'));
+        }
+    }
+
     public function test_code_is_validated_as_text_and_sql_payload_is_not_accepted_as_a_solution(): void
     {
         $controller = new DesafioController();

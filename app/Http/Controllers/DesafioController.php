@@ -415,8 +415,10 @@ class DesafioController extends Controller
             3 => $contieneTodos(['<h1', '<a', 'href=', '<img', 'src=']),
             4 => $contieneTodos(['<style', 'color:', 'background-color:', '<h1', '<p']),
             5 => $contieneTodos(['<style', '<div', 'width:', 'padding:', 'border:', 'margin:']),
-            6 => $contieneTodos(['display:flex', 'gap', 'justify-content', 'padding', 'border', 'background-color']),
-            7 => $contieneTodos(['display:grid', 'grid-template-columns', 'gap', 'padding', 'background-color', 'border-radius']),
+            6 => str_contains($compact, 'display:flex')
+                && $contieneTodos(['gap', 'justify-content', 'padding', 'border', 'background-color']),
+            7 => str_contains($compact, 'display:grid')
+                && $contieneTodos(['grid-template-columns', 'gap', 'padding', 'background-color', 'border-radius']),
             8 => (str_contains($lower, 'let ') || str_contains($lower, 'const '))
                 && $contieneTodos(['if', 'getelementbyid', 'textcontent', 'addeventlistener']),
             9 => $contieneTodos(['getelementbyid', 'addeventlistener', 'click', 'textcontent'])
