@@ -189,7 +189,10 @@
         }
         render(); notice(entries().length ? 'Te sugerimos un equipo sencillo dentro de tu presupuesto. Puedes cambiarlo antes de confirmar.' : 'Aún no tienes puntos para este equipo. Sigue aprendiendo en CodePlay para ampliar tus opciones.');
     });
-    $('adventureButton').addEventListener('click', () => $('adventureDialog').showModal());
+    $('adventureButton').addEventListener('click', () => {
+        $('journeyNotice').textContent = changed() ? 'Tienes cambios sin confirmar. Cierra este aviso y confirma tu selección antes de partir; al salir del campamento esos cambios se descartarán.' : 'Llevarás el equipo que hayas confirmado. Consultar el mapa no inicia la partida.';
+        $('adventureDialog').showModal();
+    });
     $('reviewButton').addEventListener('click', () => {
         $('purchaseSummary').replaceChildren();
         for (const entry of entries()) {
@@ -230,6 +233,29 @@
             $('confirmPurchase').textContent = 'Confirmar equipo';
             $('purchaseDialog').close(); render();
             $('saveMessage').scrollIntoView({ block: 'nearest' });
+        }
+    });
+    $('restartJourney')?.addEventListener('click', async event => {
+        if (busy) return;
+        busy = true;
+        const button = event.currentTarget;
+        button.disabled = true;
+        $('restartError').hidden = true;
+        try {
+            const response = await fetch(button.dataset.url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+                body: JSON.stringify({ expedicion_id: state.expedicion.id, version: state.expedicion.version })
+            });
+            if (response.redirected || !response.headers.get('content-type')?.includes('application/json')) throw new Error('Tu sesión terminó. Vuelve a iniciar sesión.');
+            const data = await response.json();
+            if (!response.ok) throw new Error(response.status === 409 ? 'La aventura cambió en otra pestaña. Recarga antes de reiniciar.' : 'No se pudo reiniciar. Recarga la página e inténtalo de nuevo.');
+            window.location.assign(data.url);
+        } catch (error) {
+            $('restartError').textContent = error.message;
+            $('restartError').hidden = false;
+            busy = false;
+            button.disabled = false;
         }
     });
     window.addEventListener('beforeunload', event => { if (changed()) { event.preventDefault(); event.returnValue = ''; } });

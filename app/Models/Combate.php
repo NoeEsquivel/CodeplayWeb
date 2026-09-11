@@ -9,6 +9,10 @@ class Combate extends Model
 {
     use HasFactory;
 
+    protected $casts = ['resumen' => 'array'];
+
+    public function expedicion() { return $this->belongsTo(AventuraExpedicion::class); }
+
     protected $table = 'combates';
 
     protected $fillable = [

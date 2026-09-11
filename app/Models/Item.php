@@ -9,6 +9,8 @@ class Item extends Model
 {
     use HasFactory;
 
+    protected $casts = ['bonus' => 'array', 'mana' => 'integer', 'desafio' => 'integer', 'precio' => 'integer'];
+
     protected $table = 'items';
 
     protected $fillable = [

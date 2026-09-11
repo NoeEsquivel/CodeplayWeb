@@ -17,6 +17,13 @@ class Inventario extends Model
         'cantidad'
     ];
 
+    protected $casts = ['cantidad' => 'integer', 'expedicion_id' => 'integer'];
+
+    public function expedicion()
+    {
+        return $this->belongsTo(AventuraExpedicion::class, 'expedicion_id');
+    }
+
     protected $attributes = [
         'cantidad' => 1,
     ];

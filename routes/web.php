@@ -23,7 +23,8 @@ Route::post('/login/verify', [AuthController::class, 'verify'])->name('login.ver
 // Rutas protegidas (solo para usuarios autenticados)
 Route::middleware(['auth.custom'])->group(function () {
     Route::get('/inicio-alumno', function () {
-        return view('inicio-alumno');
+        $trofeoAventura=\App\Services\AventuraFinal::victoria((int)session('usuario_id'));
+        return view('inicio-alumno',compact('trofeoAventura'));
     })->name('inicio.alumno');
     
     Route::get('/inicio-administrador', function () {
@@ -77,6 +78,16 @@ Route::prefix('alumno')->group(function () {
     Route::get('/desafios/nivel19', [DesafioController::class, 'nivel19'])->name('alumno.desafios.nivel19');
     Route::get('/desafios/nivel20', [DesafioController::class, 'nivel20'])->middleware('auth.custom')->name('alumno.desafios.nivel20');
     Route::get('/aventura', [AventuraController::class, 'index'])->middleware('auth.custom')->name('alumno.aventura');
+    Route::get('/aventura/final/{expedicion}', [AventuraController::class, 'finalAventura'])->whereNumber('expedicion')->middleware('auth.custom')->name('alumno.aventura.final');
+    Route::post('/aventura/completar', [AventuraController::class, 'completar'])->middleware(['auth.custom','throttle:10,1'])->name('alumno.aventura.completar');
+    Route::get('/aventura/mapa', [AventuraController::class, 'mapa'])->middleware('auth.custom')->name('alumno.aventura.mapa');
+    Route::post('/aventura/combate', [AventuraController::class, 'combate'])->middleware(['auth.custom', 'throttle:60,1'])->name('alumno.aventura.combate');
+    Route::post('/aventura/reiniciar', [AventuraController::class, 'reiniciar'])->middleware(['auth.custom', 'throttle:10,1'])->name('alumno.aventura.reiniciar');
+    Route::post('/aventura/evento', [AventuraController::class, 'evento'])->middleware(['auth.custom', 'throttle:60,1'])->name('alumno.aventura.evento');
+    Route::post('/aventura/gremio', [AventuraController::class, 'gremio'])->middleware(['auth.custom', 'throttle:60,1'])->name('alumno.aventura.gremio');
+    Route::get('/aventura/derrota/{expedicion}', [AventuraController::class, 'derrota'])->whereNumber('expedicion')->middleware('auth.custom')->name('alumno.aventura.derrota');
+    Route::post('/aventura/iniciar', [AventuraController::class, 'iniciar'])->middleware(['auth.custom', 'throttle:30,1'])->name('alumno.aventura.iniciar');
+    Route::post('/aventura/camino', [AventuraController::class, 'camino'])->middleware(['auth.custom', 'throttle:30,1'])->name('alumno.aventura.camino');
     Route::post('/aventura/equipamiento', [AventuraController::class, 'guardar'])->middleware(['auth.custom', 'throttle:30,1'])->name('alumno.aventura.equipamiento');
     // Mantén las demás rutas igual
     

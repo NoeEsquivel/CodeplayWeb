@@ -34,7 +34,7 @@
     <div class="page-heading"><div><p class="eyebrow">TU CONOCIMIENTO ABRE CAMINOS</p><h1>Antes del primer paso.</h1><p>Prepara tu equipo. Elige tu estilo. Lleva contigo todo lo que has aprendido.</p></div><span class="chapter">01 <span>EL CAMPAMENTO</span></span></div>
     <div class="journey-tabs" aria-label="Opciones de aventura">
         <a class="selected" href="#armeria">⚔ Equiparme <small>Prepara tu próxima expedición</small></a>
-        <button type="button" id="adventureButton">◇ Aventura <small>El siguiente capítulo · en preparación</small></button>
+        <button type="button" id="adventureButton">◇ Aventura <small>{{ $estado['expedicion']['estado'] === 'activa' ? 'Continuar tu expedición' : 'Descubre los cinco territorios' }}</small></button>
     </div>
     <div class="camp-grid">
         <aside class="character-panel" aria-labelledby="characterTitle">
@@ -75,7 +75,20 @@
     <footer class="camp-footer">Cada línea que aprendes hoy puede abrir un camino mañana. <span>CODEPLAY / AVENTURA</span></footer>
 </main>
 <dialog id="purchaseDialog" aria-labelledby="purchaseTitle"><form method="dialog"><button class="dialog-close" aria-label="Cerrar" value="cancel">×</button></form><p class="eyebrow">ANTES DE PARTIR</p><h2 id="purchaseTitle">¿Guardamos este equipo?</h2><div id="purchaseSummary"></div><p class="dialog-note">Puedes cambiarlo mientras estés en el campamento. Si pierdes la aventura, los puntos invertidos regresan a tu cuenta.</p><div class="dialog-actions"><button type="button" id="cancelPurchase" class="subtle-button">Seguir eligiendo</button><button type="button" id="confirmPurchase" class="primary-button">Confirmar equipo</button></div></dialog>
-<dialog id="adventureDialog" aria-labelledby="adventureTitle"><form method="dialog"><button class="dialog-close" aria-label="Cerrar" value="cancel">×</button></form><p class="eyebrow">EL SIGUIENTE CAPÍTULO</p><h2 id="adventureTitle">El camino se está dibujando.</h2><p>La historia, los encuentros y los combates llegarán en la siguiente etapa. Por ahora puedes preparar y guardar tu equipo; todavía no inicia ninguna expedición.</p><p>Tu personaje ya tiene un lugar en este mundo. ¿Qué llevarás en tu primer viaje?</p><form method="dialog"><button class="primary-button">Volver al campamento</button></form></dialog>
+<dialog id="adventureDialog" aria-labelledby="adventureTitle">
+    <form method="dialog"><button class="dialog-close" aria-label="Cerrar" value="cancel">×</button></form>
+    <p class="eyebrow">EL MUNDO TE ESPERA</p><h2 id="adventureTitle">Cada camino comienza contigo.</h2>
+    <p id="journeyNotice">Llevarás el equipo que hayas confirmado. Consultar el mapa no inicia la partida.</p>
+    <p>Te esperan cinco regiones con enemigos distintos, cuatro guardianes, tesoros y encargos del gremio. Tu diario conserva los encargos mientras exploras. El Dragón del escenario 50 llegará en la siguiente etapa.</p>
+    <a class="primary-button" href="{{ route('alumno.aventura.mapa') }}">{{ $estado['expedicion']['estado'] === 'activa' ? 'Continuar aventura →' : 'Consultar el mapa →' }}</a>
+    @if($estado['expedicion']['estado'] === 'activa')
+        <details class="restart-choice"><summary>↺ Reiniciar desde el escenario 1</summary>
+            <p>Terminarás esta partida y volverás a elegir equipo. Conservarás tu nivel y experiencia; recuperarás los {{ $estado['expedicion']['inversion'] }} puntos invertidos. Se perderán el equipo, oro, efectos y mejoras de esta partida.</p>
+            <button type="button" id="restartJourney" class="primary-button" data-url="{{ route('alumno.aventura.reiniciar') }}">Confirmar reinicio y elegir equipo</button>
+            <p id="restartError" role="alert" hidden></p>
+        </details>
+    @endif
+</dialog>
 <script id="adventureState" type="application/json">{!! json_encode($estado, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
 <script src="{{ asset('js/aventura.js') }}?v={{ filemtime(public_path('js/aventura.js')) }}" defer></script>
 </body>

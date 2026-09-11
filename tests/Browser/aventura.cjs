@@ -12,16 +12,21 @@ const database = path.join(os.tmpdir(), 'codeplay-aventura-test-' + crypto.rando
 const php = process.env.PHP_BINARY || 'php';
 const helper = path.join(__dirname, 'aventura-support.php');
 let base;
-const run = (mode, input) => execFileSync(php, ['-d', 'extension=pdo_sqlite', helper, mode, database, base || 'http://localhost'], { cwd: project, encoding: 'utf8', input, maxBuffer: 2e6 });
+const run = (mode, input, region = '') => execFileSync(php, ['-d', 'extension=pdo_sqlite', helper, mode, database, base || 'http://localhost', region], { cwd: project, encoding: 'utf8', input, maxBuffer: 2e6 });
 const server = http.createServer(async (req, res) => {
     try {
         const url = new URL(req.url, base);
         if (req.method === 'POST') {
             let body = ''; for await (const chunk of req) body += chunk;
-            const result = JSON.parse(run('save', body));
+            if(url.pathname.endsWith('/completar')) { const result=JSON.parse(run('complete',body)); res.writeHead(303,{Location:result.url});res.end();return; }
+            const result = JSON.parse(run(url.pathname.endsWith('/gremio') ? 'guild' : url.pathname.endsWith('/evento') ? 'event' : url.pathname.endsWith('/reiniciar') ? 'restart' : url.pathname.endsWith('/combate') ? 'combat' : url.pathname.endsWith('/iniciar') ? 'start' : url.pathname.endsWith('/camino') ? 'path' : 'save', body));
             res.statusCode = result.status || 200; res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(result)); return;
         }
         if (url.pathname === '/alumno/aventura') { res.setHeader('Content-Type', 'text/html;charset=utf-8'); res.end(run('render')); return; }
+        if (url.pathname === '/inicio-alumno') { res.setHeader('Content-Type','text/html;charset=utf-8');res.end(run('home'));return; }
+        if (url.pathname.startsWith('/alumno/aventura/final/')) { res.setHeader('Content-Type','text/html;charset=utf-8');res.end(run('ending',undefined,url.pathname.split('/').pop()));return; }
+        if (url.pathname === '/alumno/aventura/mapa') { res.setHeader('Content-Type', 'text/html;charset=utf-8'); res.end(run('map', undefined, url.searchParams.get('region') || '')); return; }
+        if (url.pathname.startsWith('/alumno/aventura/derrota/')) { res.setHeader('Content-Type','text/html;charset=utf-8'); res.end(run('defeat',undefined,url.pathname.split('/').pop())); return; }
         const file = path.resolve(project, 'public', '.' + decodeURIComponent(url.pathname));
         if (!file.startsWith(path.join(project, 'public') + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) { res.statusCode = 404; res.end(); return; }
         res.setHeader('Content-Type', { '.css': 'text/css', '.js': 'application/javascript', '.svg': 'image/svg+xml' }[path.extname(file)] || 'application/octet-stream');
@@ -36,6 +41,17 @@ const server = http.createServer(async (req, res) => {
     try {
         const page = await browser.newPage({ viewport: { width: 1440, height: 1050 } });
         const errors = [];
+        const combatClick=async selector=>{
+            const version=await page.locator('#world').getAttribute('data-version');
+            const url=page.url();
+            await page.click(selector);
+            if(selector.includes('data-combat-action') || selector.includes('data-answer')) {
+                if(await page.locator('.rune-question-backdrop').isVisible().catch(()=>false)) return;
+                if(await page.locator('[data-continue-zone]').isVisible().catch(()=>false)) await page.click('[data-continue-zone]');
+            }
+            await page.waitForFunction(({version,url})=>location.href!==url || (document.getElementById('world')?.dataset.version!==version && !document.querySelector('.is-playing')),{version,url});
+            if(new URL(page.url()).pathname!==new URL(url).pathname) await page.waitForLoadState('load');
+        };
         page.on('pageerror', error => errors.push(error.message));
         await page.route('**/*', route => new URL(route.request().url()).origin === base || process.env.ADVENTURE_ONLINE === '1' ? route.continue() : route.abort());
         await page.goto(base + '/alumno/aventura');
@@ -95,5 +111,229 @@ const server = http.createServer(async (req, res) => {
         if (reports) await page.screenshot({ path: path.join(reports, 'camp-mobile.png'), fullPage: true });
         assert.deepEqual(errors, []);
         console.log('PASS filters, mobile layout and no JavaScript errors');
+        await page.goto(base + '/alumno/aventura/mapa');
+        assert.equal(await page.locator('.map-stop').count(), 10);
+        assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+        if (reports) await page.screenshot({ path: path.join(reports, 'map-mobile.png'), fullPage: true });
+        await page.setViewportSize({ width: 1440, height: 1050 });
+        if (reports) await page.screenshot({ path: path.join(reports, 'map-desktop.png'), fullPage: true });
+        await page.goto(base + '/alumno/aventura/mapa?region=5');
+        assert.equal(await page.locator('.here').count(), 0);
+        assert.equal(await page.locator('#beginJourney').count(), 0);
+        if (reports) await page.screenshot({ path: path.join(reports, 'map-dragon.png'), fullPage: true });
+        await page.goto(base + '/alumno/aventura/mapa');
+        await page.click('#beginJourney');
+        await page.locator('#worldEntrance').waitFor({ state: 'visible' });
+        await page.locator('[data-path-choice="1"]').waitFor();
+        assert.equal(await page.locator('[data-path-choice]').count(), 3);
+        await page.click('[data-path-choice="1"]');
+        await page.locator('.pending-event, [data-guild-action], [data-event-action], [data-combat-action="abrir"]').first().waitFor();
+        const story = await page.locator('#story-title').textContent();
+        assert.equal(await page.locator('.event-stage').count(), 1);
+        assert(await page.locator('.atlas').evaluate(node => node.inert));
+        if (reports) await page.screenshot({path:path.join(reports,'event-desktop.png'),animations:'disabled'});
+        await page.setViewportSize({width:390,height:844});
+        assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+        if (reports) await page.screenshot({path:path.join(reports,'event-mobile.png'),animations:'disabled'});
+        assert(await page.locator('.topbar .back').isVisible());
+        assert(await page.locator('.topbar .back').evaluate(node => { const r=node.getBoundingClientRect(); return r.top>=0 && r.bottom<=innerHeight; }));
+        await page.setViewportSize({width:1440,height:1050});
+        await page.reload();
+        assert.equal(await page.locator('#story-title').textContent(), story);
+        assert.equal(await page.locator('[data-path-choice]').count(), 0);
+        await page.goto(base + '/alumno/aventura');
+        assert(await page.locator('#starterKit').isDisabled());
+        await page.click('#adventureButton');
+        assert(await page.getByRole('link', { name: 'Continuar aventura →' }).isVisible());
+        assert.deepEqual(errors, []);
+        console.log('PASS atlas regions, mobile overflow, animated start, persistent encounter and active camp lock');
+        run('combat-fixture');
+        await page.goto(base + '/alumno/aventura/mapa#story-title');
+        assert.equal(await page.locator('.enemy-card').count(), 1);
+        assert.equal(await page.locator('.atlas').count(), 0);
+        assert.equal(await page.locator('.combat-stage').count(), 1);
+        await page.locator('[data-arena-target="0"]').click();
+        assert((await page.locator('.enemy-card').textContent()).includes('Cada tercer turno'));
+        if (reports) await page.screenshot({path:path.join(reports,'combat-desktop.png'),fullPage:true});
+        await page.evaluate(()=>window.arenaDocumentMarker='same-page');
+        await page.locator('[data-panel="arenaSpells"]').click();
+        await combatClick('[data-combat-action="hechizo"][data-item="brasa"]');
+        assert((await page.locator('[data-player-mana]').textContent()).includes('44 / 50'));
+        assert.equal(await page.evaluate(()=>window.arenaDocumentMarker),'same-page');
+        await page.locator('[data-panel="arenaBag"]').click();
+        await combatClick('[data-combat-action="pocion"][data-item="pocion-vida"]');
+        assert((await page.locator('[data-item="pocion-vida"]').textContent()).includes('×2'));
+        await page.click('[data-combat-action="defender"]');
+        await page.locator('.is-playing').waitFor();
+        assert(await page.locator('[data-combat-action="atacar"]').isDisabled());
+        await page.click('[data-continue-zone]');
+        await page.waitForFunction(()=>!document.querySelector('.is-playing'));
+        assert.equal(await page.evaluate(()=>window.arenaDocumentMarker),'same-page');
+        for (let n=0;n<5 && !await page.locator('.battle-victory').count();n++) {
+            await combatClick('[data-combat-action="atacar"]');
+        }
+        assert(await page.locator('.battle-victory').isVisible());
+        await page.reload(); assert(await page.locator('.battle-victory').isVisible());
+        await combatClick('[data-combat-action="continuar"]');
+        assert.equal(await page.locator('[data-path-choice]').count(),3);
+        run('combat-fixture', undefined, 'boss');
+        await page.goto(base + '/alumno/aventura/mapa#story-title');
+        await page.reload(); // Fixture changed on the server; same-URL navigation can retain the previous document.
+        await combatClick('[data-combat-action="defender"]');
+        assert.equal(await page.locator('[data-combat-action="responder"]').count(),4);
+        await combatClick('[data-answer="a"]');
+        assert((await page.locator('.battle-log').textContent()).includes('¡Correcto!'));
+        assert(await page.locator('[data-combat-action="atacar"]').isVisible());
+        await page.setViewportSize({width:390,height:844});
+        assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+        if (reports) await page.screenshot({path:path.join(reports,'combat-boss-mobile.png'),fullPage:true});
+        assert.deepEqual(errors,[]);
+        console.log('PASS combat turn reloads, enemy inspection, victory, continuation, boss question and mobile layout');
+        for (let turn=0;turn<15 && !page.url().includes('/derrota/');turn++) {
+            const selector=await page.locator('[data-answer="b"]').count() ? '[data-answer="b"]' : '[data-combat-action="atacar"]';
+            await combatClick(selector);
+        }
+        assert(page.url().includes('/derrota/'));
+        assert(await page.getByText('Caer también es parte del camino.').isVisible());
+        if (reports) await page.screenshot({path:path.join(reports,'combat-defeat-mobile.png'),fullPage:true});
+        await page.reload();
+        await Promise.all([page.waitForEvent('load'),page.getByRole('link',{name:'Volver al campamento y prepararme →'}).click()]);
+        assert.equal(await page.locator('#walletAvailable').textContent(),'1400');
+        assert.equal(await page.locator('#walletReserved').textContent(),'0');
+        assert.deepEqual(errors,[]);
+        console.log('PASS real defeat screen, reload without duplicate refund and return to empty camp');
+        run('combat-fixture');
+        await page.reload();
+        await page.click('#adventureButton');
+        await page.locator('.restart-choice summary').click();
+        if (reports) await page.screenshot({path:path.join(reports,'restart-mobile.png')});
+        await Promise.all([page.waitForEvent('load'), page.click('#restartJourney')]);
+        assert.equal(await page.locator('#walletAvailable').textContent(),'1400');
+        assert.equal(await page.locator('#walletReserved').textContent(),'0');
+        assert(await page.locator('#starterKit').isEnabled());
+        await page.goto(base+'/alumno/aventura/mapa');
+        assert.equal(await page.locator('#beginJourney').count(),1);
+        assert.equal(await page.locator('.combat-stage, .event-stage').count(),0);
+        assert.deepEqual(errors,[]);
+        console.log('PASS confirmed restart, refund and preparation at scenario one');
+        run('event-fixture',undefined,'legacy');
+        await page.reload();
+        await Promise.all([page.waitForEvent('load'),page.click('[data-event-action="descubrir"]')]);
+        await Promise.all([page.waitForEvent('load'),page.click('[data-event-action="preguntar"]')]);
+        assert(await page.locator('.event-hint').isVisible());
+        await Promise.all([page.waitForEvent('load'),page.click('[data-event-action="ayudar"]')]);
+        assert.equal(await page.locator('[data-event-action="responder"]').count(),4);
+        const question=await page.locator('.rune-question h3').textContent();
+        await page.reload(); assert.equal(await page.locator('.rune-question h3').textContent(),question);
+        assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+        if(reports) await page.screenshot({path:path.join(reports,'event-question-mobile.png'),animations:'disabled'});
+        await page.setViewportSize({width:1440,height:1050});
+        if(reports) await page.screenshot({path:path.join(reports,'event-question-desktop.png'),animations:'disabled'});
+        await page.click('[data-event-action="responder"][data-answer="a"]');
+        await page.waitForFunction(()=>document.querySelector('.event-result'));
+        assert((await page.locator('.event-result').textContent()).includes('¡Correcto!'));
+        const outcome=await page.locator('.event-result').textContent();
+        await page.reload(); assert.equal(await page.locator('.event-result').textContent(),outcome);
+        if(reports) await page.screenshot({path:path.join(reports,'event-result.png'),animations:'disabled'});
+        await page.click('[data-event-action="continuar"]');
+        await page.waitForFunction(()=>document.querySelector('[data-path-choice]'));
+        assert.equal(await page.locator('[data-path-choice]').count(),3);
+        run('event-fixture',undefined,'chest'); await page.reload();
+        await Promise.all([page.waitForEvent('load'),page.click('[data-event-action="abrir"]')]);
+        assert((await page.locator('.event-loot').textContent()).includes('Filo del fénix'));
+        if(reports) await page.screenshot({path:path.join(reports,'event-loot.png'),animations:'disabled'});
+        await Promise.all([page.waitForEvent('load'),page.click('[data-event-action="equipar"]')]);
+        assert((await page.locator('.event-loot').textContent()).includes('Ya está equipado'));
+        await Promise.all([page.waitForEvent('load'),page.click('[data-event-action="continuar"]')]);
+        assert.equal(await page.locator('[data-path-choice]').count(),3);
+        assert.deepEqual(errors,[]);
+        console.log('PASS legacy encounter, narrative choices, persistent question, result, legendary loot, equip and return to map');
+        run('guild-fixture'); await page.reload();
+        assert.equal(await page.locator('.guild-offer').count(),4);
+        if(reports) await page.screenshot({path:path.join(reports,'guild-desktop.png'),animations:'disabled'});
+        const offers=await page.locator('.guild-offer h3').allTextContents();
+        await page.reload(); assert.deepEqual(await page.locator('.guild-offer h3').allTextContents(),offers);
+        for (const quest of ['runas','botiquin','explorador']) await Promise.all([page.waitForEvent('load'),page.click(`[data-guild-action="aceptar"][data-quest="${quest}"]`)]);
+        assert.equal(await page.locator('.guild-task').count(),3);
+        await page.setViewportSize({width:390,height:844});
+        await page.locator('[data-journal-quest="runas"]').scrollIntoViewIfNeeded();
+        assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+        if(reports) await page.screenshot({path:path.join(reports,'guild-question-mobile.png'),animations:'disabled'});
+        await Promise.all([page.waitForEvent('load'),page.click('[data-guild-action="responder"][data-answer="a"]')]);
+        await Promise.all([page.waitForEvent('load'),page.click('[data-guild-action="cobrar"][data-quest="runas"]')]);
+        assert((await page.locator('[data-journal-quest="runas"] summary').first().textContent()).includes('Recompensa cobrada'));
+        await Promise.all([page.waitForEvent('load'),page.click('[data-guild-action="salir"]')]);
+        assert.equal(await page.locator('[data-path-choice]').count(),3);
+        assert.equal(await page.locator('.guild-task').count(),3);
+        await Promise.all([page.waitForEvent('load'),page.click('[data-guild-action="cobrar"][data-quest="botiquin"]')]);
+        assert((await page.locator('[data-journal-quest="botiquin"] summary').first().textContent()).includes('Recompensa cobrada'));
+        assert((await page.locator('[data-journal-quest="explorador"]').textContent()).includes('1 / 2'));
+        await page.reload();
+        await page.locator('.guild-journal').scrollIntoViewIfNeeded();
+        if(reports) await page.screenshot({path:path.join(reports,'guild-journal-mobile.png'),animations:'disabled'});
+        assert.deepEqual(errors,[]);
+        console.log('PASS guild offers, persistent acceptance, quiz, claim, potion delivery and diary outside guild');
+        for(const level of [20,30,40,41,50]) {
+            run('region-fixture',undefined,String(level)); await page.reload();
+            await page.setViewportSize({width:1440,height:1050});
+            assert.equal(await page.locator('.atlas').count(),0);
+            assert(await page.locator('.enemy-card').count()>0);
+            await page.locator('[data-arena-target="0"]').first().click();
+            if(reports) await page.screenshot({path:path.join(reports,`region-${level}.png`),fullPage:true,animations:'disabled'});
+            await combatClick('[data-combat-action="defender"]');
+            await combatClick('[data-combat-action="defender"]');
+            await combatClick('[data-combat-action="defender"]');
+            if(level%10===0) {
+                assert.equal(await page.locator('[data-combat-action="responder"]').count(),4);
+                await page.setViewportSize({width:390,height:844});
+                await page.locator('.rune-question').scrollIntoViewIfNeeded();
+                assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+                if(reports) await page.screenshot({path:path.join(reports,`region-${level}-question-mobile.png`),animations:'disabled'});
+                await combatClick('[data-combat-action="responder"][data-answer="a"]');
+                assert((await page.locator('.battle-log').textContent()).includes('¡Correcto!'));
+            }
+        }
+        assert.deepEqual(errors,[]);
+        console.log('PASS regional combat artwork, all new bosses, questions and mobile layout');
+        run('arena-group-fixture'); await page.reload();
+        assert.equal(await page.locator('[data-arena-target]').count(),2);
+        await page.locator('[data-arena-target="1"]').click();
+        assert(await page.locator('input[name="enemy-target"][value="1"]').isChecked());
+        const first=await page.locator('[data-actor="enemigo-0"] [data-hp-label]').textContent();
+        await page.emulateMedia({reducedMotion:'reduce'});
+        await combatClick('[data-combat-action="atacar"]');
+        assert.equal(await page.locator('[data-actor="enemigo-0"] [data-hp-label]').textContent(),first);
+        assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+        if(reports) await page.screenshot({path:path.join(reports,'arena-group-mobile.png'),fullPage:true,animations:'disabled'});
+        await page.emulateMedia({reducedMotion:'no-preference'});
+        run('region-fixture',undefined,'50');await page.reload();
+        run('dragon-final-fixture'); await page.reload();
+        assert((await page.locator('.enemy-level').textContent()).includes('FASE 3'));
+        await combatClick('[data-combat-action="atacar"]');
+        assert(await page.locator('#encuentro').isVisible());
+        await page.click('[data-next="mensaje"]');
+        assert(await page.locator('#mensaje').isVisible());
+        await page.setViewportSize({width:1440,height:1050});
+        if(reports) await page.screenshot({path:path.join(reports,'epilogue-message-desktop.png'),fullPage:true,animations:'disabled'});
+        await page.setViewportSize({width:390,height:844});
+        await page.locator('#mensaje [data-next="logro"]').click();
+        assert(await page.locator('#logro').isVisible());
+        assert.equal(await page.locator('[data-combat-action="continuar"]').count(),0);
+        await page.reload();
+        await page.locator('.skip').click();
+        assert((await page.locator('#logro').textContent()).includes('Conquistador de la Aventura'));
+        assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+        if(reports) await page.screenshot({path:path.join(reports,'dragon-victory-mobile.png'),fullPage:true,animations:'disabled'});
+        await Promise.all([page.waitForEvent('load'),page.locator('form button').click()]);
+        assert.equal(await page.locator('#walletReserved').textContent(),'0');
+        assert(await page.locator('#starterKit').isEnabled());
+        await page.goto(base+'/inicio-alumno');
+        assert.equal(await page.locator('.adventure-trophy').count(),1);
+        await page.locator('.adventure-trophy a').click();
+        await page.locator('.skip').click();
+        assert.equal(await page.locator('form').count(),0);
+        assert((await page.locator('#logro').textContent()).includes('Preparar otra aventura'));
+        assert.deepEqual(errors,[]);
+        console.log('PASS dragon phase three, victory, reload, no scenario 51 and mobile layout');
     } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; }).finally(() => { server.close(); if (fs.existsSync(database)) fs.unlinkSync(database); });

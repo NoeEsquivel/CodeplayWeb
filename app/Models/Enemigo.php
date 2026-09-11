@@ -9,6 +9,8 @@ class Enemigo extends Model
 {
     use HasFactory;
 
+    protected $casts = ['rasgos' => 'array'];
+
     protected $table = 'enemigos';
 
     protected $fillable = [

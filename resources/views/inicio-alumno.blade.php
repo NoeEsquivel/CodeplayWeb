@@ -19,8 +19,10 @@
         
         body {
             font-family: 'Roboto', sans-serif;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding-bottom: 90px;
             background: url('{{ asset("Imagenes/Pantalla_Inicio.jpg") }}') no-repeat center center fixed;
             background-size: cover;
             color: white;
@@ -53,7 +55,9 @@
         }
         
         .menu-container {
-            height: 60vh;
+            min-height: 60vh;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -275,6 +279,14 @@
     </div>
 
     <div class="container">
+        @if(!empty($trofeoAventura))
+        <aside class="adventure-trophy" style="margin:24px auto;padding:22px;border:2px solid #e4c98f;border-radius:16px;background:linear-gradient(120deg,#172d30,#352c1e);color:#fff;text-align:center;max-width:850px">
+            <div aria-hidden="true" style="font-size:42px">🏆</div>
+            <h2 style="font-size:22px;color:#ffe1a0">Conquistador de la Aventura</h2>
+            <p>Derrotaste al Dragón y completaste Aprender Jugando.</p>
+            <a style="color:#a6efcf" href="{{ route('alumno.aventura.final',['expedicion'=>$trofeoAventura->expedicion_id]) }}">Recordar el final de mi aventura →</a>
+        </aside>
+        @endif
         <!-- Título CODEPLAY arriba -->
         <div class="row text-center">
             <div class="col-12">
