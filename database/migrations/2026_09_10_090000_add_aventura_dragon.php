@@ -11,7 +11,7 @@ return new class extends Migration {
             'vida'=>1000,'daño'=>65,'defensa'=>18,'magia'=>0,'velocidad'=>1,'recompensa_puntos'=>300,
             'rasgos'=>json_encode(['region'=>5,'experiencia'=>600,'habilidad'=>'jefe',
                 'ataque_especial'=>'Aliento del olvido',
-                'descripcion'=>'Tres fases: sobre 2/3 de vida reduce 30% el daño físico; bajo 2/3 golpea 15% más fuerte; bajo 1/3, 35% más fuerte y prepara runas cada dos turnos. Siempre reduce 50% el daño de fuego. Las runas aparecen cada tres turnos en las dos primeras fases. Acertar interrumpe el especial, recupera hasta 6 maná y potencia 50% tu próximo golpe. Usa magia sin fuego al principio, guarda curas y observa el aviso del siguiente turno.']),
+                'descripcion'=>'???? Ignar es demasiado poderoso, no eres capaz de leer sus debilidades o es probable que no las tenga.']),
             'created_at'=>now(),'updated_at'=>now(),
         ]);
     }

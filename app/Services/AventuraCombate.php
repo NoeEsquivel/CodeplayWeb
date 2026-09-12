@@ -24,11 +24,14 @@ class AventuraCombate
     {
         $region = $modelo->rasgos['region'];
         $extra = $modelo->rasgos['habilidad'] === 'jefe' ? 0 : max(0,$nivel - (($region-1)*10+1));
+        $descripcion = $modelo->clave === 'dragon'
+            ? '???? Ignar es demasiado poderoso, no eres capaz de leer sus debilidades o es probable que no las tenga.'
+            : $modelo->rasgos['descripcion'];
         return ['id'=>$modelo->id,'clave'=>$modelo->clave,'nombre'=>$modelo->nombre,'nivel'=>$nivel,
             'vida'=>$modelo->vida + $extra * 3,'max'=>$modelo->vida + $extra * 3,
             'ataque'=>$modelo->{'daño'} + intdiv($extra,2),'defensa'=>$modelo->defensa,
             'xp'=>$modelo->rasgos['experiencia'] + $extra * 2, 'oro'=>$modelo->recompensa_puntos,
-            'habilidad'=>$modelo->rasgos['habilidad'],'descripcion'=>$modelo->rasgos['descripcion'],
+            'habilidad'=>$modelo->rasgos['habilidad'],'descripcion'=>$descripcion,
             'region'=>$region,'ataque_especial'=>$modelo->rasgos['ataque_especial'] ?? 'Raíces rúnicas',
             'dividido'=>false,'robo'=>false,'invocado'=>false];
     }

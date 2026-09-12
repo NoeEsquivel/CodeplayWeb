@@ -36,5 +36,34 @@
 .arena-enemy .ruins-enemy-centinela + .platform{bottom:-70px}
 .arena-enemy .ruins-enemy-momia + .platform{bottom:-70px}
 
+/* Pantano Maldito: agua oscura, niebla mágica y criaturas expresivas. */
+.arena[data-region="pantano"] .arena-land svg{display:none}.arena[data-region="pantano"] .arena-land{z-index:-1;background:#183d42}.arena[data-region="pantano"] .arena-background-image{filter:saturate(.92) contrast(1.04)}.arena[data-region="pantano"] .platform{background:radial-gradient(ellipse at center,#94a96d 0 43%,#516e4d 46% 64%,#243e3e 68%);box-shadow:0 8px 0 #0b232966,inset 0 4px 0 #d8ebb066}.arena-enemy .swamp-enemy-image{display:block;width:80%;height:92%;margin:0 auto;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 8px 3px #061616cc)}.arena-enemy .swamp-enemy-sanguijuela .swamp-enemy-image{width:82%;height:86%;transform:translateY(40px)}.arena-enemy .swamp-enemy-bruja .swamp-enemy-image{width:63%;height:86%;transform:translateY(1px)}.arena-enemy .swamp-enemy-cienago .swamp-enemy-image{width:82%;height:86%;transform:translateY(29px)}.arena-enemy .swamp-enemy-saqueador .swamp-enemy-image{width:66%;height:84%;transform:translateY(-13px)}.arena-enemy .swamp-enemy-basilisco .swamp-enemy-image{width:91%;height:91%;transform:translateY(57px)}.arena-enemy .swamp-boss .swamp-enemy-image{width:96%;height:116%;transform:translateY(-15px);filter:drop-shadow(0 0 13px #8eea95aa) drop-shadow(0 8px 3px #061616cc)}.arena-enemy .swamp-boss-phase-2 .swamp-enemy-image{filter:drop-shadow(0 0 18px #b777f3cc) drop-shadow(0 8px 3px #061616cc)}
+.arena-enemy .swamp-enemy-sanguijuela + .platform{bottom:-64px}
+.arena-enemy .swamp-enemy-bruja + .platform{bottom:-66px}
+.arena-enemy .swamp-enemy-cienago + .platform{bottom:-65px}
+.arena-enemy .swamp-enemy-saqueador + .platform{bottom:-62px}
+.arena-enemy .swamp-enemy-basilisco + .platform{bottom:-65px}
+
+/* Montañas Heladas: nieve abierta, río congelado y cristales de escarcha. */
+.arena[data-region="hielo"] .arena-land svg{display:none}.arena[data-region="hielo"] .arena-land{z-index:-1;background:#b8dff0}.arena[data-region="hielo"] .arena-background-image{filter:saturate(.94) contrast(1.02)}.arena[data-region="hielo"] .platform{background:radial-gradient(ellipse at center,#d7f4ff 0 43%,#8bc8dc 46% 64%,#4c8da9 68%);box-shadow:0 8px 0 #18455b66,inset 0 4px 0 #fff}.arena-enemy .ice-enemy-image{display:block;width:80%;height:92%;margin:0 auto;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 8px 3px #123a59aa)}.arena-enemy .ice-enemy-yeti .ice-enemy-image{width:84%;height:91%;transform:translateY(6px)}.arena-enemy .ice-enemy-hechicero .ice-enemy-image{width:69%;height:92%;transform:translateY(0)}.arena-enemy .ice-enemy-golem_hielo .ice-enemy-image{width:81%;height:91%;transform:translateY(2px)}.arena-enemy .ice-enemy-lince .ice-enemy-image{width:88%;height:88%;transform:translateY(12px)}.arena-enemy .ice-enemy-alma_nieve .ice-enemy-image{width:80%;height:96%;transform:translateY(-1px)}.arena-enemy .ice-boss .ice-enemy-image{width:98%;height:116%;transform:translateY(-16px);filter:drop-shadow(0 0 14px #91e9ffff) drop-shadow(0 8px 3px #123a59aa)}.arena-enemy .ice-boss-phase-2 .ice-enemy-image{filter:drop-shadow(0 0 19px #b98dffff) drop-shadow(0 8px 3px #123a59aa)}
+.arena-enemy .ice-enemy-yeti + .platform{bottom:-66px}
+.arena-enemy .ice-enemy-hechicero + .platform{bottom:-80px}
+.arena-enemy .ice-enemy-golem_hielo + .platform{bottom:-67px}
+.arena-enemy .ice-enemy-lince + .platform{bottom:-67px}
+.arena-enemy .ice-enemy-alma_nieve + .platform{bottom:-69px}
+
+/* Tierras del Dragón: obsidiana, lava y una cueva-calavera en la distancia. */
+.arena[data-region="dragon"] .arena-land svg{display:none}.arena[data-region="dragon"] .arena-land{z-index:-1;background:#4a1d1a}.arena[data-region="dragon"] .arena-background-image{filter:saturate(.96) contrast(1.04)}.arena[data-region="dragon"] .platform{background:radial-gradient(ellipse at center,#6b4a40 0 42%,#3c2b2a 47% 64%,#171719 69%);box-shadow:0 8px 0 #12070788,inset 0 3px 0 #ff9b4a77}.arena-enemy .fire-enemy-image{display:block;width:80%;height:92%;margin:0 auto;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 0 7px #ff713388) drop-shadow(0 8px 3px #140604cc)}.arena-enemy .fire-enemy-salamandra .fire-enemy-image{width:85%;height:84%;transform:translateY(13px)}.arena-enemy .fire-enemy-caballero .fire-enemy-image{width:76%;height:96%;transform:translateY(0)}.arena-enemy .fire-enemy-cultista .fire-enemy-image{width:64%;height:87%;transform:translateY(0)}.arena-enemy .fire-enemy-devorador .fire-enemy-image{width:86%;height:91%;transform:translateY(6px)}.arena-enemy .fire-enemy-acechador .fire-enemy-image{width:85%;height:86%;transform:translateY(82px)}
+.arena-enemy .fire-enemy-salamandra + .platform{bottom:-75px}
+.arena-enemy .fire-enemy-caballero + .platform{bottom:-78px}
+.arena-enemy .fire-enemy-cultista + .platform{bottom:-78px}
+.arena-enemy .fire-enemy-devorador + .platform{bottom:-76px}
+.arena-enemy .fire-enemy-acechador + .platform{bottom:-76px}
+
+/* Ignar conserva su plataforma propia en la ilustración y cambia de presencia por fase. */
+.arena-enemy .fire-enemy-dragon .fire-enemy-image{width:138%;height:142%;transform:translate(-50px,-29px);filter:drop-shadow(0 0 13px #ff7133b0) drop-shadow(0 11px 5px #130504d9)}
+.arena-enemy.fire-boss-phase-2 .fire-enemy-dragon .fire-enemy-image{filter:drop-shadow(0 0 18px #bd78ffb0) drop-shadow(0 11px 5px #130504d9)}
+.arena-enemy.fire-boss-phase-3 .fire-enemy-dragon .fire-enemy-image{filter:drop-shadow(0 0 19px #ff9a3db3) drop-shadow(0 11px 5px #130504d9)}
+
 /* Avance de aventura integrado en el diálogo de victoria */
 .dialog-continue{display:inline-flex;margin-top:10px;border:1px solid #e7cb83;border-radius:7px;padding:9px 14px;background:linear-gradient(135deg,#b9e7c7,#77cbb3);color:#102b2b;font-weight:800;cursor:pointer;box-shadow:0 5px 0 #315f55;transition:transform .2s,box-shadow .2s}.dialog-continue:hover,.dialog-continue:focus-visible{transform:translateY(-2px);box-shadow:0 7px 0 #315f55;outline:none}.dialog-continue:active{transform:translateY(2px);box-shadow:0 3px 0 #315f55}

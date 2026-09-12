@@ -34,7 +34,7 @@
     <div class="page-heading"><div><p class="eyebrow">TU CONOCIMIENTO ABRE CAMINOS</p><h1>Antes del primer paso.</h1><p>Prepara tu equipo. Elige tu estilo. Lleva contigo todo lo que has aprendido.</p></div><span class="chapter">01 <span>EL CAMPAMENTO</span></span></div>
     <div class="journey-tabs" aria-label="Opciones de aventura">
         <a class="selected" href="#armeria">⚔ Equiparme <small>Prepara tu próxima expedición</small></a>
-        <button type="button" id="adventureButton">◇ Aventura <small>{{ $estado['expedicion']['estado'] === 'activa' ? 'Continuar tu expedición' : 'Descubre los cinco territorios' }}</small></button>
+        <button type="button" id="adventureButton" class="adventure-launch">✦ Iniciar aventura <small>{{ $estado['expedicion']['estado'] === 'activa' ? 'Continuar tu expedición' : 'Cuando termines de Equiparte preciona aquí para iniciar la aventura' }}</small><span aria-hidden="true">→</span></button>
     </div>
     <div class="camp-grid">
         <aside class="character-panel" aria-labelledby="characterTitle">

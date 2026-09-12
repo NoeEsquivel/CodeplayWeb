@@ -31,6 +31,28 @@
             'centinela' => 'centinela-piedra.png',
             'nigromante' => 'nigromante-archivo.png',
             'archivista' => ($enemigo['vida'] <= $enemigo['max'] / 2 ? 'aster-archivista-fase-2.png' : 'aster-archivista-fase-1.png'),
+            'sanguijuela' => 'sanguijuela-gigante.png',
+            'bruja' => 'bruja-pantano.png',
+            'cienago' => 'slime-cienaga.png',
+            'saqueador' => 'saqueador-fango.png',
+            'basilisco' => 'basilisco-musgo.png',
+            'matriarca' => ($enemigo['vida'] <= $enemigo['max'] / 2 ? 'nayade-matriarca-fase-2.png' : 'nayade-matriarca-fase-1.png'),
+            'yeti' => 'yeti-ventisca.png',
+            'hechicero' => 'hechicero-escarcha.png',
+            'golem_hielo' => 'golem-hielo.png',
+            'lince' => 'lince-cristal.png',
+            'alma_nieve' => 'alma-nieve.png',
+            'titan' => ($enemigo['vida'] <= $enemigo['max'] / 2 ? 'boreas-titan-fase-2.png' : 'boreas-titan-fase-1.png'),
+            'salamandra' => 'salamandra-ceniza.png',
+            'caballero' => 'caballero-obsidiana.png',
+            'cultista' => 'cultista-volcan.png',
+            'devorador' => 'devorador-brasas.png',
+            'acechador' => 'acechador-lava.png',
+            'dragon' => match(\App\Services\AventuraDragon::fase($enemigo)) {
+                1 => 'ignar-fase-1.png',
+                2 => 'ignar-fase-2.png',
+                default => 'ignar-fase-3.png',
+            },
             default => null,
         };
     @endphp
@@ -39,7 +61,7 @@
     @php if($enemigo['vida'] > 0) $seleccionado = true; @endphp
     <span class="enemy-level">Nivel {{ $enemigo['nivel'] }} @if($enemigo['clave']==='dragon')· FASE {{ \App\Services\AventuraDragon::fase($enemigo) }} · {{ \App\Services\AventuraDragon::nombre(\App\Services\AventuraDragon::fase($enemigo)) }}@elseif($enemigo['habilidad'] === 'jefe')· {{ $enemigo['vida'] <= $enemigo['max']/2 ? 'FASE 2 · FURIA' : 'FASE 1 · GUARDIÁN' }}@endif</span>
     <progress max="{{ $enemigo['max'] }}" value="{{ $enemigo['vida'] }}" aria-label="Vida de {{ $enemigo['nombre'] }}"></progress><small>{{ $enemigo['vida'] }} / {{ $enemigo['max'] }} vida</small>
-    <details><summary>Inspeccionar · sin gastar turno</summary><p>Ataque {{ $enemigo['ataque'] }} · Defensa {{ $enemigo['defensa'] }}<br>{{ $enemigo['descripcion'] }}</p><p>Recompensa: {{ $enemigo['xp'] }} XP · {{ $enemigo['oro'] }} oro.</p></details>
+    <details><summary>Inspeccionar · sin gastar turno</summary><p>Ataque {{ $enemigo['ataque'] }} · Defensa {{ $enemigo['defensa'] }}<br>{{ $enemigo['clave'] === 'dragon' ? '???? Ignar es demasiado poderoso, no eres capaz de leer sus debilidades o es probable que no las tenga.' : $enemigo['descripcion'] }}</p><p>Recompensa: {{ $enemigo['xp'] }} XP · {{ $enemigo['oro'] }} oro.</p></details>
 </article>
 @endforeach
 </div>
