@@ -21,6 +21,21 @@ class AventuraPreguntas
         return null;
     }
 
+    /**
+     * Shuffle display positions per encounter without changing the bank's answer IDs.
+     * The keyed encounter seed keeps the same question stable across reloads.
+     */
+    public static function ordenOpciones(array $contexto): array
+    {
+        $semilla = json_encode($contexto, JSON_THROW_ON_ERROR);
+        $pesos = [];
+        foreach (['a', 'b', 'c', 'd'] as $letra) {
+            $pesos[$letra] = hash_hmac('sha256', $semilla.':'.$letra, (string) config('app.key'));
+        }
+        asort($pesos, SORT_STRING);
+        return array_keys($pesos);
+    }
+
     public function publica(?int $id): ?array
     {
         return $id ? PreguntaTest::find($id)?->only(['pregunta','opcion_a','opcion_b','opcion_c','opcion_d']) : null;

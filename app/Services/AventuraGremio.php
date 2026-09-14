@@ -7,6 +7,21 @@ use Illuminate\Support\Facades\DB;
 
 class AventuraGremio
 {
+    public static function tiendaCatalogo(): array
+    {
+        return [
+            'pocion-vida'=>['nombre'=>'Poción de vida','texto'=>'Recupera 30 de vida durante un combate.','precio'=>18,'tipo'=>'pocion','objeto'=>'pocion-vida'],
+            'pocion-mana'=>['nombre'=>'Poción de maná','texto'=>'Recupera 20 de maná durante un combate.','precio'=>18,'tipo'=>'pocion','objeto'=>'pocion-mana'],
+            'pocion-mayor'=>['nombre'=>'Poción de vida mayor','texto'=>'Recupera 75 de vida durante un combate.','precio'=>42,'tipo'=>'pocion','objeto'=>'pocion-mayor'],
+            'elixir'=>['nombre'=>'Elixir del viajero','texto'=>'Recupera 40 de vida y 25 de maná.','precio'=>55,'tipo'=>'pocion','objeto'=>'elixir'],
+            'arma_dano'=>['nombre'=>'Filo calibrado','texto'=>'Tu arma gana +5 de daño base durante esta aventura.','precio'=>65,'tipo'=>'equipo','mejora'=>'arma_dano'],
+            'armadura_refuerzo'=>['nombre'=>'Placas reforzadas','texto'=>'Tu armadura absorbe +2 de daño directo por golpe durante esta aventura.','precio'=>55,'tipo'=>'equipo','mejora'=>'armadura_refuerzo'],
+            'dano'=>['nombre'=>'Manual ofensivo','texto'=>'Daño de ataques y hechizos: +10% durante esta aventura.','precio'=>75,'tipo'=>'mejora','mejora'=>'dano'],
+            'resistencia'=>['nombre'=>'Piel de runas','texto'=>'Reduces 5% del daño directo durante esta aventura.','precio'=>65,'tipo'=>'mejora','mejora'=>'resistencia'],
+            'regeneracion'=>['nombre'=>'Descanso del viajero','texto'=>'Recuperas 5% de vida al vencer durante esta aventura.','precio'=>60,'tipo'=>'mejora','mejora'=>'regeneracion'],
+            'critico'=>['nombre'=>'Ojo del depurador','texto'=>'Ganas 5% de probabilidad de golpe crítico durante esta aventura.','precio'=>55,'tipo'=>'mejora','mejora'=>'critico'],
+        ];
+    }
     public static function catalogo(): array
     {
         return [
@@ -28,7 +43,10 @@ class AventuraGremio
         if ($run->escenario > 48) $pool = array_values(array_diff($pool,['explorador']));
         // Stored once; reloading never rerolls the board.
         shuffle($pool);
-        return ['ofertas'=>array_slice($pool,0,4),'encargos'=>[]];
+        $tienda = array_keys(self::tiendaCatalogo());
+        shuffle($tienda);
+        return ['ofertas'=>array_slice($pool,0,4),'encargos'=>[],
+            'tienda'=>['ofertas'=>array_slice($tienda,0,4),'compras'=>[],'abierta'=>false]];
     }
 
     private function metricas(AventuraExpedicion $run): array
@@ -80,11 +98,16 @@ class AventuraGremio
             $h=$run->exploracion ?? []; $actual=$h[$run->escenario] ?? null;
             abort_if(isset($actual['combate']) && !in_array($actual['combate']['estado'],['victoria'],true),409,'Termina el combate antes de gestionar encargos.');
             $accion=$a['accion'];
-            if (in_array($accion,['abrir','aceptar','salir'],true)) {
+            if (in_array($accion,['abrir','aceptar','salir','tienda','cerrar_tienda'],true)) {
                 abort_unless(($actual['tipo'] ?? '')==='gremio' && $actual['estado']==='pendiente',409,'No estás ante un tablón del gremio.');
                 if ($accion==='abrir') {
                     abort_if(isset($actual['gremio']),409);
                     $actual['gremio']=$this->preparar($run);
+                } elseif ($accion === 'tienda') {
+                    $actual['gremio']['tienda'] ??= ['ofertas'=>array_slice(array_keys(self::tiendaCatalogo()),0,4),'compras'=>[],'abierta'=>false];
+                    $actual['gremio']['tienda']['abierta'] = true;
+                } elseif ($accion === 'cerrar_tienda') {
+                    $actual['gremio']['tienda']['abierta'] = false;
                 } elseif ($accion==='salir') {
                     abort_if($run->escenario>=50,409);
                     $actual['estado']='resuelto'; $h[$run->escenario]=$actual;
@@ -103,6 +126,30 @@ class AventuraGremio
                     }
                     $actual['gremio']['encargos'][$clave]=$encargo;
                 }
+                $h[$run->escenario]=$actual;
+            } elseif ($accion === 'comprar') {
+                abort_unless(($actual['tipo'] ?? '')==='gremio' && $actual['estado']==='pendiente' && !empty($actual['gremio']['tienda']['abierta']),409,'La tienda no está abierta.');
+                $oferta = $a['oferta'] ?? '';
+                $tienda = &$actual['gremio']['tienda'];
+                abort_unless(in_array($oferta,$tienda['ofertas'] ?? [],true),422,'Esa oferta no pertenece a esta tienda.');
+                abort_if(!empty($tienda['compras'][$oferta]),409,'Ya compraste esta oferta.');
+                $articulo = self::tiendaCatalogo()[$oferta] ?? null;
+                abort_unless($articulo,422,'Ese artículo ya no está disponible.');
+                abort_unless($run->oro >= $articulo['precio'],422,'No tienes suficiente oro para esta compra.');
+                if (($articulo['tipo'] ?? '') === 'pocion') {
+                    abort_unless(AventuraInventario::recibir($run,$articulo['objeto']),422,'Tu mochila está llena o ya tiene este objeto.');
+                    $detalle = 'Compras '.(new AventuraCatalogo())->items()[$articulo['objeto']]['nombre'].'.';
+                } elseif (($articulo['tipo'] ?? '') === 'equipo') {
+                    $limite = $articulo['mejora'] === 'arma_dano' ? 25 : 12;
+                    abort_if(AventuraMejoras::valor($run,$articulo['mejora']) >= $limite,422,'Esta mejora ya alcanzó su límite para la aventura.');
+                    $detalle = AventuraMejoras::mejorarEquipo($run,$articulo['mejora']);
+                } else {
+                    abort_if(AventuraMejoras::valor($run,$articulo['mejora']) >= AventuraMejoras::TIPOS[$articulo['mejora']][2],422,'Esta mejora ya alcanzó su límite para la aventura.');
+                    $detalle = AventuraMejoras::agregar($run,$articulo['mejora']);
+                }
+                $run->oro -= $articulo['precio'];
+                $tienda['compras'][$oferta] = ['detalle'=>$detalle,'precio'=>$articulo['precio']];
+                unset($tienda);
                 $h[$run->escenario]=$actual;
             } else {
                 $origen=$a['origen'] ?? 0; $clave=$a['encargo'] ?? '';

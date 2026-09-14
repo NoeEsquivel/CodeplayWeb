@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    @include('partials.favicon')
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Atlas de los cinco territorios · CodePlay</title>
@@ -11,13 +12,23 @@
 </head>
 <body class="world-page" data-theme="{{ $mundo['region']['tema'] }}">
 @php
+    $bossIntroduction = match((int)$estado['expedicion']['escenario']) {
+        10 => ['name' => 'Silvar', 'url' => config('aventura-cinematics.silvar_url')],
+        20 => ['name' => 'Aster', 'url' => config('aventura-cinematics.aster_url')],
+        30 => ['name' => 'Náyade', 'url' => config('aventura-cinematics.nayade_url')],
+        40 => ['name' => 'Bóreas', 'url' => config('aventura-cinematics.boreas_url')],
+        50 => ['name' => 'Ignar', 'url' => config('aventura-cinematics.ignar_url')],
+        default => null,
+    };
     $run = $estado['expedicion']; $personaje = $estado['personaje']; $region = $mundo['region'];
     $activa = $run['estado'] === 'activa'; $actual = $region['id'] === $mundo['actual']['id'];
     $combateEscena = $activa && $actual && !empty($mundo['evento']['combate']);
     $eventoEscena = $activa && $actual && $mundo['evento'] && !$combateEscena;
+    $musicaBatallaBosque = (int)$region['id'] === 1 && $combateEscena && (($mundo['evento']['combate']['estado'] ?? '') !== 'victoria');
+    $musicaRuinas = (int)$region['id'] === 2 && !$combateEscena;
 @endphp
 <header class="topbar"><a class="back" href="{{ route('alumno.aventura') }}">← Campamento</a><a class="brand" href="{{ route('inicio.alumno') }}">CODE<span>PLAY</span><small>EL ATLAS</small></a><span class="player-name">{{ session('usuario_nombre', 'Explorador') }}</span></header>
-<main class="world-shell {{ $combateEscena ? 'combat-stage' : ($eventoEscena ? 'event-stage' : '') }}" id="world" data-id="{{ $run['id'] }}" data-version="{{ $run['version'] }}" data-start="{{ route('alumno.aventura.iniciar') }}" data-path="{{ route('alumno.aventura.camino') }}" data-combat="{{ route('alumno.aventura.combate') }}" data-event="{{ route('alumno.aventura.evento') }}" data-guild="{{ route('alumno.aventura.gremio') }}">
+<main class="world-shell {{ $combateEscena ? 'combat-stage' : ($eventoEscena ? 'event-stage' : '') }}" id="world" data-forest-music="{{ (int)$region['id'] === 1 && !$combateEscena ? 'true' : 'false' }}" data-ruins-music="{{ $musicaRuinas ? 'true' : 'false' }}" data-forest-battle-music="{{ $musicaBatallaBosque ? 'true' : 'false' }}" data-id="{{ $run['id'] }}" data-version="{{ $run['version'] }}" data-start="{{ route('alumno.aventura.iniciar') }}" data-path="{{ route('alumno.aventura.camino') }}" data-combat="{{ route('alumno.aventura.combate') }}" data-event="{{ route('alumno.aventura.evento') }}" data-guild="{{ route('alumno.aventura.gremio') }}">
     @if(!$combateEscena)
     <div @if($eventoEscena) inert aria-hidden="true" @endif>
     <div class="world-heading"><div><p class="eyebrow">CINCO TERRITORIOS · UNA HISTORIA POR ESCRIBIR</p><h1>El conocimiento abre caminos.</h1><p>Observa. Elige. Descubre qué te espera al otro lado.</p></div><div class="journey-number"><span>ESCENARIO</span><strong>{{ $run['escenario'] }}<small> / 50</small></strong><span>{{ $activa ? 'EXPEDICIÓN EN CURSO' : 'LISTO PARA COMENZAR' }}</span></div></div>
@@ -46,7 +57,7 @@
             <div class="travel-money"><span>Oro de la partida <b>{{ $run['oro'] }}</b></span><span>Puntos en equipo <b>{{ $run['inversion'] }}</b></span></div>
             <details open><summary>Equipo y mochila <span>{{ count($estado['inventario']) }}</span></summary><ul class="pack">@forelse($estado['inventario'] as $item)<li><span>{{ $item['nombre'] }}<small>{{ \App\Services\AventuraCatalogo::RAREZAS[$item['rareza']] ?? 'Objeto' }}</small></span><b>×{{ $item['cantidad'] }}</b></li>@empty<li>Viajas con la mochila vacía.</li>@endforelse</ul></details>
             <details><summary>Efectos activos <span>{{ count($run['efectos'] ?? []) }}</span></summary>@forelse($run['efectos'] ?? [] as $efecto)<p>{{ $efecto['nombre'] ?? $efecto['tipo'] ?? 'Efecto' }} @if(isset($efecto['turnos']))· {{ $efecto['turnos'] }} turnos @endif</p>@empty<p>No tienes efectos activos.</p>@endforelse</details>
-            <details><summary>Mejoras de esta partida <span>{{ count($run['mejoras'] ?? []) }}</span></summary>@forelse($run['mejoras'] ?? [] as $mejora)<p>{{ $mejora['nombre'] ?? $mejora['tipo'] ?? 'Mejora' }} @if(isset($mejora['valor']))+{{ $mejora['valor'] }}% @endif<br>{{ $mejora['descripcion'] ?? '' }}</p>@empty<p>Las decisiones del viaje podrán darte nuevas ventajas.</p>@endforelse</details>
+            <details><summary>Mejoras de esta partida <span>{{ count($run['mejoras'] ?? []) }}</span></summary>@forelse($run['mejoras'] ?? [] as $mejora)<p>{{ $mejora['nombre'] ?? $mejora['tipo'] ?? 'Mejora' }} @if(isset($mejora['valor']))+{{ $mejora['valor'] }}{{ in_array($mejora['tipo'] ?? '', ['arma_dano','armadura_refuerzo'], true) ? '' : '%' }} @endif<br>{{ $mejora['descripcion'] ?? '' }}</p>@empty<p>Las decisiones del viaje podrán darte nuevas ventajas.</p>@endforelse</details>
             <p class="travel-save">◇ El viaje se guarda con cada decisión.</p>
         </aside>
         <section class="story" aria-labelledby="story-title">
@@ -78,8 +89,33 @@
     </div>
     <footer class="camp-footer">No necesitas conocer todas las respuestas para comenzar a explorar.<span>CODEPLAY / APRENDER JUGANDO</span></footer>
 </main>
-<div id="worldEntrance" class="world-entrance" hidden role="status" aria-live="polite"><div class="portal"><i></i><i></i><i></i><span>✧</span></div><p class="eyebrow">TU HISTORIA ESTÁ POR COMENZAR</p><h2>El bosque reconoce tus pasos.</h2><p id="entranceStatus">Abriendo los caminos…</p></div>
+<div id="worldEntrance" class="world-entrance" hidden role="status" aria-live="polite"><video class="world-entrance-video" playsinline preload="auto" aria-hidden="true"><source src="{{ asset('videos/aventura/inicio-codeplay2.mp4') }}?v={{ filemtime(public_path('videos/aventura/inicio-codeplay2.mp4')) }}" type="video/mp4"></video><p class="eyebrow">TU HISTORIA ESTÁ POR COMENZAR</p><h2>El bosque reconoce tus pasos.</h2><p id="entranceStatus">Atravesando el portal…</p></div>
+@if(!empty($bossIntroduction['url']))
+<div id="bossIntroduction" data-boss-name="{{ $bossIntroduction['name'] }}" class="world-entrance boss-cinematic" hidden role="dialog" aria-modal="true" aria-label="Presentación de {{ $bossIntroduction['name'] }}">
+    <video class="world-entrance-video" playsinline preload="auto" aria-label="{{ $bossIntroduction['name'] }} aparece ante el héroe">
+        <source src="{{ asset($bossIntroduction['url']) }}" type="video/mp4">
+    </video>
+    <p data-cinematic-status role="status">Preparando el encuentro con {{ $bossIntroduction['name'] }}…</p>
+</div>
+@endif
 <script src="{{ asset('js/aventura-arena.js') }}?v={{ filemtime(public_path('js/aventura-arena.js')) }}" defer></script>
 <script src="{{ asset('js/aventura-mapa.js') }}?v={{ filemtime(public_path('js/aventura-mapa.js')) }}" defer></script>
+
+<div class="forest-music-controls" id="forestMusicControls" hidden role="group" aria-label="Música del bosque">
+    <button type="button" aria-label="Reproducir música del bosque">▶ Música</button>
+    <label for="forestMusicVolume">Volumen</label>
+    <input id="forestMusicVolume" type="range" min="0" max="100" value="35" aria-label="Volumen de la música del bosque">
+    <output for="forestMusicVolume">35%</output>
+</div>
+<audio id="forestMusic" loop preload="metadata" src="{{ asset('audio/aventura/bosque-inicio.mp3') }}"></audio>
+<div class="forest-music-controls" id="ruinsMusicControls" hidden role="group" aria-label="Música de Ruinas Antiguas">
+    <button type="button" aria-label="Reproducir música de Ruinas Antiguas">▶ Música</button>
+    <label for="ruinsMusicVolume">Volumen</label>
+    <input id="ruinsMusicVolume" type="range" min="0" max="100" value="35" aria-label="Volumen de la música de Ruinas Antiguas">
+    <output for="ruinsMusicVolume">35%</output>
+</div>
+<audio id="ruinsMusic" loop preload="metadata" src="{{ asset('audio/aventura/ruinas-antiguas.mp3') }}"></audio>
+<audio id="forestBattleMusic" loop preload="metadata" src="{{ asset('audio/aventura/batalla-bosque.mp3') }}"></audio>
+<script src="{{ asset('js/aventura-musica.js') }}?v={{ filemtime(public_path('js/aventura-musica.js')) }}" defer></script>
 </body>
 </html>

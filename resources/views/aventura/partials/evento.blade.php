@@ -33,11 +33,15 @@
         <h3>{{ $mundo['pregunta_evento']['pregunta'] ?? 'La inscripción desapareció.' }}</h3>
         <p>Lee las opciones con calma. Solo tienes un intento en este encuentro.</p>
         @if($mundo['pregunta_evento'])
-        <div class="rune-answers">@foreach(['a','b','c','d'] as $letra)<button type="button" data-event-action="responder" data-answer="{{ $letra }}"><b>{{ strtoupper($letra) }}</b> {{ $mundo['pregunta_evento']['opcion_'.$letra] }}</button>@endforeach</div>
+        <div class="rune-answers">@foreach(\App\Services\AventuraPreguntas::ordenOpciones(['evento', $run['id'], $run['escenario'], $n['pregunta']]) as $posicion => $letra)<button type="button" data-event-action="responder" data-answer="{{ $letra }}"><b>{{ ['A','B','C','D'][$posicion] }}</b> {{ $mundo['pregunta_evento']['opcion_'.$letra] }}</button>@endforeach</div>
         @else<button type="button" class="primary-button" data-event-action="responder" data-answer="a">Continuar sin penalización</button>@endif
     </div>
 @else
     <div class="event-result" role="status"><p>{{ $n['resultado'] }}</p><ul>@foreach($n['detalle'] as $detalle)<li>{{ $detalle }}</li>@endforeach</ul></div>
+    @if(!empty($n['mejora_hechizo']))
+        <div class="event-loot"><p class="eyebrow">FOCO ARCANO · MUY RARO</p><h3>Elige un hechizo para mejorar</h3><p>La mejora dura toda esta aventura. El hechizo subirá un nivel y ganará 10% de daño, curación o protección.</p>
+        <div class="event-actions">@foreach($run['equipo']['hechizos'] as $hechizo)<button type="button" class="subtle-button" data-event-action="mejorar_hechizo" data-spell="{{ $hechizo }}">Mejorar {{ $catalogoEvento[$hechizo]['nombre'] }} →</button>@endforeach</div></div>
+    @endif
     @if(!empty($n['botin']))
         @php $botin = $catalogoEvento[$n['botin']]; @endphp
         <div class="event-loot"><p class="eyebrow">{{ \App\Services\AventuraCatalogo::RAREZAS[$botin['rareza']] }}</p><h3>{{ $botin['nombre'] }}</h3><p>{{ $botin['descripcion'] }}</p>
@@ -51,5 +55,5 @@
         </div>
     @endif
     <p class="story-note">Vida: {{ $run['vida_actual'] }}/{{ $personaje['vida'] }} · Oro de la partida: {{ $run['oro'] }} · Nivel: {{ $personaje['nivel'] }}</p>
-    <button type="button" class="primary-button" data-event-action="continuar">Volver al mapa y continuar →</button>
+    @if(empty($n['mejora_hechizo']))<button type="button" class="primary-button" data-event-action="continuar">Volver al mapa y continuar →</button>@endif
 @endif

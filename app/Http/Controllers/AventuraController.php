@@ -29,9 +29,9 @@ class AventuraController extends Controller
     {
         $datos=$request->validate([
             'expedicion_id'=>['required','integer','min:1'],'version'=>['required','integer','min:0'],
-            'accion'=>['required','in:abrir,aceptar,salir,responder,cobrar,abandonar,equipar'],
+            'accion'=>['required','in:abrir,aceptar,salir,tienda,cerrar_tienda,comprar,responder,cobrar,abandonar,equipar'],
             'encargo'=>['nullable','string','max:40'],'origen'=>['nullable','integer','between:1,50'],
-            'respuesta'=>['nullable','in:a,b,c,d'],'reemplazar'=>['nullable','string','max:80'],
+            'respuesta'=>['nullable','in:a,b,c,d'],'reemplazar'=>['nullable','string','max:80'],'oferta'=>['nullable','string','max:80'],
         ]);
         $gremio->actuar((int)session('usuario_id'),(int)$datos['expedicion_id'],(int)$datos['version'],$datos);
         return response()->json(['url'=>route('alumno.aventura.mapa').'#story-title']);
@@ -41,8 +41,8 @@ class AventuraController extends Controller
     {
         $datos = $request->validate([
             'expedicion_id'=>['required','integer','min:1'], 'version'=>['required','integer','min:0'],
-            'accion'=>['required','in:descubrir,preguntar,ayudar,ignorar,abrir,responder,equipar,continuar'],
-            'respuesta'=>['nullable','in:a,b,c,d'], 'reemplazar'=>['nullable','string','max:80'],
+            'accion'=>['required','in:descubrir,preguntar,ayudar,ignorar,abrir,responder,equipar,mejorar_hechizo,continuar'],
+            'respuesta'=>['nullable','in:a,b,c,d'], 'reemplazar'=>['nullable','string','max:80'], 'hechizo'=>['nullable','string','max:80'],
         ]);
         $resultado = $eventos->actuar((int)session('usuario_id'),(int)$datos['expedicion_id'],(int)$datos['version'],$datos);
         return response()->json(['url'=>$resultado === 'derrota'
@@ -68,7 +68,7 @@ class AventuraController extends Controller
             'tiempo_agotado'=>['nullable','boolean'],
         ]);
         $resultado = $combate->actuar((int)session('usuario_id'), (int)$datos['expedicion_id'], (int)$datos['version'], $datos);
-        if(\App\Services\AventuraFinal::victoria((int)session('usuario_id'),(int)$datos['expedicion_id'])) return response()->json(['secuencia'=>$combate->secuencia(),'url'=>route('alumno.aventura.final',['expedicion'=>$datos['expedicion_id']])]);
+        if(\App\Services\AventuraFinal::victoria((int)session('usuario_id'),(int)$datos['expedicion_id'])) return response()->json(['cinematica_final'=>(bool)config('aventura-cinematics.ignar_victory_url'),'secuencia'=>$combate->secuencia(),'url'=>route('alumno.aventura.final',['expedicion'=>$datos['expedicion_id']])]);
         return response()->json(['secuencia'=>$combate->secuencia(),'url'=>$resultado === 'derrota'
             ? route('alumno.aventura.derrota',['expedicion'=>$datos['expedicion_id']])
             : route('alumno.aventura.mapa').'#story-title']);

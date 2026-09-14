@@ -151,10 +151,21 @@ class AventuraCombateTest extends TestCase
         $this->editBattle(fn(&$b)=>$b['turno']=3);
         $this->action(['accion'=>'defender']);
         self::assertSame('pregunta',$this->battle()['estado']); self::assertSame(100,$this->run->fresh()->vida_actual);
-        $this->withSession(['usuario_id'=>$this->user->id])->get('/alumno/aventura/mapa')->assertOk()->assertSee('¿Qué etiqueta crea un párrafo?')->assertDontSee('respuesta_correcta');
+        $page=$this->withSession(['usuario_id'=>$this->user->id])->get('/alumno/aventura/mapa')->assertOk()->assertSee('¿Qué etiqueta crea un párrafo?')->assertDontSee('respuesta_correcta');
+        preg_match_all('/data-combat-action="responder" data-answer="([a-d])"><b>([A-D])<\/b> (.*?)<\/button>/s', $page->getContent(), $options, PREG_SET_ORDER);
+        self::assertCount(4, $options);
+        $source=['a'=>'<p>', 'b'=>'<img>', 'c'=>'<a>', 'd'=>'<br>'];
+        foreach ($options as $position=>$option) {
+            self::assertSame(['A','B','C','D'][$position], $option[2]);
+            self::assertSame($source[$option[1]], html_entity_decode($option[3], ENT_QUOTES, 'UTF-8'));
+        }
+        $again=$this->get('/alumno/aventura/mapa')->assertOk();
+        preg_match_all('/data-combat-action="responder" data-answer="([a-d])"><b>([A-D])<\/b> (.*?)<\/button>/s', $again->getContent(), $sameOptions, PREG_SET_ORDER);
+        self::assertSame($options, $sameOptions);
+        $correctButton=array_values(array_filter($options, fn($option)=>html_entity_decode($option[3], ENT_QUOTES, 'UTF-8')==='<p>'))[0];
         self::assertArrayNotHasKey('respuesta_correcta',$this->engine->preguntaPublica($this->battle()));
         $this->combatPost(['accion'=>'atacar','objetivo'=>0])->assertStatus(409);
-        $this->action(['accion'=>'responder','respuesta'=>'a']);
+        $this->action(['accion'=>'responder','respuesta'=>$correctButton[1]]);
         self::assertSame(100,$this->run->fresh()->vida_actual); self::assertSame(4,$this->battle()['turno']);
         $this->editBattle(function (&$b) { $b['turno']=6; $b['enemigos'][0]['vida']=100; });
         $this->action(['accion'=>'defender']);

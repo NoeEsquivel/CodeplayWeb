@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    @include('partials.favicon')
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>El último horizonte · CodePlay</title>
 <link rel="stylesheet" href="{{ asset('css/aventura-final.css') }}?v={{ filemtime(public_path('css/aventura-final.css')) }}">
 </head>
 <body>
+@php($victoryVideo = config('aventura-cinematics.ignar_victory_url'))
+@if($victoryVideo)
+<div id="victoryCinematic" data-run="{{ $partida->id }}" role="dialog" aria-modal="true" aria-label="La última batalla: Supernova">
+    <video playsinline preload="auto" aria-label="El héroe derrota a Ignar con Supernova"><source src="{{ asset($victoryVideo) }}" type="video/mp4"></video>
+    <div class="victory-controls"><p data-victory-status role="status">Preparando el último combate…</p><button type="button" data-victory-retry hidden>Reproducir batalla final →</button></div>
+</div>
+@endif
 <div class="final-stars" aria-hidden="true"></div>
-<main class="epilogue">
+<main class="epilogue" @if($victoryVideo) hidden inert @endif>
     <p class="overline">CODEPLAY · EL ÚLTIMO HORIZONTE</p>
     <div class="creator" aria-hidden="true"><svg viewBox="0 0 200 180"><circle cx="100" cy="68" r="32"/><path d="M38 180v-25q0-52 62-52t62 52v25Z"/><path class="rune" d="m80 132-15 12 15 12m40-24 15 12-15 12m-13-30-14 42"/></svg></div>
     <section class="chapter" id="encuentro" aria-labelledby="encuentro-title">
@@ -45,4 +53,5 @@
     <button class="skip" type="button" data-next="logro" hidden>Ir al logro</button>
 </main>
 <script src="{{ asset('js/aventura-final.js') }}?v={{ filemtime(public_path('js/aventura-final.js')) }}" defer></script>
+<script src="{{ asset('js/aventura-victory.js') }}?v={{ filemtime(public_path('js/aventura-victory.js')) }}" defer></script>
 </body></html>

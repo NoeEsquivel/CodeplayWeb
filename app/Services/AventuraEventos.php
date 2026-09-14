@@ -33,6 +33,7 @@ class AventuraEventos
                 $n = $this->preparar($evento['tipo'],$historial);
             } elseif ($a === 'continuar') {
                 abort_unless($evento['estado'] === 'resuelto' && ($n['etapa'] ?? '') === 'resultado',409,'Primero resuelve el encuentro.');
+                abort_if(!empty($n['mejora_hechizo']),422,'Elige primero el hechizo que quieres mejorar.');
                 abort_if($run->escenario >= 50,409);
                 $run->escenario++; $run->version++; $run->save(); return 'mapa';
             } elseif ($a === 'equipar') {
@@ -45,6 +46,12 @@ class AventuraEventos
                 $run->mana_actual = min($despues['mana'],$run->mana_actual);
                 $n['equipado'] = true;
                 $n['detalle'][] = 'Equipo actualizado. El objeto anterior sigue en tu mochila. Vida máxima: '.$antes['vida'].' → '.$despues['vida'].'. Maná máximo: '.$antes['mana'].' → '.$despues['mana'].'.';
+            } elseif ($a === 'mejorar_hechizo') {
+                abort_unless($evento['estado'] === 'resuelto' && ($n['etapa'] ?? '') === 'resultado' && !empty($n['mejora_hechizo']),409,'No hay una mejora de hechizo pendiente.');
+                $hechizo = $accion['hechizo'] ?? '';
+                abort_unless(in_array($hechizo,$run->equipo['hechizos'] ?? [],true),422,'Elige uno de los hechizos que llevas equipado.');
+                $n['detalle'][] = AventuraMejoras::mejorarHechizo($run,$hechizo);
+                unset($n['mejora_hechizo']);
             } else {
                 abort_unless($evento['estado'] === 'pendiente' && $n,409,'Primero descubre el encuentro.');
                 if ($a === 'responder') {
@@ -129,13 +136,19 @@ class AventuraEventos
             $xp = AventuraMejoras::experiencia($run,15+$run->escenario*2);
             (new AventuraService())->otorgarExperiencia($run->usuario_id,'expedicion:'.$run->id.':evento:'.$run->escenario,$xp);
             $n['detalle'][] = '+'.$xp.' de experiencia permanente.';
-        } elseif ($tirada === 3 || $tirada === 4) {
-            $clave = $this->botin($run,$tirada === 3);
+        } elseif ($tirada === 3) {
+            $clave = $this->botin($run);
             if ($clave && AventuraInventario::recibir($run,$clave)) {
                 $item = (new AventuraCatalogo())->items()[$clave];
                 $n['botin'] = $clave;
                 $n['detalle'][] = '+1 '.$item['nombre'].' · '.AventuraCatalogo::RAREZAS[$item['rareza']].'. Guardado en tu mochila.';
             } else { $run->oro += 15; $n['detalle'][] = 'Tu mochila ya tiene ese objeto o alcanzó su límite. Recibes 15 de oro.'; }
+        } elseif ($tirada === 4) {
+            $opciones = [];
+            if (!empty($run->equipo['arma'])) $opciones[] = 'arma_dano';
+            if (!empty($run->equipo['armadura'])) $opciones[] = 'armadura_refuerzo';
+            if ($opciones) $n['detalle'][] = AventuraMejoras::mejorarEquipo($run,$opciones[$this->azar(0,count($opciones)-1)]);
+            else { $run->oro += 15; $n['detalle'][] = 'No llevas arma ni armadura para reforzar. Recibes 15 de oro.'; }
         } elseif ($tirada === 5) {
             $tipos = array_keys(AventuraMejoras::TIPOS); $tipo = $tipos[$this->azar(0,count($tipos)-1)];
             $base = (new AventuraService())->estado($run->usuario_id)['personaje']['vida'];
@@ -146,19 +159,19 @@ class AventuraEventos
                 $run->vida_actual += max(0,$max-$base);
             }
         } else {
-            $efectos = array_values(array_filter($run->efectos ?? [],fn($e)=>$e['tipo'] !== 'inspiracion'));
-            $efectos[] = ['tipo'=>'inspiracion','nombre'=>'Inspiración: +20% de daño en el próximo combate','valor'=>20];
-            $run->efectos = $efectos;
-            $n['detalle'][] = 'Inspiración: +20% de daño durante tu próximo combate. No se acumula consigo misma.';
+            if (!empty($run->equipo['hechizos'])) {
+                $n['mejora_hechizo'] = true;
+                $n['detalle'][] = 'Hallaste un foco arcano muy raro. Elige un hechizo equipado para elevarlo de nivel durante esta aventura.';
+            } else {
+                $n['detalle'][] = AventuraMejoras::agregar($run,'critico');
+            }
         }
     }
 
-    private function botin(AventuraExpedicion $run,bool $pocion): ?string
+    private function botin(AventuraExpedicion $run): ?string
     {
-        $tirada = $this->azar(1,100);
-        $rareza = $tirada <= 60 ? 'normal' : ($tirada <= 85 ? 'raro' : ($tirada <= 95 ? 'super_raro' : ($tirada <= 99 ? 'ultra_raro' : 'legendario')));
         $completados = DB::table('desafio_recompensas')->where('usuario_id',$run->usuario_id)->where('completado_primera_vez',true)->pluck('nivel_desafio')->all();
-        $pool = array_filter((new AventuraCatalogo())->items(),fn($i)=>($pocion ? $i['tipo'] === 'pocion' : $i['tipo'] !== 'pocion' && $i['rareza'] === $rareza) && (!$i['desafio'] || in_array($i['desafio'],$completados)));
+        $pool = array_filter((new AventuraCatalogo())->items(),fn($i)=>$i['tipo'] === 'pocion' && (!$i['desafio'] || in_array($i['desafio'],$completados)));
         $keys = array_keys($pool);
         return $keys ? $keys[$this->azar(0,count($keys)-1)] : null;
     }

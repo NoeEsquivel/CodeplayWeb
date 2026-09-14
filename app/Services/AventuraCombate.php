@@ -125,7 +125,7 @@ class AventuraCombate
         $tipo = $a['accion']; $dano = 0; $elemento = 'fisico';
         $equipo = $run->equipo;
         $b['defendiendo'] = false;
-        if ($tipo === 'atacar') $dano = 8 + 2 * $stats['total']['dano'];
+        if ($tipo === 'atacar') $dano = 8 + 2 * $stats['total']['dano'] + AventuraMejoras::valor($run,'arma_dano');
         elseif ($tipo === 'defender') {
             $b['defendiendo'] = true;
             $run->mana_actual = min($stats['mana'],$run->mana_actual+4);
@@ -139,14 +139,16 @@ class AventuraCombate
             $magia = $stats['total']['magia'];
             $ataques = ['brasa'=>8,'escarcha'=>16,'relampago'=>28,'meteorito'=>45,'supernova'=>70];
             $curas = ['alivio'=>15,'renuevo'=>35,'luz-fenix'=>80];
-            if (isset($ataques[$id])) { $dano = $ataques[$id]+$magia; $elemento = in_array($id,['brasa','meteorito'],true) ? 'fuego' : 'magia'; }
-            elseif (isset($curas[$id])) $run->vida_actual = min($stats['vida'],$run->vida_actual+$curas[$id]+$magia);
+            $maestria = AventuraMejoras::valorHechizo($run,$id);
+            if (isset($ataques[$id])) { $dano = (int)ceil(($ataques[$id]+$magia)*(100+$maestria)/100); $elemento = in_array($id,['brasa','meteorito'],true) ? 'fuego' : 'magia'; }
+            elseif (isset($curas[$id])) $run->vida_actual = min($stats['vida'],$run->vida_actual+(int)ceil(($curas[$id]+$magia)*(100+$maestria)/100));
             else {
                 $efectos = array_values(array_filter($run->efectos ?? [],fn ($e) => $e['tipo'] !== 'barrera'));
-                $efectos[] = ['tipo'=>'barrera','nombre'=>'Barrera protectora','valor'=>($id === 'barrera' ? 18 : 50)+$magia];
+                $efectos[] = ['tipo'=>'barrera','nombre'=>'Barrera protectora','valor'=>(int)ceil((($id === 'barrera' ? 18 : 50)+$magia)*(100+$maestria)/100)];
                 $run->efectos = $efectos;
             }
-            $b['registro'][] = 'Usas '.$item['nombre'].': '.$item['mana'].' de maná.';
+            $nivel = AventuraMejoras::nivelHechizo($run,$id);
+            $b['registro'][] = 'Usas '.$item['nombre'].($nivel > 1 ? ' nivel '.$nivel : '').': '.$item['mana'].' de maná.';
         } elseif ($tipo === 'pocion') {
             $id = $a['objeto'] ?? '';
             $valores = ['pocion-vida'=>[30,0],'pocion-mana'=>[0,20],'pocion-mayor'=>[75,0],'elixir'=>[40,25]];
@@ -203,6 +205,7 @@ class AventuraCombate
     private function recibir(AventuraExpedicion $run, array &$b, int $dano, string $nombre): void
     {
         $dano = (int)ceil($dano*(100-AventuraMejoras::valor($run,'resistencia'))/100);
+        $dano = max(0,$dano-AventuraMejoras::valor($run,'armadura_refuerzo'));
         if ($b['defendiendo']) $dano = (int) ceil($dano/2);
         $efectos = $run->efectos ?? [];
         foreach ($efectos as $i=>$efecto) if ($efecto['tipo'] === 'barrera') {

@@ -18,7 +18,9 @@ class AventuraMejoras
 
     public static function valor(AventuraExpedicion $run, string $tipo): int
     {
-        return min(self::TIPOS[$tipo][2], array_sum(array_map(fn($m)=>($m['tipo'] ?? '') === $tipo ? (int)$m['valor'] : 0,$run->mejoras ?? [])));
+        $limites = ['arma_dano'=>25, 'armadura_refuerzo'=>12];
+        $limite = self::TIPOS[$tipo][2] ?? $limites[$tipo] ?? 0;
+        return min($limite, array_sum(array_map(fn($m)=>($m['tipo'] ?? '') === $tipo ? (int)$m['valor'] : 0,$run->mejoras ?? [])));
     }
 
     public static function agregar(AventuraExpedicion $run, string $tipo): string
@@ -40,5 +42,45 @@ class AventuraMejoras
     public static function experiencia(AventuraExpedicion $run, int $base): int
     {
         return (int)ceil($base*(100+self::valor($run,'experiencia'))/100);
+    }
+
+    public static function mejorarEquipo(AventuraExpedicion $run, string $tipo): string
+    {
+        $definiciones = [
+            'arma_dano'=>['Filo calibrado', 5, 25, 'Tu arma gana +%d de daño base en cada ataque físico.'],
+            'armadura_refuerzo'=>['Placas reforzadas', 2, 12, 'Tu armadura absorbe %d de daño directo adicional por golpe.'],
+        ];
+        [$nombre,$paso,$limite,$texto] = $definiciones[$tipo];
+        $actual = self::valor($run,$tipo);
+        if ($actual >= $limite) { $run->oro += 15; return 'Tu '.$nombre.' ya alcanzó su límite. Recibes 15 de oro en su lugar.'; }
+        $nuevo = min($limite,$actual+$paso);
+        $mejoras = array_values(array_filter($run->mejoras ?? [],fn($m)=>($m['tipo'] ?? '') !== $tipo));
+        $mejoras[] = ['tipo'=>$tipo,'nombre'=>$nombre,'valor'=>$nuevo,'descripcion'=>sprintf($texto,$nuevo)];
+        $run->mejoras = $mejoras;
+        return $nombre.': '.sprintf($texto,$nuevo).' Dura hasta terminar esta partida.';
+    }
+
+    public static function valorHechizo(AventuraExpedicion $run, string $hechizo): int
+    {
+        return min(30, array_sum(array_map(fn($m)=>(($m['tipo'] ?? '') === 'maestria_hechizo' && ($m['hechizo'] ?? '') === $hechizo) ? (int)$m['valor'] : 0,$run->mejoras ?? [])));
+    }
+
+    public static function nivelHechizo(AventuraExpedicion $run, string $hechizo): int
+    {
+        return 1 + intdiv(self::valorHechizo($run,$hechizo),10);
+    }
+
+    public static function mejorarHechizo(AventuraExpedicion $run, string $hechizo): string
+    {
+        $actual = self::valorHechizo($run,$hechizo);
+        $catalogo = (new AventuraCatalogo())->items();
+        $nombre = $catalogo[$hechizo]['nombre'] ?? 'Hechizo';
+        if ($actual >= 30) { $run->oro += 15; return $nombre.' ya alcanzó el nivel máximo. Recibes 15 de oro en su lugar.'; }
+        $nuevo = min(30,$actual+10);
+        $mejoras = array_values(array_filter($run->mejoras ?? [],fn($m)=>!(($m['tipo'] ?? '') === 'maestria_hechizo' && ($m['hechizo'] ?? '') === $hechizo)));
+        $nivel = 1 + intdiv($nuevo,10);
+        $mejoras[] = ['tipo'=>'maestria_hechizo','hechizo'=>$hechizo,'nombre'=>$nombre.' Nv. '.$nivel,'valor'=>$nuevo,'descripcion'=>'Daño, curación o protección del hechizo: +'.$nuevo.'%.'];
+        $run->mejoras = $mejoras;
+        return $nombre.' sube a nivel '.$nivel.': sus efectos ganan +10% durante esta aventura.';
     }
 }
