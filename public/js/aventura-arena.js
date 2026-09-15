@@ -83,7 +83,13 @@
             e.preventDefault(); const resolve=continueResolve; continueResolve=null; resolve();
         }
     });
-    function animate(actor,kind) {const fighter=actor?.querySelector('.fighter');if(!fighter)return;fighter.classList.remove('strike','enemy-strike','magic','hit','restore','guard');void fighter.offsetWidth;fighter.classList.add(kind);}
+    function animate(actor,kind) {
+        const fighter=actor?.querySelector('.fighter'); if(!fighter)return;
+        fighter.classList.remove('strike','enemy-strike','magic','hit','restore','guard','damage-flash','heal-flash');
+        void fighter.offsetWidth; fighter.classList.add(kind);
+        if(kind==='hit') { fighter.classList.add('damage-flash'); setTimeout(()=>fighter.classList.remove('damage-flash'),950); }
+        if(kind==='restore') { fighter.classList.add('heal-flash'); setTimeout(()=>fighter.classList.remove('heal-flash'),1100); }
+    }
     function slash(arena,target,enemy=false) {
         if(!arena||!target) return;
         const bounds=target.getBoundingClientRect(), stage=arena.getBoundingClientRect();
@@ -104,6 +110,16 @@
         const a=actor.getBoundingClientRect(),b=arena.getBoundingClientRect();
         const el=document.createElement('span');el.className='combat-number'+(delta>0?' heal':'');el.textContent=(delta>0?'+':'')+delta;
         el.style.left=(a.left-b.left+a.width/2)+'px';el.style.top=(a.top-b.top+a.height/2)+'px';arena.querySelector('.arena-fx').append(el);setTimeout(()=>el.remove(),1000);
+    }
+    function aura(arena, actor, type) {
+        if (!arena || !actor) return null;
+        const bounds=actor.getBoundingClientRect(),stage=arena.getBoundingClientRect();
+        const effect=document.createElement('span'); effect.className=`combat-aura ${type}`;
+        effect.style.left=(bounds.left-stage.left+bounds.width/2)+'px';
+        effect.style.top=(bounds.top-stage.top+bounds.height/2)+'px';
+        if (type==='level-up') effect.innerHTML='<i>✦</i><i>✧</i><i>✦</i><b>NIVEL ↑</b>';
+        else effect.innerHTML='<i></i><i></i><i></i><i></i><i></i>';
+        arena.querySelector('.arena-fx').append(effect); setTimeout(()=>effect.remove(),1050); return effect;
     }
     async function play(root,sequence,nextRoot) {
         const theatre=root.querySelector('[data-theatre]'); if(!theatre||!sequence?.length)return;
@@ -133,7 +149,16 @@
             await pause(650);
             const hpLabel=theatre.querySelector('[data-player-hp]'),manaLabel=theatre.querySelector('[data-player-mana]');
             const maxHp=Number(hpLabel.textContent.split('/')[1]),maxMana=Number(manaLabel.textContent.split('/')[1]);
-            const delta=event.vida-Number(player.dataset.hp);number(arena,player,delta);if(delta)animate(player,delta>0?'restore':'hit');player.dataset.hp=event.vida;
+            const delta=event.vida-Number(player.dataset.hp);number(arena,player,delta);if(delta)animate(player,delta>0?'restore':'hit');
+            if(delta>0) visualEffects.push(aura(arena,player,'heal-aura'));
+            if(delta<0) visualEffects.push(aura(arena,player,'impact-aura'));
+            const nextLevel=Number(nextRoot?.querySelector('[data-actor="jugador"]')?.dataset.level || 0);
+            if(nextLevel>Number(player.dataset.level||0)) {
+                player.dataset.level=String(nextLevel);
+                const levelLabel=theatre.querySelector('[data-player-level]'); if(levelLabel) levelLabel.textContent=`Nv. ${nextLevel}`;
+                visualEffects.push(aura(arena,player,'level-up'));
+            }
+            player.dataset.hp=event.vida;
             player.classList.toggle('is-fallen',event.vida<=0);
             hpLabel.textContent=`${event.vida} / ${maxHp}`;manaLabel.textContent=`${event.mana} / ${maxMana}`;
             theatre.querySelector('[data-player-bar]').style.width=Math.max(0,Math.min(100,100*event.vida/maxHp))+'%';
@@ -145,6 +170,8 @@
                 }
                 if(!target)return;
                 const change=enemy.vida-Number(target.dataset.hp);number(arena,target,change);if(change)animate(target,change>0?'restore':'hit');
+                if(change<0) visualEffects.push(aura(arena,target,'impact-aura'));
+                if(change>0) visualEffects.push(aura(arena,target,'heal-aura'));
                 target.dataset.hp=enemy.vida;target.classList.toggle('is-fallen',enemy.vida<=0);
                 target.querySelector('[data-hp-label]').textContent=`${enemy.vida} / ${enemy.max}`;
                 target.querySelector('[data-hp-bar]').style.width=(100*enemy.vida/enemy.max)+'%';

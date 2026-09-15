@@ -33,6 +33,7 @@
     const changed = () => JSON.stringify(draft) !== JSON.stringify(state.expedicion.equipo);
     const editable = () => state.expedicion.estado === 'preparacion' && !busy;
     const potionCount = () => draft.pociones.reduce((sum, entry) => sum + entry.cantidad, 0);
+    const spellLimit = () => state.personaje.limite_hechizos || 2;
     function notice(text) { $('shopNotice').textContent = text; $('shopNotice').hidden = !text; }
     function feedback(text, type = '') { $('saveMessage').textContent = text; $('saveMessage').className = 'save-message ' + type; }
     function selected(item) {
@@ -53,7 +54,7 @@
     function choose(item, delta = 1) {
         if (!editable() || !item.desbloqueado) return;
         const next = candidate(item, delta);
-        if (next.hechizos.length > 2) { notice('Puedes llevar dos hechizos. Retira uno de los seleccionados para cambiarlo.'); return; }
+        if (next.hechizos.length > spellLimit()) { notice(`Puedes llevar hasta ${spellLimit()} hechizos con tu nivel actual. Retira uno de los seleccionados para cambiarlo.`); return; }
         if (next.pociones.reduce((sum, potion) => sum + potion.cantidad, 0) > 20) { notice('Tu mochila admite 20 pociones. Retira alguna para añadir otra.'); return; }
         if (cost(next) > state.puntos.presupuesto) { notice('Esta combinación supera tu presupuesto. Prueba otra selección.'); return; }
         draft = next;
@@ -82,7 +83,7 @@
         const slots = [
             ['ARMA', 'sword', draft.arma ? [items[draft.arma].nombre] : ['Sin arma']],
             ['ARMADURA', 'armor', draft.armadura ? [items[draft.armadura].nombre] : ['Sin armadura']],
-            ['HECHIZOS · ' + draft.hechizos.length + '/2', 'bolt', draft.hechizos.length ? draft.hechizos.map(id => items[id].nombre) : ['Sin hechizos']],
+            ['HECHIZOS · ' + draft.hechizos.length + '/' + spellLimit(), 'bolt', draft.hechizos.length ? draft.hechizos.map(id => items[id].nombre) : ['Sin hechizos']],
             ['POCIONES · ' + potionCount() + '/20', 'potion', draft.pociones.length ? draft.pociones.map(p => `${p.cantidad} × ${items[p.id].nombre}`) : ['Mochila vacía']]
         ];
         for (const [title, art, lines] of slots) {
@@ -249,7 +250,7 @@
             });
             if (response.redirected || !response.headers.get('content-type')?.includes('application/json')) throw new Error('Tu sesión terminó. Vuelve a iniciar sesión.');
             const data = await response.json();
-            if (!response.ok) throw new Error(response.status === 409 ? 'La aventura cambió en otra pestaña. Recarga antes de reiniciar.' : 'No se pudo reiniciar. Recarga la página e inténtalo de nuevo.');
+            if (!response.ok) throw new Error(response.status === 409 ? 'La aventura cambió en otra pestaña. Recarga antes de reiniciar.' : Object.values(data.errors || {}).flat()[0] || data.message || 'No se pudo reiniciar. Inténtalo de nuevo.');
             window.location.assign(data.url);
         } catch (error) {
             $('restartError').textContent = error.message;

@@ -43,9 +43,16 @@ class AventuraCatalogo
         $add('barrera', 'Barrera rúnica', 'hechizo', 'raro', 95, [], 'Absorbe 18 + tu magia de daño en el siguiente golpe.', 'shield', null, 10);
         $add('relampago', 'Relámpago', 'hechizo', 'super_raro', 220, [], 'Ataque eléctrico: 28 + tu magia de daño.', 'bolt', null, 16);
         $add('renuevo', 'Renuevo', 'hechizo', 'super_raro', 230, [], 'Recupera 35 + tu magia de vida.', 'heal', null, 18);
+        $add('quebrarrocas', 'Quebrarrocas', 'hechizo', 'super_raro', 250, [], 'Magia de tierra: 34 + tu magia de daño.', 'axe', null, 18);
+        $add('raiz-vital', 'Raíz vital', 'hechizo', 'super_raro', 270, [], 'Recupera 28 + tu magia de vida y regenera 5 de vida durante 3 turnos.', 'heal', null, 20);
+        $add('ritual-doble', 'Ritual de doble filo', 'hechizo', 'super_raro', 290, [], 'Tus próximos 2 ataques físicos golpean dos veces.', 'sword', null, 22);
         $add('meteorito', 'Meteorito', 'hechizo', 'ultra_raro', 460, [], 'Ataque de fuego: 45 + tu magia de daño.', 'fire', null, 24);
         $add('aurora', 'Aurora protectora', 'hechizo', 'ultra_raro', 480, [], 'Absorbe 50 + tu magia de daño en el siguiente golpe.', 'shield', null, 24);
-        $add('supernova', 'Supernova', 'hechizo', 'legendario', 850, [], 'Ataque estelar: 70 + tu magia de daño.', 'bolt', null, 36);
+        $add('tormenta-cadena', 'Tormenta en cadena', 'hechizo', 'ultra_raro', 540, [], 'Ataque eléctrico: 58 + tu magia de daño.', 'bolt', null, 30);
+        $add('furia-runica', 'Furia rúnica', 'hechizo', 'ultra_raro', 560, [], 'Todos tus ataques y hechizos causan 35% más daño durante 3 turnos.', 'flame', null, 28);
+        $add('imbuicion-ignea', 'Imbuición ígnea', 'hechizo', 'ultra_raro', 580, [], 'Durante 3 turnos, tus ataques físicos se vuelven mágicos de fuego y causan 25% más daño.', 'fire', null, 30);
+        $add('terremoto', 'Terremoto', 'hechizo', 'ultra_raro', 600, [], 'Magia de tierra: 64 + tu magia de daño y una barrera de 20.', 'axe', null, 32);
+        $add('supernova', 'Supernova', 'hechizo', 'legendario', 1500, [], 'Explosión cósmica: 150 + tu magia y 50% de tu vida faltante. Cuesta 75 de maná y 15% de tu vida máxima. Ignora 75% de la defensa y resistencia mágica.', 'bolt', null, 75);
         $add('luz-fenix', 'Luz del fénix', 'hechizo', 'legendario', 850, [], 'Recupera 80 + tu magia de vida; no revive al personaje.', 'heal', null, 32);
         $add('pocion-vida', 'Poción de vida', 'pocion', 'normal', 15, [], 'Recupera 30 de vida sin superar el máximo.', 'potion');
         $add('pocion-mana', 'Poción de maná', 'pocion', 'normal', 15, [], 'Recupera 20 de maná sin superar el máximo.', 'mana');
@@ -61,7 +68,13 @@ class AventuraCatalogo
 
     public static function vacio(): array { return ['arma' => null, 'armadura' => null, 'hechizos' => [], 'pociones' => []]; }
 
-    public function cotizar(array $equipo, array $completados): array
+    /** Cada diez niveles completos abre un espacio adicional para hechizos. */
+    public static function limiteHechizos(int $nivel): int
+    {
+        return 2 + intdiv(max(1, $nivel) - 1, 10);
+    }
+
+    public function cotizar(array $equipo, array $completados, int $nivel = 1): array
     {
         $items = $this->items();
         $costo = 0;
@@ -74,7 +87,8 @@ class AventuraCatalogo
             foreach ($item['bonus'] as $stat => $valor) $bonus[$stat] += $valor;
         };
         foreach (['arma', 'armadura'] as $slot) if ($equipo[$slot] !== null) $usar($equipo[$slot], $slot);
-        if (count($equipo['hechizos']) > 2 || count(array_unique($equipo['hechizos'])) !== count($equipo['hechizos'])) throw ValidationException::withMessages(['equipo' => 'Elige hasta dos hechizos diferentes.']);
+        $limiteHechizos = self::limiteHechizos($nivel);
+        if (count($equipo['hechizos']) > $limiteHechizos || count(array_unique($equipo['hechizos'])) !== count($equipo['hechizos'])) throw ValidationException::withMessages(['equipo' => 'Puedes equipar hasta '.$limiteHechizos.' hechizos diferentes con tu nivel actual.']);
         foreach ($equipo['hechizos'] as $id) $usar($id, 'hechizo');
         $cantidad = 0;
         $vistos = [];

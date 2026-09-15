@@ -16,11 +16,16 @@ class AventuraMejoras
         'resistencia'=>['Piel de runas',5,20,'Reducción del daño directo recibido'],
     ];
 
-    public static function valor(AventuraExpedicion $run, string $tipo): int
+    private static function lista(AventuraExpedicion|array $run): array
+    {
+        return $run instanceof AventuraExpedicion ? ($run->mejoras ?? []) : ($run['mejoras'] ?? []);
+    }
+
+    public static function valor(AventuraExpedicion|array $run, string $tipo): int
     {
         $limites = ['arma_dano'=>25, 'armadura_refuerzo'=>12];
         $limite = self::TIPOS[$tipo][2] ?? $limites[$tipo] ?? 0;
-        return min($limite, array_sum(array_map(fn($m)=>($m['tipo'] ?? '') === $tipo ? (int)$m['valor'] : 0,$run->mejoras ?? [])));
+        return min($limite, array_sum(array_map(fn($m)=>($m['tipo'] ?? '') === $tipo ? (int)$m['valor'] : 0,self::lista($run))));
     }
 
     public static function agregar(AventuraExpedicion $run, string $tipo): string
@@ -60,12 +65,12 @@ class AventuraMejoras
         return $nombre.': '.sprintf($texto,$nuevo).' Dura hasta terminar esta partida.';
     }
 
-    public static function valorHechizo(AventuraExpedicion $run, string $hechizo): int
+    public static function valorHechizo(AventuraExpedicion|array $run, string $hechizo): int
     {
-        return min(30, array_sum(array_map(fn($m)=>(($m['tipo'] ?? '') === 'maestria_hechizo' && ($m['hechizo'] ?? '') === $hechizo) ? (int)$m['valor'] : 0,$run->mejoras ?? [])));
+        return min(30, array_sum(array_map(fn($m)=>(($m['tipo'] ?? '') === 'maestria_hechizo' && ($m['hechizo'] ?? '') === $hechizo) ? (int)$m['valor'] : 0,self::lista($run))));
     }
 
-    public static function nivelHechizo(AventuraExpedicion $run, string $hechizo): int
+    public static function nivelHechizo(AventuraExpedicion|array $run, string $hechizo): int
     {
         return 1 + intdiv(self::valorHechizo($run,$hechizo),10);
     }

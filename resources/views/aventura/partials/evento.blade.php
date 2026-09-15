@@ -47,8 +47,8 @@
         <div class="event-loot"><p class="eyebrow">{{ \App\Services\AventuraCatalogo::RAREZAS[$botin['rareza']] }}</p><h3>{{ $botin['nombre'] }}</h3><p>{{ $botin['descripcion'] }}</p>
         @foreach($botin['bonus'] as $atributo => $valor)<span class="loot-bonus">+{{ $valor }} {{ ['dano'=>'daño','magia'=>'magia','armadura'=>'armadura','inteligencia'=>'inteligencia','vitalidad'=>'vitalidad'][$atributo] }}</span>@endforeach
         @if($botin['tipo'] !== 'pocion' && empty($n['equipado']))
-            @if($botin['tipo'] === 'hechizo' && count($run['equipo']['hechizos']) >= 2)
-                <label for="replaceSpell">Ya llevas dos hechizos. Elige cuál dejar en la mochila:</label><select id="replaceSpell">@foreach($run['equipo']['hechizos'] as $clave)<option value="{{ $clave }}">{{ $catalogoEvento[$clave]['nombre'] }}</option>@endforeach</select>
+            @if($botin['tipo'] === 'hechizo' && count($run['equipo']['hechizos']) >= $personaje['limite_hechizos'])
+                <label for="replaceSpell">Ya llevas {{ $personaje['limite_hechizos'] }} hechizos. Elige cuál dejar en la mochila:</label><select id="replaceSpell">@foreach($run['equipo']['hechizos'] as $clave)<option value="{{ $clave }}">{{ $catalogoEvento[$clave]['nombre'] }}</option>@endforeach</select>
             @endif
             <button type="button" class="subtle-button" data-event-action="equipar">Equipar este objeto</button><p class="story-note">Reemplaza su espacio de equipo sin curarte. También puedes conservarlo en la mochila.</p>
         @else<p>{{ $botin['tipo'] === 'pocion' ? 'Lista para usar durante un combate.' : 'Ya está equipado.' }}</p>@endif

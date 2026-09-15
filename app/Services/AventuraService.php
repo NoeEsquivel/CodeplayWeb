@@ -53,7 +53,7 @@ class AventuraService
         $completados = $this->completados($usuario->id);
         $stats = $personaje->only(AventuraCatalogo::STATS);
         // Equipped purchases were authorized when saved. Read their bonuses even if a challenge is administratively reset.
-        $bonus = $catalogo->cotizar($expedicion->equipo, [5, 10, 15, 20])['bonus'];
+        $bonus = $catalogo->cotizar($expedicion->equipo, [5, 10, 15, 20], $personaje->nivel)['bonus'];
         $total = [];
         foreach ($stats as $stat => $valor) $total[$stat] = $valor + $bonus[$stat];
         $vidaMaxima = AventuraMejoras::vida($expedicion, 100 + 5 * ($total['vitalidad'] - 1));
@@ -64,7 +64,7 @@ class AventuraService
             if ($expedicion->isDirty()) $expedicion->save();
         }
         return [
-            'personaje' => ['nivel' => $personaje->nivel, 'experiencia' => $personaje->experiencia, 'siguiente' => $personaje->experienciaSiguiente(), 'base' => $stats, 'bonus' => $bonus, 'total' => $total, 'vida' => $vidaMaxima, 'mana' => $manaMaximo, 'ultimo_aumento' => $personaje->ultimo_aumento],
+            'personaje' => ['nivel' => $personaje->nivel, 'experiencia' => $personaje->experiencia, 'siguiente' => $personaje->experienciaSiguiente(), 'limite_hechizos' => AventuraCatalogo::limiteHechizos($personaje->nivel), 'base' => $stats, 'bonus' => $bonus, 'total' => $total, 'vida' => $vidaMaxima, 'mana' => $manaMaximo, 'ultimo_aumento' => $personaje->ultimo_aumento],
             'expedicion' => $expedicion->only(['id', 'estado', 'version', 'equipo', 'inversion', 'escenario', 'vida_actual', 'mana_actual', 'oro', 'efectos', 'mejoras', 'iniciada_at']),
             'inventario' => $this->integrada() ? $expedicion->inventario()->with('item')->where('cantidad', '>', 0)->orderBy('id')->get()->map(fn ($fila) => [
                 'id' => $fila->item->clave_catalogo, 'nombre' => $fila->item->nombre, 'cantidad' => $fila->cantidad,
@@ -83,7 +83,7 @@ class AventuraService
             $expedicion = $this->expedicion($id);
             abort_if($expedicion->id !== $expedicionId || $expedicion->version !== $version, 409, 'Tu equipo cambió en otra pestaña. Recarga para ver la selección actual.');
             abort_if($expedicion->estado !== 'preparacion', 409, 'Solo puedes cambiar el equipo antes de iniciar la aventura.');
-            $costo = (new AventuraCatalogo())->cotizar($equipo, $this->completados($id))['costo'];
+            $costo = (new AventuraCatalogo())->cotizar($equipo, $this->completados($id), $personaje->nivel)['costo'];
             $diferencia = $costo - $expedicion->inversion;
             if ($diferencia > (int) $usuario->puntos_totales - (int) $usuario->puntos_usados) throw ValidationException::withMessages(['equipo' => 'No tienes suficientes puntos. Retira algún objeto o sigue aprendiendo en CodePlay.']);
             // Account and expedition are changed atomically; never accept prices or balances from the browser.
@@ -138,7 +138,10 @@ class AventuraService
             if ($run->estado === $estado) return; // Repeated request cannot refund twice.
             abort_if($version !== null && $run->version !== $version, 409, 'La aventura cambió en otra pestaña. Recarga antes de reiniciar.');
             abort_if($run->estado !== 'activa', 409);
-            $usuario->puntos_usados = (int) $usuario->puntos_usados - $run->inversion;
+            // A prior interrupted save can leave the expedition investment out
+            // of sync with the account counter. Resetting must never make the
+            // counter negative or block the player from starting over.
+            $usuario->puntos_usados = max(0, (int) $usuario->puntos_usados - (int) $run->inversion);
             $usuario->save();
             $run->estado = $estado;
             if ($this->integrada()) {
@@ -155,7 +158,7 @@ class AventuraService
         }, 3);
     }
 
-    protected function incremento(): int { return random_int(0, 2); }
+    protected function incremento(int $nivel): int { return random_int(0, 2 + intdiv(max(1, $nivel) - 1, 10)); }
 
     public function otorgarExperiencia(int $id, string $evento, int $cantidad): void
     {
@@ -171,7 +174,7 @@ class AventuraService
                 $personaje->nivel++;
                 $aumento = [];
                 foreach (AventuraCatalogo::STATS as $stat) {
-                    $aumento[$stat] = $this->incremento();
+                    $aumento[$stat] = $this->incremento($personaje->nivel);
                     $personaje->$stat += $aumento[$stat];
                 }
                 $personaje->ultimo_aumento = $aumento;

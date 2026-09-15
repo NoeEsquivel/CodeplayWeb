@@ -68,7 +68,7 @@ const server = http.createServer(async (req, res) => {
         await page.locator('[data-item="brasa"] button').click();
         await page.locator('[data-item="alivio"] button').click();
         await page.locator('[data-item="escarcha"] button').click();
-        assert((await page.locator('#shopNotice').textContent()).includes('dos hechizos'));
+        assert((await page.locator('#shopNotice').textContent()).includes('hasta 2 hechizos'));
         await page.click('#cat-pocion');
         await page.getByRole('button', { name: 'Añadir Poción de vida', exact: true }).click();
         await page.getByRole('button', { name: 'Añadir Poción de vida', exact: true }).click();

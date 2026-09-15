@@ -83,7 +83,7 @@ class AventuraEquipamientoTest extends TestCase
         self::assertSame(50, $state['personaje']['mana']);
         self::assertSame(100, $state['personaje']['siguiente']);
         self::assertSame(0, $state['personaje']['experiencia']);
-        self::assertCount(38, $state['catalogo']);
+        self::assertCount(45, $state['catalogo']);
         self::assertSame(100, $this->player->fresh()->puntos_usados);
         self::assertSame(1, AventuraPersonaje::count());
         self::assertSame(1, AventuraExpedicion::count());
@@ -172,7 +172,7 @@ class AventuraEquipamientoTest extends TestCase
     {
         $service = new class extends AventuraService {
             private int $index = 0;
-            protected function incremento(): int { return [0, 1, 2, 0, 1][$this->index++ % 5]; }
+            protected function incremento(int $nivel): int { return [0, 1, 2, 0, 1][$this->index++ % 5]; }
         };
         $service->otorgarExperiencia($this->player->id, 'test:encuentro:1', 260);
         $state = $service->estado($this->player->id);
@@ -188,6 +188,33 @@ class AventuraEquipamientoTest extends TestCase
         $after = $service->guardar($this->player->id, $state['expedicion']['id'], 0, $equipment);
         self::assertSame(54, $after['personaje']['mana']);
         self::assertSame(1, $after['personaje']['base']['inteligencia']);
+    }
+
+    public function test_level_milestones_expand_attribute_growth_and_spell_capacity(): void
+    {
+        self::assertSame(2, AventuraCatalogo::limiteHechizos(10));
+        self::assertSame(3, AventuraCatalogo::limiteHechizos(11));
+        self::assertSame(4, AventuraCatalogo::limiteHechizos(21));
+
+        $equipo = AventuraCatalogo::vacio();
+        $equipo['hechizos'] = ['brasa', 'alivio', 'escarcha'];
+        $catalogo = new AventuraCatalogo();
+        try {
+            $catalogo->cotizar($equipo, [], 10);
+            self::fail('Un personaje de nivel 10 no debe equipar tres hechizos.');
+        } catch (\Illuminate\Validation\ValidationException) {
+            // El tercer espacio se abre exactamente al llegar al nivel 11.
+        }
+        self::assertSame(145, $catalogo->cotizar($equipo, [], 11)['costo']);
+
+        $personaje = AventuraPersonaje::where('usuario_id', $this->player->id)->firstOrFail();
+        $personaje->update(['nivel' => 10, 'experiencia' => 0]);
+        $service = new class extends AventuraService {
+            protected function incremento(int $nivel): int { return $nivel === 11 ? 3 : 0; }
+        };
+        $service->otorgarExperiencia($this->player->id, 'milestone-level-11', 550);
+        self::assertSame(11, $service->estado($this->player->id)['personaje']['nivel']);
+        self::assertSame(['dano' => 4, 'magia' => 4, 'armadura' => 4, 'inteligencia' => 4, 'vitalidad' => 4], $service->estado($this->player->id)['personaje']['base']);
     }
 
     public function test_other_users_cannot_modify_a_preparation_and_no_xp_endpoint_exists(): void
@@ -229,7 +256,7 @@ class AventuraEquipamientoTest extends TestCase
         self::assertFalse(\Illuminate\Support\Facades\Schema::hasColumn('aventura_expediciones', 'equipo'));
         $this->service->estado($this->player->id);
         self::assertSame(5, DB::table('inventario')->count());
-        self::assertSame(38, DB::table('items')->count());
+        self::assertSame(45, DB::table('items')->count());
     }
 
     public function test_active_run_resumes_resources_and_consumed_inventory_without_reset_or_duplicate_start(): void

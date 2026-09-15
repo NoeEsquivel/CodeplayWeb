@@ -8,11 +8,11 @@
     const output = controls.querySelector('output');
     const read = (store, key) => { try { return store.getItem(key); } catch { return null; } };
     const write = (store, key, value) => { try { store.setItem(key, String(value)); } catch {} };
-    // Each visit to the forest starts with music enabled. Volume choices remain
-    // available during the visit, but never make a later forest screen silent.
+    const muteKey = 'codeplay-adventure-map-music-muted';
+    let userMuted = read(localStorage, muteKey) === 'true';
     audio.muted = false;
-    audio.volume = 0.35;
-    let lastVolume = audio.volume;
+    audio.volume = userMuted ? 0 : 0.35;
+    let lastVolume = userMuted ? 0.35 : audio.volume;
     let enteringCombat = false;
     let pending = false;
     let restored = audio.readyState >= HTMLMediaElement.HAVE_METADATA;
@@ -59,10 +59,15 @@
     slider.addEventListener('input', () => {
         audio.volume = Number(slider.value) / 100;
         if (audio.volume > 0) lastVolume = audio.volume;
+        userMuted = audio.volume === 0;
+        write(localStorage, muteKey, userMuted);
         sync();
     });
     toggle.addEventListener('click', () => {
-        audio.volume = audio.volume === 0 ? lastVolume : audio.paused ? audio.volume : 0;
+        if (audio.volume === 0) { audio.volume = lastVolume; userMuted = false; }
+        else if (audio.paused) userMuted = false;
+        else { audio.volume = 0; userMuted = true; }
+        write(localStorage, muteKey, userMuted);
         sync();
     });
     // Capture before the combat handler or the autoplay-unlock listener runs.
@@ -97,9 +102,11 @@
     const output = controls.querySelector('output');
     const read = (store, key) => { try { return store.getItem(key); } catch { return null; } };
     const write = (store, key, value) => { try { store.setItem(key, String(value)); } catch {} };
+    const muteKey = 'codeplay-adventure-map-music-muted';
+    let userMuted = read(localStorage, muteKey) === 'true';
     audio.muted = false;
-    audio.volume = 0.35;
-    let lastVolume = audio.volume;
+    audio.volume = userMuted ? 0 : 0.35;
+    let lastVolume = userMuted ? 0.35 : audio.volume;
     let enteringCombat = false;
     let pending = false;
     let restored = audio.readyState >= HTMLMediaElement.HAVE_METADATA;
@@ -143,10 +150,15 @@
     slider.addEventListener('input', () => {
         audio.volume = Number(slider.value) / 100;
         if (audio.volume > 0) lastVolume = audio.volume;
+        userMuted = audio.volume === 0;
+        write(localStorage, muteKey, userMuted);
         sync();
     });
     toggle.addEventListener('click', () => {
-        audio.volume = audio.volume === 0 ? lastVolume : audio.paused ? audio.volume : 0;
+        if (audio.volume === 0) { audio.volume = lastVolume; userMuted = false; }
+        else if (audio.paused) userMuted = false;
+        else { audio.volume = 0; userMuted = true; }
+        write(localStorage, muteKey, userMuted);
         sync();
     });
     document.addEventListener('click', event => {

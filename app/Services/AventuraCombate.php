@@ -125,7 +125,22 @@ class AventuraCombate
         $tipo = $a['accion']; $dano = 0; $elemento = 'fisico';
         $equipo = $run->equipo;
         $b['defendiendo'] = false;
-        if ($tipo === 'atacar') $dano = 8 + 2 * $stats['total']['dano'] + AventuraMejoras::valor($run,'arma_dano');
+        $hechizo = null;
+        if ($tipo === 'atacar') {
+            $dano = 8 + 2 * $stats['total']['dano'] + AventuraMejoras::valor($run,'arma_dano');
+            $imbuicion = $this->efecto($run, 'imbuicion_ignea');
+            if ($imbuicion) {
+                $dano = (int)ceil($dano * (100 + $imbuicion['valor']) / 100);
+                $elemento = 'fuego';
+                $b['registro'][] = 'Tu arma arde con la imbuición ígnea.';
+            }
+            $ritual = $this->efecto($run, 'ritual_doble');
+            if ($ritual) {
+                $dano *= 2;
+                $this->consumirCarga($run, 'ritual_doble');
+                $b['registro'][] = 'El ritual de doble filo replica tu ataque.';
+            }
+        }
         elseif ($tipo === 'defender') {
             $b['defendiendo'] = true;
             $run->mana_actual = min($stats['mana'],$run->mana_actual+4);
@@ -135,17 +150,44 @@ class AventuraCombate
             abort_unless(in_array($id,$equipo['hechizos'],true),422,'No tienes ese hechizo equipado.');
             $item = (new AventuraCatalogo())->items()[$id];
             abort_if($run->mana_actual < $item['mana'],422,'No tienes suficiente maná. Puedes defenderte o usar una poción.');
+            if ($id === 'supernova') {
+                $costoVida = (int)ceil($stats['vida'] * .15);
+                abort_if($run->vida_actual <= $costoVida, 422, 'No tienes suficiente vida para canalizar Supernova.');
+                $run->vida_actual -= $costoVida;
+                $b['registro'][] = 'Canalizas Supernova y entregas '.$costoVida.' de vida.';
+            }
             $run->mana_actual -= $item['mana'];
             $magia = $stats['total']['magia'];
-            $ataques = ['brasa'=>8,'escarcha'=>16,'relampago'=>28,'meteorito'=>45,'supernova'=>70];
-            $curas = ['alivio'=>15,'renuevo'=>35,'luz-fenix'=>80];
+            $ataques = ['brasa'=>8,'escarcha'=>16,'relampago'=>28,'quebrarrocas'=>34,'meteorito'=>45,'tormenta-cadena'=>58,'terremoto'=>64,'supernova'=>150];
+            $curas = ['alivio'=>15,'renuevo'=>35,'raiz-vital'=>28,'luz-fenix'=>80];
             $maestria = AventuraMejoras::valorHechizo($run,$id);
-            if (isset($ataques[$id])) { $dano = (int)ceil(($ataques[$id]+$magia)*(100+$maestria)/100); $elemento = in_array($id,['brasa','meteorito'],true) ? 'fuego' : 'magia'; }
-            elseif (isset($curas[$id])) $run->vida_actual = min($stats['vida'],$run->vida_actual+(int)ceil(($curas[$id]+$magia)*(100+$maestria)/100));
+            if (isset($ataques[$id])) {
+                $vidaFaltante = $id === 'supernova' ? $stats['vida'] - $run->vida_actual : 0;
+                $bonoVida = $id === 'supernova' ? intdiv($vidaFaltante, 2) : 0;
+                $dano = (int)ceil(($ataques[$id]+$magia+$bonoVida)*(100+$maestria)/100);
+                $elemento = in_array($id,['brasa','meteorito'],true) ? 'fuego' : 'magia';
+                $hechizo = $id;
+                if ($id === 'terremoto') {
+                    $this->aplicarEfecto($run, ['tipo'=>'barrera','nombre'=>'Barrera de piedra','valor'=>(int)ceil((20+$magia)*(100+$maestria)/100)]);
+                }
+            }
+            elseif (isset($curas[$id])) {
+                $run->vida_actual = min($stats['vida'],$run->vida_actual+(int)ceil(($curas[$id]+$magia)*(100+$maestria)/100));
+                if ($id === 'raiz-vital') {
+                    $this->aplicarEfecto($run, ['tipo'=>'raiz_vital','nombre'=>'Raíz vital: regeneración','valor'=>(int)ceil(5*(100+$maestria)/100),'turnos'=>3,'inicia_siguiente_turno'=>true]);
+                }
+            }
+            elseif ($id === 'ritual-doble') {
+                $this->aplicarEfecto($run, ['tipo'=>'ritual_doble','nombre'=>'Ritual de doble filo','cargas'=>2]);
+            }
+            elseif ($id === 'furia-runica') {
+                $this->aplicarEfecto($run, ['tipo'=>'furia_runica','nombre'=>'Furia rúnica: +35% de daño','valor'=>35,'turnos'=>3,'inicia_siguiente_turno'=>true]);
+            }
+            elseif ($id === 'imbuicion-ignea') {
+                $this->aplicarEfecto($run, ['tipo'=>'imbuicion_ignea','nombre'=>'Imbuición ígnea: ataques mágicos','valor'=>25,'turnos'=>3,'inicia_siguiente_turno'=>true]);
+            }
             else {
-                $efectos = array_values(array_filter($run->efectos ?? [],fn ($e) => $e['tipo'] !== 'barrera'));
-                $efectos[] = ['tipo'=>'barrera','nombre'=>'Barrera protectora','valor'=>(int)ceil((($id === 'barrera' ? 18 : 50)+$magia)*(100+$maestria)/100)];
-                $run->efectos = $efectos;
+                $this->aplicarEfecto($run, ['tipo'=>'barrera','nombre'=>'Barrera protectora','valor'=>(int)ceil((($id === 'barrera' ? 18 : 50)+$magia)*(100+$maestria)/100)]);
             }
             $nivel = AventuraMejoras::nivelHechizo($run,$id);
             $b['registro'][] = 'Usas '.$item['nombre'].($nivel > 1 ? ' nivel '.$nivel : '').': '.$item['mana'].' de maná.';
@@ -164,15 +206,18 @@ class AventuraCombate
         } else abort(422,'Acción desconocida.');
         if ($dano > 0) {
             $inspiracion = array_sum(array_map(fn($e)=>$e['tipo'] === 'inspiracion' ? $e['valor'] : 0,$run->efectos ?? []));
-            $dano = (int)ceil($dano*(100+AventuraMejoras::valor($run,'dano')+$inspiracion)/100);
+            $furia = $this->efecto($run, 'furia_runica')['valor'] ?? 0;
+            $dano = (int)ceil($dano*(100+AventuraMejoras::valor($run,'dano')+$inspiracion+$furia)/100);
             if (AventuraMejoras::valor($run,'critico') > 0 && $this->azar(1,100) <= AventuraMejoras::valor($run,'critico')) {
                 $dano = (int)ceil($dano*1.5); $b['registro'][] = '¡Golpe crítico! Tu ojo del depurador encuentra una debilidad.';
             }
             $target = $a['objetivo'] ?? -1;
             abort_unless(isset($b['enemigos'][$target]) && $b['enemigos'][$target]['vida'] > 0,422,'Selecciona un enemigo que siga en pie.');
             $enemy = &$b['enemigos'][$target];
-            $dano = max(1,$dano - ($elemento === 'fisico' ? $enemy['defensa'] : intdiv($enemy['defensa'],2)));
-            if ($enemy['habilidad'] === 'resiste_magia' && $elemento !== 'fisico') $dano=max(1,(int)ceil($dano*.6));
+            $defensa = $enemy['defensa'];
+            if ($hechizo === 'supernova') $defensa = intdiv($defensa,4);
+            $dano = max(1,$dano - ($elemento === 'fisico' ? $defensa : intdiv($defensa,2)));
+            if ($enemy['habilidad'] === 'resiste_magia' && $elemento !== 'fisico' && $hechizo !== 'supernova') $dano=max(1,(int)ceil($dano*.6));
             if ($enemy['habilidad'] === 'resiste_fisico' && $elemento === 'fisico') $dano=max(1,(int)ceil($dano*.65));
             if ($enemy['clave'] === 'archivista' && $elemento === 'fisico' && $b['turno']%2===0) { $dano=max(1,(int)ceil($dano*.75)); $b['registro'][]='El sello del Archivista amortigua tu ataque físico.'; }
             if ($enemy['clave'] === 'titan' && $elemento === 'fuego') $dano=(int)ceil($dano*1.5);
@@ -281,7 +326,7 @@ class AventuraCombate
         unset($enemy);
         foreach($invocaciones as $eco) $b['enemigos'][]=$eco;
         if($invocaciones) $this->escena($run,$b,'invocacion','ambiente',count($b['registro'])-1);
-        $this->cerrarTurno($run,$b);
+        $this->cerrarTurno($run,$b,$stats);
     }
 
     private function envenenar(AventuraExpedicion $run,int $valor): void
@@ -291,15 +336,54 @@ class AventuraCombate
         $run->efectos=$efectos;
     }
 
-    private function cerrarTurno(AventuraExpedicion $run, array &$b): void
+    private function efecto(AventuraExpedicion $run, string $tipo): ?array
+    {
+        foreach ($run->efectos ?? [] as $efecto) if ($efecto['tipo'] === $tipo) return $efecto;
+        return null;
+    }
+
+    private function aplicarEfecto(AventuraExpedicion $run, array $nuevo): void
+    {
+        $efectos = array_values(array_filter($run->efectos ?? [], fn ($efecto) => $efecto['tipo'] !== $nuevo['tipo']));
+        $efectos[] = $nuevo;
+        $run->efectos = $efectos;
+    }
+
+    private function consumirCarga(AventuraExpedicion $run, string $tipo): void
+    {
+        $efectos = $run->efectos ?? [];
+        foreach ($efectos as $indice => &$efecto) {
+            if ($efecto['tipo'] !== $tipo) continue;
+            $efecto['cargas']--;
+            if ($efecto['cargas'] <= 0) unset($efectos[$indice]);
+            break;
+        }
+        unset($efecto);
+        $run->efectos = array_values($efectos);
+    }
+
+    private function cerrarTurno(AventuraExpedicion $run, array &$b, array $stats): void
     {
         $desde=count($b['registro']);
         $efectos = $run->efectos ?? [];
-        foreach ($efectos as $i=>&$e) if ($e['tipo'] === 'veneno') {
-            $valor=$e['valor'] ?? 2;
-            $run->vida_actual = max(0,$run->vida_actual-$valor); $e['turnos']--;
-            $b['registro'][] = 'El veneno te quita '.$valor.' de vida.';
-            if ($e['turnos'] <= 0) unset($efectos[$i]);
+        foreach ($efectos as $i=>&$e) {
+            if (!empty($e['inicia_siguiente_turno'])) {
+                unset($e['inicia_siguiente_turno']);
+                continue;
+            }
+            if ($e['tipo'] === 'veneno') {
+                $valor=$e['valor'] ?? 2;
+                $run->vida_actual = max(0,$run->vida_actual-$valor);
+                $b['registro'][] = 'El veneno te quita '.$valor.' de vida.';
+            } elseif ($e['tipo'] === 'raiz_vital') {
+                $valor=$e['valor'] ?? 5;
+                $run->vida_actual = min($stats['vida'],$run->vida_actual+$valor);
+                $b['registro'][] = 'La raíz vital recupera hasta '.$valor.' de vida.';
+            }
+            if (isset($e['turnos'])) {
+                $e['turnos']--;
+                if ($e['turnos'] <= 0) unset($efectos[$i]);
+            }
         }
         unset($e); $run->efectos = array_values($efectos);
         $b['turno']++; $b['defendiendo'] = false;
@@ -332,7 +416,7 @@ class AventuraCombate
         }
         $b['pregunta'] = null; $b['estado'] = 'jugador';
         $this->escena($run,$b,'respuesta','enemigo-0',$desde);
-        $this->cerrarTurno($run,$b);
+        $this->cerrarTurno($run,$b,$stats);
     }
 
     private function finalizar(AventuraExpedicion $run, array &$b, bool $victoria): void
@@ -352,7 +436,7 @@ class AventuraCombate
             $curacion = (int)ceil($max*AventuraMejoras::valor($run,'regeneracion')/100);
             if ($curacion > 0) { $run->vida_actual = min($max,$run->vida_actual+$curacion); $b['registro'][] = 'Descansas y recuperas hasta '.$curacion.' de vida.'; }
         } else $b['registro'][] = 'Has caído. Conservas el aprendizaje, la experiencia y tu nivel.';
-        $run->efectos = array_values(array_filter($run->efectos ?? [],fn($e)=>!in_array($e['tipo'],['veneno','barrera','inspiracion'],true)));
+        $run->efectos = array_values(array_filter($run->efectos ?? [],fn($e)=>!in_array($e['tipo'],['veneno','barrera','inspiracion','raiz_vital','ritual_doble','furia_runica','imbuicion_ignea'],true)));
         $record = new Combate();
         $record->usuario_id = $run->usuario_id; $record->enemigo_id = $b['enemigos'][0]['id'];
         $record->resultado = $b['estado']; $record->vida_restante_usuario = $run->vida_actual;

@@ -34,7 +34,8 @@ class AventuraInventario
         abort_unless($fila && $fila->posicion === null,409,'El objeto ya está equipado o no está en tu mochila.');
         if ($item['tipo'] === 'hechizo') {
             $equipados = $run->equipo['hechizos'];
-            if (count($equipados) >= 2) {
+            $nivel = (int) DB::table('aventura_personajes')->where('usuario_id', $run->usuario_id)->value('nivel');
+            if (count($equipados) >= AventuraCatalogo::limiteHechizos($nivel)) {
                 abort_unless(in_array($reemplazar,$equipados,true),422,'Elige qué hechizo reemplazar.');
                 $run->inventario()->whereHas('item',fn($q)=>$q->where('clave_catalogo',$reemplazar))->update(['posicion'=>null]);
             }

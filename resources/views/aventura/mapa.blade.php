@@ -98,6 +98,12 @@
     <p data-cinematic-status role="status">Preparando el encuentro con {{ $bossIntroduction['name'] }}…</p>
 </div>
 @endif
+<div id="supernovaCinematic" class="world-entrance supernova-cinematic" hidden role="dialog" aria-modal="true" aria-label="El héroe canaliza Supernova">
+    <video class="world-entrance-video" playsinline preload="metadata" aria-label="El héroe canaliza y libera Supernova">
+        <source src="{{ asset('videos/aventura/supernova-cinematica.mp4') }}?v={{ filemtime(public_path('videos/aventura/supernova-cinematica.mp4')) }}" type="video/mp4">
+    </video>
+    <p data-cinematic-status role="status">Canalizando Supernova…</p>
+</div>
 <script src="{{ asset('js/aventura-arena.js') }}?v={{ filemtime(public_path('js/aventura-arena.js')) }}" defer></script>
 <script src="{{ asset('js/aventura-mapa.js') }}?v={{ filemtime(public_path('js/aventura-mapa.js')) }}" defer></script>
 

@@ -5,6 +5,7 @@
     let busy = false;
     const overlay = document.getElementById('worldEntrance');
     const entranceVideo = overlay?.querySelector('.world-entrance-video');
+    const supernovaCinematic = document.getElementById('supernovaCinematic');
     let errorBox = document.getElementById('worldError');
     function beginWorldEntrance(options = {}) {
         const video = options.video || entranceVideo;
@@ -122,10 +123,30 @@
             root.inert = wasInert;
         }
     }
+    async function playSupernovaCinematic() {
+        if (!supernovaCinematic) throw new Error('No se encontró la cinemática de Supernova. Recarga la página e inténtalo de nuevo.');
+        const wasInert = root.inert;
+        supernovaCinematic.hidden = false;
+        root.inert = true;
+        try {
+            await beginWorldEntrance({
+                video: supernovaCinematic.querySelector('video'),
+                status: supernovaCinematic.querySelector('[data-cinematic-status]'),
+                playingText: '',
+                loadingText: 'Canalizando Supernova…',
+                retryLabel: 'Lanzar Supernova'
+            });
+        } finally {
+            supernovaCinematic.hidden = true;
+            root.inert = wasInert;
+        }
+    }
     async function action(start, camino, combat = null, eventAction = false) {
         if (busy) return;
         busy = true;
         errorBox.hidden = true;
+        const reopenGuildShop = eventAction === 'gremio' && combat?.accion === 'comprar';
+        const guildScrollY = eventAction === 'gremio' ? window.scrollY : null;
         const buttons = root.querySelectorAll('button');
         const disabledBefore = [...buttons].map(button => button.disabled);
         buttons.forEach(button => { button.disabled = true; });
@@ -139,6 +160,9 @@
             }
             if (combat?.accion === 'abrir' && root.querySelector('[data-boss-intro]')) {
                 await playBossIntroduction();
+            }
+            if (combat?.accion === 'hechizo' && combat.objeto === 'supernova') {
+                await playSupernovaCinematic();
             }
             const response = await fetch(eventAction === 'gremio' ? root.dataset.guild : eventAction ? root.dataset.event : combat ? root.dataset.combat : start ? root.dataset.start : root.dataset.path, {
                 method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
@@ -191,6 +215,8 @@
                 root.replaceWith(nextRoot);root=nextRoot;errorBox=root.querySelector('#worldError');busy=false;
                 document.body.dataset.theme=nextDocument.body.dataset.theme;
                 history.replaceState(null,'',destination.href);bind();
+                if (reopenGuildShop) root.querySelector('[data-guild-shop]')?.showModal();
+                if (guildScrollY !== null) requestAnimationFrame(() => window.scrollTo(0, guildScrollY));
                 document.dispatchEvent(new CustomEvent('codeplay:turn-rendered'));
                 return;
             }
@@ -200,6 +226,7 @@
             } else location.assign(destination.href);
         } catch (error) {
             overlay.hidden = true; root.inert = false;
+            document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());
             document.dispatchEvent(new CustomEvent('codeplay:action-error'));
             errorBox.textContent = error.name === 'TimeoutError' ? 'La conexión tardó demasiado. Recarga para comprobar si se guardó la acción antes de intentarlo de nuevo.' : error.message;
             errorBox.hidden = false;
@@ -226,13 +253,56 @@
         if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); }
     }
     document.getElementById('beginJourney')?.addEventListener('click', () => action(true));
+    const guildShop = root.querySelector('[data-guild-shop]');
+    root.querySelector('[data-open-guild-shop]')?.addEventListener('click', () => guildShop?.showModal());
+    guildShop?.querySelectorAll('[data-close-guild-shop]').forEach(button => button.addEventListener('click', () => guildShop.close()));
+    const requirementDialog = root.querySelector('[data-guild-requirement-dialog]');
+    let pendingGuildAction = null;
+    const runGuildAction = (button) => action(false, null, {accion:button.dataset.guildAction,
+        ...(button.dataset.quest ? {encargo:button.dataset.quest} : {}),
+        ...(button.dataset.source ? {origen:Number(button.dataset.source)} : {}),
+        ...(button.dataset.shopItem ? {oferta:button.dataset.shopItem} : {}),
+        ...(button.dataset.answer ? {respuesta:button.dataset.answer} : {})}, 'gremio');
     root.querySelectorAll('[data-guild-action]').forEach(button => button.addEventListener('click', () => {
-        action(false, null, {accion:button.dataset.guildAction,
-            ...(button.dataset.quest ? {encargo:button.dataset.quest} : {}),
-            ...(button.dataset.source ? {origen:Number(button.dataset.source)} : {}),
-            ...(button.dataset.shopItem ? {oferta:button.dataset.shopItem} : {}),
-            ...(button.dataset.answer ? {respuesta:button.dataset.answer} : {})}, 'gremio');
+        if (button.dataset.guildRequires) {
+            pendingGuildAction = button;
+            const resourceName = button.dataset.guildRequiresName || 'la poción requerida';
+            const message = requirementDialog?.querySelector('[data-guild-requirement-text]');
+            if (message) message.textContent = `No tienes ${resourceName} en tu mochila.`;
+            requirementDialog?.showModal();
+            return;
+        }
+        runGuildAction(button);
     }));
+    requirementDialog?.querySelector('[data-close-guild-requirement]')?.addEventListener('click', () => {
+        pendingGuildAction = null;
+        requirementDialog.close();
+    });
+    requirementDialog?.querySelector('[data-confirm-guild-requirement]')?.addEventListener('click', () => {
+        const pendingAction = pendingGuildAction;
+        pendingGuildAction = null;
+        requirementDialog.close();
+        if (pendingAction) runGuildAction(pendingAction);
+    });
+    const guildTimer = root.querySelector('[data-guild-rune-timer]');
+    const guildQuestion = root.querySelector('[data-guild-rune-question]');
+    if (guildTimer && guildQuestion) {
+        let remaining = 30;
+        const tick = () => {
+            if (!document.body.contains(guildQuestion)) return false;
+            guildTimer.textContent = String(remaining);
+            if (remaining <= 5) guildTimer.parentElement.classList.add('is-warning');
+            if (remaining <= 0) {
+                guildQuestion.querySelectorAll('[data-guild-action]').forEach(button => { button.disabled = true; });
+                action(false, null, {accion:'responder', encargo:guildQuestion.dataset.guildQuestion, origen:Number(guildQuestion.dataset.guildSource), tiempo_agotado:true}, 'gremio');
+                return false;
+            }
+            remaining -= 1;
+            return true;
+        };
+        tick();
+        const timerId = setInterval(() => { if (!tick()) clearInterval(timerId); }, 1000);
+    }
     root.querySelectorAll('[data-event-action]').forEach(button => button.addEventListener('click', () => {
         const replacement = document.getElementById('replaceSpell')?.value;
         action(false, null, { accion: button.dataset.eventAction,

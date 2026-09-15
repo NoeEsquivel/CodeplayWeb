@@ -19,7 +19,7 @@ class AventuraCombateTest extends TestCase
         parent::setUp();
         if (!in_array('sqlite',\PDO::getAvailableDrivers())) $this->markTestSkipped('Se requiere pdo_sqlite.');
         config(['database.default'=>'sqlite','database.connections.sqlite.database'=>':memory:']); DB::purge('sqlite');
-        foreach (['2025_09_30_064434_create_usuarios_table.php','2025_09_30_064441_create_documentacion_table.php','2025_09_30_064446_create_tests_table.php','2025_09_30_064451_create_preguntas_test_table.php','2025_10_18_173127_add_test_module_to_tests_table.php','2025_09_30_064527_create_enemigos_table.php','2025_09_30_064532_create_combates_table.php','2025_09_30_064537_create_items_table.php','2025_09_30_064544_create_inventario_table.php','2025_10_21_082507_create_desafio_recompensas_table.php','2026_09_08_120000_create_aventura_preparacion_tables.php','2026_09_08_140000_integrate_aventura_inventory.php','2026_09_09_090000_add_aventura_exploracion.php','2026_09_09_120000_add_aventura_bosque_combate.php'] as $file) (require database_path('migrations/'.$file))->up();
+        foreach (['2025_09_30_064434_create_usuarios_table.php','2025_09_30_064441_create_documentacion_table.php','2025_09_30_064446_create_tests_table.php','2025_09_30_064451_create_preguntas_test_table.php','2025_10_18_173127_add_test_module_to_tests_table.php','2025_09_30_064527_create_enemigos_table.php','2025_09_30_064532_create_combates_table.php','2025_09_30_064537_create_items_table.php','2025_09_30_064544_create_inventario_table.php','2025_10_21_082507_create_desafio_recompensas_table.php','2026_09_08_120000_create_aventura_preparacion_tables.php','2026_09_08_140000_integrate_aventura_inventory.php','2026_09_09_090000_add_aventura_exploracion.php','2026_09_09_120000_add_aventura_bosque_combate.php','2026_09_15_120000_add_aventura_spell_catalog_items.php'] as $file) (require database_path('migrations/'.$file))->up();
         DB::table('documentacion')->insert(['id'=>1,'titulo'=>'Fixture HTML','contenido'=>'Fixture']);
         DB::table('tests')->insert(['id'=>1,'documentacion_id'=>1,'titulo'=>'HTML','modulo'=>'html1']);
         DB::table('preguntas_test')->insert(['test_id'=>1,'pregunta'=>'¿Qué etiqueta crea un párrafo?','opcion_a'=>'<p>','opcion_b'=>'<img>','opcion_c'=>'<a>','opcion_d'=>'<br>','respuesta_correcta'=>'a']);
@@ -233,5 +233,30 @@ class AventuraCombateTest extends TestCase
             self::assertSame(2,$this->battle()['turno']);
             self::assertGreaterThan(0,$this->run->fresh()->vida_actual);
         }
+    }
+
+    public function test_supernova_is_a_costly_legendary_attack_that_bypasses_magic_resistance(): void
+    {
+        $this->run->refresh();
+        $equipment = $this->run->equipo;
+        $equipment['hechizos'] = ['supernova'];
+        $this->run->estado = 'preparacion';
+        $this->run->exploracion = [1 => ['tipo' => 'enemigo', 'estado' => 'pendiente']];
+        $this->run->save();
+        $this->camp->guardar($this->user->id, $this->run->id, $this->run->version, $equipment);
+        $this->camp->iniciar($this->user->id, $this->run->id);
+        $this->action(['accion' => 'abrir']);
+        $this->editBattle(function (&$b) {
+            $b['enemigos'][0]['vida'] = 500;
+            $b['enemigos'][0]['max'] = 500;
+            $b['enemigos'][0]['defensa'] = 40;
+            $b['enemigos'][0]['habilidad'] = 'resiste_magia';
+        });
+        $this->run->refresh()->update(['mana_actual' => 100]);
+
+        $this->action(['accion' => 'hechizo', 'objeto' => 'supernova', 'objetivo' => 0]);
+
+        self::assertSame(25, $this->run->fresh()->mana_actual);
+        self::assertSame(347, $this->battle()['enemigos'][0]['vida']);
     }
 }

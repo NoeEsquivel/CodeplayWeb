@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\AventuraService;
 use App\Services\AventuraExploracion;
 use App\Services\AventuraCombate;
+use App\Services\AventuraCatalogo;
 use App\Models\AventuraExpedicion;
 use Illuminate\Http\Request;
 
@@ -31,7 +32,7 @@ class AventuraController extends Controller
             'expedicion_id'=>['required','integer','min:1'],'version'=>['required','integer','min:0'],
             'accion'=>['required','in:abrir,aceptar,salir,tienda,cerrar_tienda,comprar,responder,cobrar,abandonar,equipar'],
             'encargo'=>['nullable','string','max:40'],'origen'=>['nullable','integer','between:1,50'],
-            'respuesta'=>['nullable','in:a,b,c,d'],'reemplazar'=>['nullable','string','max:80'],'oferta'=>['nullable','string','max:80'],
+            'respuesta'=>['nullable','in:a,b,c,d'],'tiempo_agotado'=>['nullable','boolean'],'reemplazar'=>['nullable','string','max:80'],'oferta'=>['nullable','string','max:80'],
         ]);
         $gremio->actuar((int)session('usuario_id'),(int)$datos['expedicion_id'],(int)$datos['version'],$datos);
         return response()->json(['url'=>route('alumno.aventura.mapa').'#story-title']);
@@ -118,13 +119,15 @@ class AventuraController extends Controller
 
     public function guardar(Request $request, AventuraService $aventura)
     {
+        $nivel = $aventura->estado((int) session('usuario_id'))['personaje']['nivel'];
+        $limiteHechizos = AventuraCatalogo::limiteHechizos($nivel);
         $datos = $request->validate([
             'expedicion_id' => ['required', 'integer', 'min:1'],
             'version' => ['required', 'integer', 'min:0'],
             'equipo' => ['required', 'array:arma,armadura,hechizos,pociones'],
             'equipo.arma' => ['present', 'nullable', 'string', 'max:80'],
             'equipo.armadura' => ['present', 'nullable', 'string', 'max:80'],
-            'equipo.hechizos' => ['present', 'array', 'max:2'],
+            'equipo.hechizos' => ['present', 'array', 'max:'.$limiteHechizos],
             'equipo.hechizos.*' => ['required', 'string', 'max:80', 'distinct:strict'],
             'equipo.pociones' => ['present', 'array', 'max:4'],
             'equipo.pociones.*' => ['required', 'array:id,cantidad'],

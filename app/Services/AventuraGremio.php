@@ -30,6 +30,7 @@ class AventuraGremio
             'runas'=>['nombre'=>'La inscripción del gremio','texto'=>'Resuelve aquí una pregunta del archivo de programación. Tienes un intento.','tipo'=>'acertijo','meta'=>1,'xp'=>20,'oro'=>10],
             'mentor'=>['nombre'=>'Aprender para ayudar','texto'=>'Responde correctamente 2 preguntas de eventos, jefes o encargos después de aceptar.','tipo'=>'respuestas','meta'=>2,'xp'=>40,'oro'=>20,'mejora'=>'experiencia'],
             'botiquin'=>['nombre'=>'Un botiquín para el camino','texto'=>'Entrega 1 Poción de vida de tu mochila. Se consume al cobrar; no cambia el reembolso de tu equipo.','tipo'=>'entrega','meta'=>1,'xp'=>20,'oro'=>15,'entregar'=>'pocion-vida'],
+            'reserva_arcana'=>['nombre'=>'Reserva arcana','texto'=>'Entrega 1 Poción de maná de tu mochila. Se consume al cobrar; no cambia el reembolso de tu equipo.','tipo'=>'entrega','meta'=>1,'xp'=>20,'oro'=>15,'entregar'=>'pocion-mana'],
             'explorador'=>['nombre'=>'Reconocer el terreno','texto'=>'Avanza 2 escenarios desde el lugar donde aceptes el encargo.','tipo'=>'escenario','meta'=>2,'xp'=>25,'oro'=>15,'inspiracion'=>true],
             'guardian'=>['nombre'=>'Silenciar las raíces','texto'=>'Derrota a Silvar, el jefe del escenario 10, después de aceptar.','tipo'=>'jefe','meta'=>1,'xp'=>80,'oro'=>40,'objeto'=>'hierro'],
             'hallazgo'=>['nombre'=>'Suministros perdidos','texto'=>'Encuentra una poción en un tesoro o evento después de aceptar. Las compras y premios del gremio no cuentan.','tipo'=>'hallazgo','meta'=>1,'xp'=>25,'oro'=>15,'objeto'=>'pocion-mana'],
@@ -128,7 +129,10 @@ class AventuraGremio
                 }
                 $h[$run->escenario]=$actual;
             } elseif ($accion === 'comprar') {
-                abort_unless(($actual['tipo'] ?? '')==='gremio' && $actual['estado']==='pendiente' && !empty($actual['gremio']['tienda']['abierta']),409,'La tienda no está abierta.');
+                // The storefront is now a client-side modal. Its offers are
+                // already persisted with this guild encounter, so purchases
+                // must not depend on the old screen-transition flag.
+                abort_unless(($actual['tipo'] ?? '')==='gremio' && $actual['estado']==='pendiente' && !empty($actual['gremio']['tienda']['ofertas']),409,'La tienda no está disponible en este encuentro.');
                 $oferta = $a['oferta'] ?? '';
                 $tienda = &$actual['gremio']['tienda'];
                 abort_unless(in_array($oferta,$tienda['ofertas'] ?? [],true),422,'Esa oferta no pertenece a esta tienda.');
@@ -165,12 +169,13 @@ class AventuraGremio
                     if ($accion==='abandonar') $q['estado']='abandonado';
                     elseif ($accion==='responder') {
                         abort_unless($d['tipo']==='acertijo' && !isset($q['correcta']),409);
-                        abort_unless(in_array($a['respuesta'] ?? '',['a','b','c','d'],true),422);
+                        $agotado = ($a['tiempo_agotado'] ?? false) === true;
+                        abort_unless($agotado || in_array($a['respuesta'] ?? '',['a','b','c','d'],true),422);
                         $pregunta=PreguntaTest::find($q['pregunta']);
                         if (!$pregunta) { $q['estado']='cancelado'; $q['mensaje']='La inscripción desapareció. El encargo se cancela sin penalización.'; }
                         else {
-                            $q['correcta']=$pregunta->esRespuestaCorrecta($a['respuesta']);
-                            $q['mensaje']=$q['correcta']?'¡Correcto! Ya puedes cobrar este encargo.':'La respuesta correcta era: '.$pregunta->{'opcion_'.$pregunta->respuesta_correcta}.'. Sigue aprendiendo; encontrarás nuevos encargos.';
+                            $q['correcta']=!$agotado && $pregunta->esRespuestaCorrecta($a['respuesta']);
+                            $q['mensaje']=$q['correcta']?'¡Correcto! Ya puedes cobrar este encargo.':($agotado ? 'El tiempo se agotó. ' : '').'La respuesta correcta era: '.$pregunta->{'opcion_'.$pregunta->respuesta_correcta}.'. Sigue aprendiendo; encontrarás nuevos encargos.';
                             if (!$q['correcta']) $q['estado']='fallido';
                         }
                     } elseif ($accion==='cobrar') {
