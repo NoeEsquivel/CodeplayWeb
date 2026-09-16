@@ -15,6 +15,9 @@
 </div>
 @endif
 <div class="final-stars" aria-hidden="true"></div>
+<audio id="finalEpilogueMusic" preload="auto">
+    <source src="{{ asset('audio/aventura-epilogo-final.mp3') }}" type="audio/mpeg">
+</audio>
 <main class="epilogue" @if($victoryVideo) hidden inert @endif>
     <p class="overline">CODEPLAY · EL ÚLTIMO HORIZONTE</p>
     <div class="creator" aria-hidden="true"><svg viewBox="0 0 200 180"><circle cx="100" cy="68" r="32"/><path d="M38 180v-25q0-52 62-52t62 52v25Z"/><path class="rune" d="m80 132-15 12 15 12m40-24 15 12-15 12m-13-30-14 42"/></svg></div>
@@ -48,7 +51,7 @@
         @else
         <a class="button" href="{{ route('alumno.aventura') }}">Preparar otra aventura →</a>
         @endif
-        <a class="home-link" href="{{ route('inicio.alumno') }}">Ver mi trofeo en el menú principal</a>
+        <a class="home-link" href="{{ route('inicio.alumno') }}" data-stop-epilogue-music>Ver mi trofeo en el menú principal</a>
     </section>
     <button class="skip" type="button" data-next="logro" hidden>Ir al logro</button>
 </main>

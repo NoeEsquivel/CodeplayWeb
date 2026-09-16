@@ -10,10 +10,10 @@ class AventuraGremio
     public static function tiendaCatalogo(): array
     {
         return [
-            'pocion-vida'=>['nombre'=>'Poción de vida','texto'=>'Recupera 30 de vida durante un combate.','precio'=>18,'tipo'=>'pocion','objeto'=>'pocion-vida'],
-            'pocion-mana'=>['nombre'=>'Poción de maná','texto'=>'Recupera 20 de maná durante un combate.','precio'=>18,'tipo'=>'pocion','objeto'=>'pocion-mana'],
-            'pocion-mayor'=>['nombre'=>'Poción de vida mayor','texto'=>'Recupera 75 de vida durante un combate.','precio'=>42,'tipo'=>'pocion','objeto'=>'pocion-mayor'],
-            'elixir'=>['nombre'=>'Elixir del viajero','texto'=>'Recupera 40 de vida y 25 de maná.','precio'=>55,'tipo'=>'pocion','objeto'=>'elixir'],
+            'pocion-vida'=>['nombre'=>'Poción de vida','texto'=>'Recupera 20% de tu vida máxima durante un combate.','precio'=>18,'tipo'=>'pocion','objeto'=>'pocion-vida'],
+            'pocion-mana'=>['nombre'=>'Poción de maná','texto'=>'Recupera 25% de tu maná máximo durante un combate.','precio'=>18,'tipo'=>'pocion','objeto'=>'pocion-mana'],
+            'pocion-mayor'=>['nombre'=>'Poción de vida mayor','texto'=>'Recupera 50% de tu vida máxima durante un combate.','precio'=>42,'tipo'=>'pocion','objeto'=>'pocion-mayor'],
+            'elixir'=>['nombre'=>'Elixir del viajero','texto'=>'Recupera 40% de vida y 30% de maná durante un combate.','precio'=>55,'tipo'=>'pocion','objeto'=>'elixir'],
             'arma_dano'=>['nombre'=>'Filo calibrado','texto'=>'Tu arma gana +5 de daño base durante esta aventura.','precio'=>65,'tipo'=>'equipo','mejora'=>'arma_dano'],
             'armadura_refuerzo'=>['nombre'=>'Placas reforzadas','texto'=>'Tu armadura absorbe +2 de daño directo por golpe durante esta aventura.','precio'=>55,'tipo'=>'equipo','mejora'=>'armadura_refuerzo'],
             'dano'=>['nombre'=>'Manual ofensivo','texto'=>'Daño de ataques y hechizos: +10% durante esta aventura.','precio'=>75,'tipo'=>'mejora','mejora'=>'dano'],

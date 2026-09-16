@@ -143,8 +143,9 @@ class AventuraCombate
         }
         elseif ($tipo === 'defender') {
             $b['defendiendo'] = true;
-            $run->mana_actual = min($stats['mana'],$run->mana_actual+4);
-            $b['registro'][] = 'Te defiendes: mitad de daño directo este turno y recuperas hasta 4 de maná.';
+            $manaRecuperado = 4 * (1 + intdiv(max(1, (int) $stats['nivel']) - 1, 10));
+            $run->mana_actual = min($stats['mana'],$run->mana_actual+$manaRecuperado);
+            $b['registro'][] = 'Te defiendes: mitad de daño directo este turno y recuperas hasta '.$manaRecuperado.' de maná.';
         } elseif ($tipo === 'hechizo') {
             $id = $a['objeto'] ?? '';
             abort_unless(in_array($id,$equipo['hechizos'],true),422,'No tienes ese hechizo equipado.');
@@ -193,11 +194,13 @@ class AventuraCombate
             $b['registro'][] = 'Usas '.$item['nombre'].($nivel > 1 ? ' nivel '.$nivel : '').': '.$item['mana'].' de maná.';
         } elseif ($tipo === 'pocion') {
             $id = $a['objeto'] ?? '';
-            $valores = ['pocion-vida'=>[30,0],'pocion-mana'=>[0,20],'pocion-mayor'=>[75,0],'elixir'=>[40,25]];
-            abort_unless(isset($valores[$id]),422,'Poción desconocida.');
+            $porcentajes = ['pocion-vida'=>[.20,0],'pocion-mana'=>[0,.25],'pocion-mayor'=>[.50,0],'elixir'=>[.40,.30]];
+            abort_unless(isset($porcentajes[$id]),422,'Poción desconocida.');
             $fila = $run->inventario()->whereHas('item',fn($q)=>$q->where('clave_catalogo',$id))->where('cantidad','>',0)->first();
             abort_unless($fila,422,'Ya no tienes esa poción.');
-            [$vida,$mana] = $valores[$id];
+            [$porcentajeVida,$porcentajeMana] = $porcentajes[$id];
+            $vida = (int)ceil($stats['vida'] * $porcentajeVida);
+            $mana = (int)ceil($stats['mana'] * $porcentajeMana);
             abort_if(($vida === 0 || $run->vida_actual >= $stats['vida']) && ($mana === 0 || $run->mana_actual >= $stats['mana']),422,'No necesitas esta poción todavía.');
             $fila->cantidad--; $fila->save();
             $run->vida_actual = min($stats['vida'],$run->vida_actual+$vida);

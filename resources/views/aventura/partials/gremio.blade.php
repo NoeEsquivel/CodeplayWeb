@@ -26,6 +26,7 @@
 <dialog class="guild-store-dialog" data-guild-shop aria-labelledby="guildStoreTitle">
     <div class="guild-store-header"><div><p class="eyebrow">GREMIO DE AVENTUREROS · PROVISIONES</p><h2 id="guildStoreTitle">La tienda del viajero</h2><p>Tu oro disponible: <strong>{{ $run['oro'] }}</strong></p></div><button type="button" class="dialog-close" data-close-guild-shop aria-label="Volver al gremio">×</button></div>
     <p class="guild-store-intro">Estas cuatro ofertas fueron reservadas para este encuentro. Solo cambiarán cuando encuentres otro gremio en un escenario distinto.</p>
+    <p class="guild-store-error" data-guild-shop-error role="alert" aria-live="assertive" tabindex="-1" hidden></p>
     <div class="guild-store-grid">
     @foreach($tienda['ofertas'] ?? [] as $clave)
         @php $articulo=$articulos[$clave]; $comprado=$tienda['compras'][$clave] ?? null; @endphp

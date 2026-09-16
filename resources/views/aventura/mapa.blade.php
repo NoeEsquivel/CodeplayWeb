@@ -24,11 +24,30 @@
     $activa = $run['estado'] === 'activa'; $actual = $region['id'] === $mundo['actual']['id'];
     $combateEscena = $activa && $actual && !empty($mundo['evento']['combate']);
     $eventoEscena = $activa && $actual && $mundo['evento'] && !$combateEscena;
+    $mapaBosque3d = $activa && $actual && (int) $region['id'] === 1;
+    $mapaRuinas3d = $activa && $actual && (int) $region['id'] === 2;
+    $mapaPantano3d = $activa && $actual && (int) $region['id'] === 3;
+    $mapaHielo3d = $activa && $actual && (int) $region['id'] === 4;
+    $mapaDragon3d = $activa && $actual && (int) $region['id'] === 5;
+    $mapaTerritorio3d = $mapaBosque3d || $mapaRuinas3d || $mapaPantano3d || $mapaHielo3d || $mapaDragon3d;
+    $forestTieneDecision = $mapaTerritorio3d && empty($mundo['evento']);
+    $caminosActuales = $mapaBosque3d
+        ? \App\Services\AventuraMundo::caminosBosque((int) $run['escenario'])
+        : ($mapaRuinas3d
+            ? \App\Services\AventuraMundo::caminosRuinas((int) $run['escenario'])
+            : ($mapaPantano3d ? \App\Services\AventuraMundo::caminosPantano((int) $run['escenario']) : ($mapaHielo3d ? \App\Services\AventuraMundo::caminosHielo((int) $run['escenario']) : ($mapaDragon3d ? \App\Services\AventuraMundo::caminosDragon((int) $run['escenario']) : $region['caminos']))));
     $musicaBatallaBosque = (int)$region['id'] === 1 && $combateEscena && (($mundo['evento']['combate']['estado'] ?? '') !== 'victoria');
+    $musicaBatallaRuinas = (int)$region['id'] === 2 && $combateEscena && (($mundo['evento']['combate']['estado'] ?? '') !== 'victoria');
+    $musicaBatallaPantano = (int)$region['id'] === 3 && $combateEscena && (($mundo['evento']['combate']['estado'] ?? '') !== 'victoria');
+    $musicaBatallaHielo = (int)$region['id'] === 4 && $combateEscena && (($mundo['evento']['combate']['estado'] ?? '') !== 'victoria');
+    $musicaBatallaDragon = (int)$region['id'] === 5 && $combateEscena && (($mundo['evento']['combate']['estado'] ?? '') !== 'victoria');
     $musicaRuinas = (int)$region['id'] === 2 && !$combateEscena;
+    $musicaPantano = (int)$region['id'] === 3 && !$combateEscena;
+    $musicaHielo = (int)$region['id'] === 4 && !$combateEscena;
+    $musicaDragon = (int)$region['id'] === 5 && !$combateEscena;
 @endphp
 <header class="topbar"><a class="back" href="{{ route('alumno.aventura') }}">← Campamento</a><a class="brand" href="{{ route('inicio.alumno') }}">CODE<span>PLAY</span><small>EL ATLAS</small></a><span class="player-name">{{ session('usuario_nombre', 'Explorador') }}</span></header>
-<main class="world-shell {{ $combateEscena ? 'combat-stage' : ($eventoEscena ? 'event-stage' : '') }}" id="world" data-forest-music="{{ (int)$region['id'] === 1 && !$combateEscena ? 'true' : 'false' }}" data-ruins-music="{{ $musicaRuinas ? 'true' : 'false' }}" data-forest-battle-music="{{ $musicaBatallaBosque ? 'true' : 'false' }}" data-id="{{ $run['id'] }}" data-version="{{ $run['version'] }}" data-start="{{ route('alumno.aventura.iniciar') }}" data-path="{{ route('alumno.aventura.camino') }}" data-combat="{{ route('alumno.aventura.combate') }}" data-event="{{ route('alumno.aventura.evento') }}" data-guild="{{ route('alumno.aventura.gremio') }}">
+<main class="world-shell {{ $combateEscena ? 'combat-stage' : ($eventoEscena ? 'event-stage' : '') }}" id="world" data-forest-music="{{ (int)$region['id'] === 1 && !$combateEscena ? 'true' : 'false' }}" data-ruins-music="{{ $musicaRuinas ? 'true' : 'false' }}" data-swamp-music="{{ $musicaPantano ? 'true' : 'false' }}" data-ice-music="{{ $musicaHielo ? 'true' : 'false' }}" data-dragon-music="{{ $musicaDragon ? 'true' : 'false' }}" data-forest-battle-music="{{ $musicaBatallaBosque ? 'true' : 'false' }}" data-ruins-battle-music="{{ $musicaBatallaRuinas ? 'true' : 'false' }}" data-swamp-battle-music="{{ $musicaBatallaPantano ? 'true' : 'false' }}" data-ice-battle-music="{{ $musicaBatallaHielo ? 'true' : 'false' }}" data-dragon-battle-music="{{ $musicaBatallaDragon ? 'true' : 'false' }}" data-id="{{ $run['id'] }}" data-version="{{ $run['version'] }}" data-start="{{ route('alumno.aventura.iniciar') }}" data-path="{{ route('alumno.aventura.camino') }}" data-combat="{{ route('alumno.aventura.combate') }}" data-event="{{ route('alumno.aventura.evento') }}" data-guild="{{ route('alumno.aventura.gremio') }}">
     @if(!$combateEscena)
     <div @if($eventoEscena) inert aria-hidden="true" @endif>
     <div class="world-heading"><div><p class="eyebrow">CINCO TERRITORIOS · UNA HISTORIA POR ESCRIBIR</p><h1>El conocimiento abre caminos.</h1><p>Observa. Elige. Descubre qué te espera al otro lado.</p></div><div class="journey-number"><span>ESCENARIO</span><strong>{{ $run['escenario'] }}<small> / 50</small></strong><span>{{ $activa ? 'EXPEDICIÓN EN CURSO' : 'LISTO PARA COMENZAR' }}</span></div></div>
@@ -44,7 +63,7 @@
         @if(!$combateEscena)
         <section class="atlas" aria-labelledby="region-title" @if($eventoEscena) inert aria-hidden="true" @endif>
             <div class="atlas-title"><p class="eyebrow">REGIÓN {{ $region['id'] }} · {{ $region['subtitulo'] }}</p><h2 id="region-title">{{ $region['nombre'] }}</h2><span>Escenarios {{ $region['desde'] }}–{{ $region['hasta'] }}</span></div>
-            @include('aventura.partials.territorio')
+            @if($mapaBosque3d) @include('aventura.partials.territorio-bosque-3d') @elseif($mapaRuinas3d) @include('aventura.partials.territorio-ruinas-3d') @elseif($mapaPantano3d) @include('aventura.partials.territorio-pantano-3d') @elseif($mapaHielo3d) @include('aventura.partials.territorio-hielo-3d') @elseif($mapaDragon3d) @include('aventura.partials.territorio-dragon-3d') @else @include('aventura.partials.territorio') @endif
             <div class="atlas-legend"><span><i class="legend-current"></i>Tu posición</span><span>◇ Camino por descubrir</span><span>♜ Guardián obligatorio</span></div>
             <p class="atlas-caption">Los senderos guardan sus secretos. Sus señales orientan; su destino se descubre al elegir.</p>
         </section>
@@ -78,8 +97,12 @@
             @elseif($mundo['evento'])
                 <p class="eyebrow">ESCENARIO {{ $run['escenario'] }} · ENCUENTRO GUARDADO</p><h2 id="story-title">{{ $mundo['evento']['titulo'] }}</h2><p>{{ $mundo['evento']['texto'] }}</p><div class="pending-event"><span>◇</span><p><b>Tu siguiente capítulo está a salvo.</b>La resolución de este encuentro estará disponible próximamente. Puedes salir y volver: conservarás el mismo encuentro, equipo y recursos.</p></div>
             @else
-                <p class="eyebrow">ESCENARIO {{ $run['escenario'] }} · ELIGE TU RUMBO</p><h2 id="story-title">El camino se divide frente a ti.</h2><p>{{ $region['relato'] }}</p>
-                <div class="path-choices">@foreach($region['caminos'] as $indice => $camino)<button type="button" data-path-choice="{{ $indice }}"><span class="path-index">0{{ $indice + 1 }} <i>↗</i></span><b>{{ $camino[0] }}</b><small>{{ $camino[1] }}</small></button>@endforeach</div>
+                @if($mapaTerritorio3d)
+                    <p class="eyebrow">ESCENARIO {{ $run['escenario'] }} · PRÓXIMO DESTINO</p><h2 id="story-title">{{ $mapaBosque3d ? ($run['escenario'] === 10 ? 'El claro de Silvar te espera.' : 'El sendero se abre ante ti.') : ($mapaRuinas3d ? ($run['escenario'] === 20 ? 'El santuario de Aster te espera.' : 'Las ruinas señalan tu siguiente paso.') : ($mapaPantano3d ? ($run['escenario'] === 30 ? 'El santuario de Náyade te espera.' : 'El pantano señala tu siguiente paso.') : ($mapaHielo3d ? ($run['escenario'] === 40 ? 'El trono de Bóreas te espera.' : 'Las montañas señalan tu siguiente paso.') : ($run['escenario'] === 50 ? 'La guarida de Ignar te espera.' : 'Las tierras del Dragón señalan tu siguiente paso.')))) }}</h2><p>{{ $mapaBosque3d ? ($run['escenario'] === 10 ? 'El bosque guarda silencio. Solo queda seguir el resplandor de las raíces hasta el Guardián de la región.' : 'El siguiente punto del mapa parpadea. Púlsalo para acercarte al bosque y elegir cómo continuar.') : ($mapaRuinas3d ? ($run['escenario'] === 20 ? 'Las antorchas del santuario arden a lo lejos. Solo queda enfrentar al Guardián de los Archivos.' : 'El siguiente punto del mapa parpadea. Púlsalo para acercarte a las ruinas y elegir cómo continuar.') : ($mapaPantano3d ? ($run['escenario'] === 30 ? 'Las aguas se aquietan frente al santuario. Solo queda enfrentar a la Guardiana de las Aguas Sin Nombre.' : 'El siguiente punto del mapa parpadea. Púlsalo para acercarte al pantano y elegir cómo continuar.') : ($mapaHielo3d ? ($run['escenario'] === 40 ? 'La tormenta se abre frente al trono. Solo queda enfrentar al Guardián de la Tormenta.' : 'El siguiente punto del mapa parpadea. Púlsalo para acercarte a las montañas y elegir cómo continuar.') : ($run['escenario'] === 50 ? 'La boca de la montaña-calavera arde frente a ti. Solo queda enfrentar a Ignar, el Dragón.' : 'El siguiente punto del mapa parpadea. Púlsalo para acercarte a las tierras del Dragón y elegir cómo continuar.')))) }}</p>
+                @else
+                    <p class="eyebrow">ESCENARIO {{ $run['escenario'] }} · ELIGE TU RUMBO</p><h2 id="story-title">El camino se divide frente a ti.</h2><p>{{ $region['relato'] }}</p>
+                    <div class="path-choices">@foreach($caminosActuales as $indice => $camino)<button type="button" data-path-choice="{{ $indice }}"><span class="path-index">0{{ $indice + 1 }} <i>↗</i></span><b>{{ $camino[0] }}</b><small>{{ $camino[1] }}</small></button>@endforeach</div>
+                @endif
             @endif
             @if($activa && $actual && (!$combateEscena || ($mundo['evento']['combate']['estado'] ?? '') === 'victoria'))
                 @include('aventura.partials.diario')
@@ -87,6 +110,15 @@
             <p id="worldError" role="alert" hidden></p>
         </section>
     </div>
+@if($forestTieneDecision)
+<dialog id="forestPathDialog" class="forest-path-dialog" aria-labelledby="forest-path-title">
+    <form method="dialog" class="forest-path-close"><button type="submit" aria-label="Volver al mapa" data-close-forest-paths>×</button></form>
+    <p class="eyebrow">ESCENARIO {{ $run['escenario'] }} · ELIGE TU RUMBO</p>
+    <h2 id="forest-path-title">{{ $mapaBosque3d ? ($run['escenario'] === 1 ? 'El campamento te recibe.' : ($run['escenario'] === 10 ? 'Solo queda una senda.' : 'El bosque revela tres caminos.')) : ($mapaRuinas3d ? ($run['escenario'] === 11 ? 'El umbral de los archivos se abre.' : ($run['escenario'] === 20 ? 'Solo queda una ruta hacia Aster.' : 'Las ruinas revelan tres caminos.')) : ($mapaPantano3d ? ($run['escenario'] === 21 ? 'Las marismas se abren.' : ($run['escenario'] === 30 ? 'Solo queda una ruta hacia Náyade.' : 'El pantano revela tres caminos.')) : ($mapaHielo3d ? ($run['escenario'] === 31 ? 'El paso de la corona se abre.' : ($run['escenario'] === 40 ? 'Solo queda una ruta hacia Bóreas.' : 'Las montañas revelan tres caminos.')) : ($run['escenario'] === 41 ? 'El umbral de ceniza se abre.' : ($run['escenario'] === 50 ? 'Solo queda una ruta hacia Ignar.' : 'Las tierras del Dragón revelan tres caminos.'))))) }}</h2>
+    <p>{{ $mapaBosque3d ? ($run['escenario'] === 1 ? 'La aventura comienza junto al fuego. Desde aquí partirás hacia el Bosque Inicial.' : ($run['escenario'] === 10 ? 'Las raíces se apartan y el claro del guardián queda abierto ante ti.' : 'Observa el terreno antes de decidir. Cada camino guarda su propio encuentro.')) : ($mapaRuinas3d ? ($run['escenario'] === 11 ? 'Tras las dunas, una sola escalera conduce a la ciudad enterrada.' : ($run['escenario'] === 20 ? 'Las llamas rituales iluminan el último paso antes del Guardián de los Archivos.' : 'Observa las ruinas antes de decidir. Cada ruta conduce a un descubrimiento diferente.')) : ($mapaPantano3d ? ($run['escenario'] === 21 ? 'La primera pasarela atraviesa las aguas quietas. Al cruzarla comenzará la exploración del Pantano Maldito.' : ($run['escenario'] === 30 ? 'Las luces del agua rodean el último paso antes de la Guardiana de las Aguas Sin Nombre.' : 'Observa la ciénaga antes de decidir. Cada sendero guarda un peligro distinto.')) : ($mapaHielo3d ? ($run['escenario'] === 31 ? 'Una única senda abandona la aldea y conduce al corazón de las Montañas Heladas.' : ($run['escenario'] === 40 ? 'Las luces de la aurora rodean el último paso antes del Guardián de la Tormenta.' : 'Observa la montaña antes de decidir. Cada senda guarda un desafío distinto.')) : ($run['escenario'] === 41 ? 'Una única senda atraviesa las primeras brasas y conduce al Umbral de Ceniza.' : ($run['escenario'] === 50 ? 'La montaña-calavera abre su boca de fuego. El último paso conduce al Dragón.' : 'Observa el terreno antes de decidir. Cada ruta atraviesa una amenaza distinta.'))))) }}</p>
+    <div class="path-choices {{ count($caminosActuales) === 1 ? 'one-path' : '' }}">@foreach($caminosActuales as $indice => $camino)<button type="button" data-path-choice="{{ $indice }}"><span class="path-index">0{{ $indice + 1 }} <i>↗</i></span><b>{{ $camino[0] }}</b><small>{{ $camino[1] }}</small></button>@endforeach</div>
+</dialog>
+@endif
     <footer class="camp-footer">No necesitas conocer todas las respuestas para comenzar a explorar.<span>CODEPLAY / APRENDER JUGANDO</span></footer>
 </main>
 <div id="worldEntrance" class="world-entrance" hidden role="status" aria-live="polite"><video class="world-entrance-video" playsinline preload="auto" aria-hidden="true"><source src="{{ asset('videos/aventura/inicio-codeplay2.mp4') }}?v={{ filemtime(public_path('videos/aventura/inicio-codeplay2.mp4')) }}" type="video/mp4"></video><p class="eyebrow">TU HISTORIA ESTÁ POR COMENZAR</p><h2>El bosque reconoce tus pasos.</h2><p id="entranceStatus">Atravesando el portal…</p></div>
@@ -121,7 +153,32 @@
     <output for="ruinsMusicVolume">35%</output>
 </div>
 <audio id="ruinsMusic" loop preload="metadata" src="{{ asset('audio/aventura/ruinas-antiguas.mp3') }}"></audio>
+<div class="forest-music-controls" id="swampMusicControls" hidden role="group" aria-label="Música del Pantano Maldito">
+    <button type="button" aria-label="Reproducir música del Pantano Maldito">▶ Música</button>
+    <label for="swampMusicVolume">Volumen</label>
+    <input id="swampMusicVolume" type="range" min="0" max="100" value="35" aria-label="Volumen de la música del Pantano Maldito">
+    <output for="swampMusicVolume">35%</output>
+</div>
+<audio id="swampMusic" loop preload="metadata" src="{{ asset('audio/aventura/pantano-maldito.mp3') }}"></audio>
+<div class="forest-music-controls" id="iceMusicControls" hidden role="group" aria-label="Música de Montañas Heladas">
+    <button type="button" aria-label="Reproducir música de Montañas Heladas">▶ Música</button>
+    <label for="iceMusicVolume">Volumen</label>
+    <input id="iceMusicVolume" type="range" min="0" max="100" value="35" aria-label="Volumen de la música de Montañas Heladas">
+    <output for="iceMusicVolume">35%</output>
+</div>
+<audio id="iceMusic" loop preload="metadata" src="{{ asset('audio/aventura/montanas-heladas.mp3') }}"></audio>
+<div class="forest-music-controls" id="dragonMusicControls" hidden role="group" aria-label="Música de Tierras del Dragón">
+    <button type="button" aria-label="Reproducir música de Tierras del Dragón">▶ Música</button>
+    <label for="dragonMusicVolume">Volumen</label>
+    <input id="dragonMusicVolume" type="range" min="0" max="100" value="35" aria-label="Volumen de la música de Tierras del Dragón">
+    <output for="dragonMusicVolume">35%</output>
+</div>
+<audio id="dragonMusic" loop preload="metadata" src="{{ asset('audio/aventura/tierras-dragon.mp3') }}"></audio>
 <audio id="forestBattleMusic" loop preload="metadata" src="{{ asset('audio/aventura/batalla-bosque.mp3') }}"></audio>
+<audio id="ruinsBattleMusic" loop preload="metadata" src="{{ asset('audio/aventura/batalla-ruinas.mp3') }}"></audio>
+<audio id="swampBattleMusic" loop preload="metadata" src="{{ asset('audio/aventura/batalla-pantano.mp3') }}"></audio>
+<audio id="iceBattleMusic" loop preload="metadata" src="{{ asset('audio/aventura/batalla-montanas-heladas.mp3') }}"></audio>
+<audio id="dragonBattleMusic" loop preload="metadata" src="{{ asset('audio/aventura/batalla-tierras-dragon.mp3') }}"></audio>
 <script src="{{ asset('js/aventura-musica.js') }}?v={{ filemtime(public_path('js/aventura-musica.js')) }}" defer></script>
 </body>
 </html>

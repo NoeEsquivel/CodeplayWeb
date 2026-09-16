@@ -13,6 +13,7 @@
         scene.hidden = true;
         epilogue.hidden = false;
         epilogue.inert = false;
+        document.dispatchEvent(new CustomEvent('codeplay:epilogue-revealed'));
         document.getElementById('encuentro-title')?.focus();
     };
     try { if (sessionStorage.getItem(key) === 'complete') { reveal(); return; } } catch (_) {}

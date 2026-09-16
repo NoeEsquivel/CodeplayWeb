@@ -54,10 +54,10 @@ class AventuraCatalogo
         $add('terremoto', 'Terremoto', 'hechizo', 'ultra_raro', 600, [], 'Magia de tierra: 64 + tu magia de daño y una barrera de 20.', 'axe', null, 32);
         $add('supernova', 'Supernova', 'hechizo', 'legendario', 1500, [], 'Explosión cósmica: 150 + tu magia y 50% de tu vida faltante. Cuesta 75 de maná y 15% de tu vida máxima. Ignora 75% de la defensa y resistencia mágica.', 'bolt', null, 75);
         $add('luz-fenix', 'Luz del fénix', 'hechizo', 'legendario', 850, [], 'Recupera 80 + tu magia de vida; no revive al personaje.', 'heal', null, 32);
-        $add('pocion-vida', 'Poción de vida', 'pocion', 'normal', 15, [], 'Recupera 30 de vida sin superar el máximo.', 'potion');
-        $add('pocion-mana', 'Poción de maná', 'pocion', 'normal', 15, [], 'Recupera 20 de maná sin superar el máximo.', 'mana');
-        $add('pocion-mayor', 'Poción de vida mayor', 'pocion', 'raro', 35, [], 'Recupera 75 de vida sin superar el máximo.', 'potion');
-        $add('elixir', 'Elixir del viajero', 'pocion', 'raro', 45, [], 'Recupera 40 de vida y 25 de maná.', 'elixir');
+        $add('pocion-vida', 'Poción de vida', 'pocion', 'normal', 15, [], 'Recupera 20% de vida máxima sin superar el máximo.', 'potion');
+        $add('pocion-mana', 'Poción de maná', 'pocion', 'normal', 15, [], 'Recupera 25% de maná máximo sin superar el máximo.', 'mana');
+        $add('pocion-mayor', 'Poción de vida mayor', 'pocion', 'raro', 35, [], 'Recupera 50% de vida máxima sin superar el máximo.', 'potion');
+        $add('elixir', 'Elixir del viajero', 'pocion', 'raro', 45, [], 'Recupera 40% de vida máxima y 30% de maná máximo.', 'elixir');
 
         $add('coraza-caja', 'Coraza del modelo de caja', 'armadura', 'raro', 80, ['armadura' => 5, 'vitalidad' => 2], 'Sus capas de protección celebran tu dominio de CSS.', 'armor', 5);
         $add('filo-validacion', 'Filo de la validación', 'arma', 'raro', 80, ['dano' => 5, 'inteligencia' => 2], 'Un filo preciso para quien comprueba antes de actuar.', 'sword', 10);

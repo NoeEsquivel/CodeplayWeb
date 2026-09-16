@@ -7,6 +7,58 @@
     const entranceVideo = overlay?.querySelector('.world-entrance-video');
     const supernovaCinematic = document.getElementById('supernovaCinematic');
     let errorBox = document.getElementById('worldError');
+    const combatFocusKey = 'codeplay:focus-combat';
+    const mapFocusKey = 'codeplay:focus-map';
+    function prepareCombatView(destination) {
+        try { sessionStorage.setItem(combatFocusKey, 'pending'); } catch (_) {}
+    }
+    function revealCombatView() {
+        const scroll = () => {
+            const anchor = root?.querySelector('.battle-status, [data-theatre]');
+            if (!anchor) return;
+            const top = Math.max(0, window.scrollY + anchor.getBoundingClientRect().top - 12);
+            window.scrollTo({ top, behavior: 'auto' });
+        };
+        // The browser may restore the old scroll position after rendering a
+        // new page. Repeat briefly so the combat header reliably wins.
+        requestAnimationFrame(() => requestAnimationFrame(scroll));
+        window.setTimeout(scroll, 90);
+        window.setTimeout(scroll, 240);
+    }
+    function preserveViewport(top) {
+        const restore = () => window.scrollTo({ top, behavior: 'auto' });
+        requestAnimationFrame(() => requestAnimationFrame(restore));
+        window.setTimeout(restore, 90);
+        window.setTimeout(restore, 240);
+        window.setTimeout(restore, 480);
+        window.setTimeout(restore, 800);
+    }
+    function preserveScrollContainer(getContainer, top) {
+        if (top === null || top === undefined) return;
+        const restore = () => {
+            const container = getContainer();
+            if (container) container.scrollTop = top;
+        };
+        requestAnimationFrame(() => requestAnimationFrame(restore));
+        window.setTimeout(restore, 90);
+        window.setTimeout(restore, 240);
+        window.setTimeout(restore, 480);
+    }
+    function prepareMapView() {
+        try { sessionStorage.setItem(mapFocusKey, 'pending'); } catch (_) {}
+    }
+    function revealMapView() {
+        const center = () => {
+            const map = root?.querySelector('.forest-3d-map, .territory-map');
+            if (!map) return;
+            const bounds = map.getBoundingClientRect();
+            const top = Math.max(0, window.scrollY + bounds.top + (bounds.height / 2) - (window.innerHeight / 2));
+            window.scrollTo({ top, behavior: 'auto' });
+        };
+        requestAnimationFrame(() => requestAnimationFrame(center));
+        window.setTimeout(center, 90);
+        window.setTimeout(center, 240);
+    }
     function beginWorldEntrance(options = {}) {
         const video = options.video || entranceVideo;
         const retryLabel = options.retryLabel || 'Abrir los caminos';
@@ -146,7 +198,18 @@
         busy = true;
         errorBox.hidden = true;
         const reopenGuildShop = eventAction === 'gremio' && combat?.accion === 'comprar';
+        const guildShopError = reopenGuildShop ? root.querySelector('[data-guild-shop-error]') : null;
+        if (guildShopError) {
+            guildShopError.hidden = true;
+            guildShopError.textContent = '';
+        }
         const guildScrollY = eventAction === 'gremio' ? window.scrollY : null;
+        const guildModalScrollTop = eventAction === 'gremio'
+            ? root.querySelector('.event-stage .story')?.scrollTop
+            : null;
+        // Removing the focused guild button can make some browsers jump to the
+        // document start while the refreshed board replaces the current one.
+        if (eventAction === 'gremio') document.activeElement?.blur?.();
         const buttons = root.querySelectorAll('button');
         const disabledBefore = [...buttons].map(button => button.disabled);
         buttons.forEach(button => { button.disabled = true; });
@@ -180,6 +243,7 @@
             saved = true;
             const destination = new URL(data.url, location.origin);
             if (destination.origin !== location.origin) throw new Error('No se pudo abrir el mapa.');
+            if (combat?.accion === 'continuar') prepareMapView();
             // The saved final blow is presented by the movie before the epilogue.
             if (data.cinematica_final) { location.assign(destination.href); return; }
             if(combat && !eventAction && data.secuencia && root.querySelector('[data-theatre]')) {
@@ -212,32 +276,70 @@
                 const nextRoot = nextDocument.getElementById('world');
                 if(!nextRoot) throw new Error('La decisión se guardó. Recarga para continuar.');
                 syncBossIntroduction(nextDocument);
+                // The guild's timed question is a viewport modal. Keep an old
+                // instance from surviving outside #world before it is replaced.
+                document.querySelector('[data-guild-rune-question]')?.remove();
                 root.replaceWith(nextRoot);root=nextRoot;errorBox=root.querySelector('#worldError');busy=false;
                 document.body.dataset.theme=nextDocument.body.dataset.theme;
+                if (guildScrollY !== null) window.scrollTo({ top: guildScrollY, behavior: 'auto' });
                 history.replaceState(null,'',destination.href);bind();
                 if (reopenGuildShop) root.querySelector('[data-guild-shop]')?.showModal();
-                if (guildScrollY !== null) requestAnimationFrame(() => window.scrollTo(0, guildScrollY));
+                if (guildScrollY !== null) preserveViewport(guildScrollY);
+                preserveScrollContainer(() => root?.querySelector('.event-stage .story'), guildModalScrollTop);
                 document.dispatchEvent(new CustomEvent('codeplay:turn-rendered'));
                 return;
             }
             // A fragment-only navigation would not reload the rendered turn.
             if (destination.pathname === location.pathname && destination.search === location.search) {
+                if (combat?.accion === 'abrir') prepareCombatView(destination);
                 history.replaceState(null, '', destination.href); location.reload();
-            } else location.assign(destination.href);
+            } else {
+                if (combat?.accion === 'abrir') prepareCombatView(destination);
+                location.assign(destination.href);
+            }
         } catch (error) {
             overlay.hidden = true; root.inert = false;
-            document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());
             document.dispatchEvent(new CustomEvent('codeplay:action-error'));
-            errorBox.textContent = error.name === 'TimeoutError' ? 'La conexión tardó demasiado. Recarga para comprobar si se guardó la acción antes de intentarlo de nuevo.' : error.message;
-            errorBox.hidden = false;
-            errorBox.scrollIntoView({ block: 'nearest' });
+            const message = error.name === 'TimeoutError'
+                ? 'La conexión tardó demasiado. Recarga para comprobar si se guardó la acción antes de intentarlo de nuevo.'
+                : error.message;
+            const shopDialog = reopenGuildShop ? root.querySelector('[data-guild-shop]') : null;
+            const shopError = reopenGuildShop ? root.querySelector('[data-guild-shop-error]') : null;
+
+            if (shopDialog && shopError) {
+                if (!shopDialog.open) shopDialog.showModal();
+                shopError.textContent = saved
+                    ? 'El turno ya se guardó. Recarga la página para continuar sin repetir la acción.'
+                    : message;
+                shopError.hidden = false;
+                shopError.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+                shopError.focus({ preventScroll: true });
+            } else {
+                document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());
+                errorBox.textContent = saved
+                    ? 'El turno ya se guardó. Recarga la página para continuar sin repetir la acción.'
+                    : message;
+                errorBox.hidden = false;
+                errorBox.scrollIntoView({ block: 'nearest' });
+            }
             if(!saved) buttons.forEach((button, index) => { button.disabled = disabledBefore[index]; });
-            else {errorBox.textContent='El turno ya se guardó. Recarga la página para continuar sin repetir la acción.';}
             busy = false;
         }
     }
     function bind() {
     window.CodePlayArena?.init(root);
+    const forestMap = root.querySelector('[data-forest-map]');
+    const forestPathDialog = document.getElementById('forestPathDialog');
+    root.querySelector('[data-open-forest-paths]')?.addEventListener('click', event => {
+        if (busy || !forestPathDialog) return;
+        const nextNode = event.currentTarget;
+        forestMap?.style.setProperty('--focus-x', nextNode.style.getPropertyValue('--x'));
+        forestMap?.style.setProperty('--focus-y', nextNode.style.getPropertyValue('--y'));
+        forestMap?.classList.add('is-zoomed');
+        window.setTimeout(() => forestPathDialog.showModal(), 1180);
+    });
+    forestPathDialog?.addEventListener('close', () => forestMap?.classList.remove('is-zoomed'));
+    forestPathDialog?.querySelector('[data-close-forest-paths]')?.addEventListener('click', () => forestMap?.classList.remove('is-zoomed'));
     root.querySelector('[data-preview-boss]')?.addEventListener('click', async () => {
         if (busy) return;
         busy = true;
@@ -252,17 +354,37 @@
         const heading = document.getElementById('story-title');
         if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); }
     }
+    if (root.matches('.combat-stage')) {
+        try {
+            if (sessionStorage.getItem(combatFocusKey) === 'pending') {
+                sessionStorage.removeItem(combatFocusKey);
+                revealCombatView();
+                window.addEventListener('pageshow', revealCombatView, { once: true });
+            }
+        } catch (_) {}
+    }
+    if (root.querySelector('.forest-3d-map, .territory-map')) {
+        try {
+            if (sessionStorage.getItem(mapFocusKey) === 'pending') {
+                sessionStorage.removeItem(mapFocusKey);
+                revealMapView();
+                window.addEventListener('pageshow', revealMapView, { once: true });
+            }
+        } catch (_) {}
+    }
     document.getElementById('beginJourney')?.addEventListener('click', () => action(true));
     const guildShop = root.querySelector('[data-guild-shop]');
     root.querySelector('[data-open-guild-shop]')?.addEventListener('click', () => guildShop?.showModal());
     guildShop?.querySelectorAll('[data-close-guild-shop]').forEach(button => button.addEventListener('click', () => guildShop.close()));
     const requirementDialog = root.querySelector('[data-guild-requirement-dialog]');
     let pendingGuildAction = null;
-    const runGuildAction = (button) => action(false, null, {accion:button.dataset.guildAction,
+    const runGuildAction = (button) => {
+        action(false, null, {accion:button.dataset.guildAction,
         ...(button.dataset.quest ? {encargo:button.dataset.quest} : {}),
         ...(button.dataset.source ? {origen:Number(button.dataset.source)} : {}),
         ...(button.dataset.shopItem ? {oferta:button.dataset.shopItem} : {}),
         ...(button.dataset.answer ? {respuesta:button.dataset.answer} : {})}, 'gremio');
+    };
     root.querySelectorAll('[data-guild-action]').forEach(button => button.addEventListener('click', () => {
         if (button.dataset.guildRequires) {
             pendingGuildAction = button;
@@ -303,6 +425,10 @@
         tick();
         const timerId = setInterval(() => { if (!tick()) clearInterval(timerId); }, 1000);
     }
+    // .story is transformed while an event is open, which would otherwise make
+    // a fixed question modal position itself inside its scrollable content.
+    // Moving the already-bound prompt to <body> makes it center in the viewport.
+    if (guildQuestion?.isConnected) document.body.append(guildQuestion);
     root.querySelectorAll('[data-event-action]').forEach(button => button.addEventListener('click', () => {
         const replacement = document.getElementById('replaceSpell')?.value;
         action(false, null, { accion: button.dataset.eventAction,
@@ -310,7 +436,10 @@
             ...(button.dataset.spell ? {hechizo:button.dataset.spell} : {}),
             ...(replacement ? {reemplazar:replacement} : {}) }, true);
     }));
-    root.querySelectorAll('[data-path-choice]').forEach(button => button.addEventListener('click', () => action(false, Number(button.dataset.pathChoice))));
+    root.querySelectorAll('[data-path-choice]').forEach(button => button.addEventListener('click', () => {
+        forestPathDialog?.close();
+        action(false, Number(button.dataset.pathChoice));
+    }));
     root.querySelectorAll('[data-combat-action]').forEach(button => button.addEventListener('click', () => {
         if(button.dataset.answer) root.querySelector('.rune-question-backdrop')?.remove();
         const target = root.querySelector('input[name="enemy-target"]:checked');
