@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CODEPLAY - {{ $test->titulo ?? 'Test HTML' }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/all.min.css') }}">
+    <link href="{{ asset('vendor/fonts/pixel-roboto-400-700.css') }}" rel="stylesheet">
     <style>
         :root {
             --primary-color: #6a11cb;
@@ -92,7 +92,7 @@
             <a class="btn btn-outline-light me-2" href="{{ route('alumno.documentacion') }}">
                 <i class="fas fa-arrow-left"></i>
             </a>
-            <img src="https://img.icons8.com/nolan/48/code.png" alt="Logo" width="40" height="40">
+            <img src="{{ asset('images/local/code-icon-48.png') }}" alt="Logo" width="40" height="40">
             <span class="navbar-brand mb-0 h1" style="font-family: 'Press Start 2P', cursive; color: var(--accent-color);">
                 CODEPLAY
             </span>

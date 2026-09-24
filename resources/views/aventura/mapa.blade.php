@@ -179,6 +179,8 @@
 <audio id="swampBattleMusic" loop preload="metadata" src="{{ asset('audio/aventura/batalla-pantano.mp3') }}"></audio>
 <audio id="iceBattleMusic" loop preload="metadata" src="{{ asset('audio/aventura/batalla-montanas-heladas.mp3') }}"></audio>
 <audio id="dragonBattleMusic" loop preload="metadata" src="{{ asset('audio/aventura/batalla-tierras-dragon.mp3') }}"></audio>
+<audio id="answerCorrectSound" preload="auto" src="{{ asset('audio/aventura/respuesta-correcta.mp3') }}"></audio>
+<audio id="answerIncorrectSound" preload="auto" src="{{ asset('audio/aventura/respuesta-incorrecta.mp3') }}"></audio>
 <script src="{{ asset('js/aventura-musica.js') }}?v={{ filemtime(public_path('js/aventura-musica.js')) }}" defer></script>
 </body>
 </html>

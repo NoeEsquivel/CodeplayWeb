@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>CODEPLAY · Proyecto final: Mini Arcade</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+    <link href="{{ asset('vendor/fonts/pixel-roboto-400-500-700.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('vendor/codemirror/codemirror.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/codemirror/dracula.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/desafio20.css') }}?v={{ filemtime(public_path('css/desafio20.css')) }}">
 </head>
 <body style="--fondo: url('{{ asset('Imagenes/Pantalla_Inicio.jpg') }}')">
@@ -158,11 +158,11 @@
         <p class="celebration-footer">Este es el final del desafío, y el comienzo de nuevas ideas.</p>
     </div>
 </dialog>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="{{ asset('vendor/codemirror/codemirror.min.js') }}"></script>
+<script src="{{ asset('vendor/codemirror/xml.min.js') }}"></script>
+<script src="{{ asset('vendor/codemirror/javascript.min.js') }}"></script>
+<script src="{{ asset('vendor/codemirror/css.min.js') }}"></script>
+<script src="{{ asset('vendor/codemirror/htmlmixed.min.js') }}"></script>
 <script src="{{ asset('js/desafio20.js') }}?v={{ filemtime(public_path('js/desafio20.js')) }}"></script>
 </body>
 </html>

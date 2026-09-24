@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CODEPLAY - Documentación</title>
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/all.min.css') }}">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="{{ asset('vendor/fonts/pixel-roboto-400-700.css') }}" rel="stylesheet">
     <!-- Animate.css -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="{{ asset('vendor/animate/animate.min.css') }}">
     <style>
         :root {
             --primary-color: #6a11cb;
@@ -170,7 +170,7 @@
             <a class="btn btn-home me-2" href="{{ route('inicio.alumno') }}">
                 <i class="fas fa-home text-white"></i>
             </a>
-            <img src="https://img.icons8.com/nolan/48/code.png" alt="Logo" width="40" height="40">
+            <img src="{{ asset('images/local/code-icon-48.png') }}" alt="Logo" width="40" height="40">
             
             <!-- Título Centrado -->
             <span class="game-title">CODEPLAY</span>
@@ -432,7 +432,7 @@
     </div>
 
     <!-- Bootstrap JS Bundle + Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
     
     <script>
         // Función para navegar con animación

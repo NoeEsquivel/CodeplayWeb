@@ -9,6 +9,14 @@
     let errorBox = document.getElementById('worldError');
     const combatFocusKey = 'codeplay:focus-combat';
     const mapFocusKey = 'codeplay:focus-map';
+    function playAnswerFeedback(isAnswer) {
+        if (!isAnswer) return;
+        const feedback = root?.querySelector('[data-answer-feedback]')?.dataset.answerFeedback;
+        const sound = document.getElementById(feedback === 'correct' ? 'answerCorrectSound' : feedback === 'incorrect' ? 'answerIncorrectSound' : '');
+        if (!sound) return;
+        sound.currentTime = 0;
+        sound.play().catch(() => {});
+    }
     function prepareCombatView(destination) {
         try { sessionStorage.setItem(combatFocusKey, 'pending'); } catch (_) {}
     }
@@ -260,7 +268,7 @@
                     syncBossIntroduction(nextDocument);
                     root.replaceWith(nextRoot);root=nextRoot;errorBox=root.querySelector('#worldError');busy=false;
                     document.body.dataset.theme=nextTheme;
-                    history.replaceState(null,'',destination.href);bind();
+                    history.replaceState(null,'',destination.href);bind();playAnswerFeedback(combat?.accion === 'responder');
                     const focus=root.querySelector('.rune-question h3, .battle-victory, .battle-narration');
                     if(focus){focus.tabIndex=-1;focus.focus({preventScroll:true});}
                     document.dispatchEvent(new CustomEvent('codeplay:turn-rendered'));
@@ -282,7 +290,7 @@
                 root.replaceWith(nextRoot);root=nextRoot;errorBox=root.querySelector('#worldError');busy=false;
                 document.body.dataset.theme=nextDocument.body.dataset.theme;
                 if (guildScrollY !== null) window.scrollTo({ top: guildScrollY, behavior: 'auto' });
-                history.replaceState(null,'',destination.href);bind();
+                history.replaceState(null,'',destination.href);bind();playAnswerFeedback(combat?.accion === 'responder');
                 if (reopenGuildShop) root.querySelector('[data-guild-shop]')?.showModal();
                 if (guildScrollY !== null) preserveViewport(guildScrollY);
                 preserveScrollContainer(() => root?.querySelector('.event-stage .story'), guildModalScrollTop);

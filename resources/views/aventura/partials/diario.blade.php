@@ -16,6 +16,7 @@
                 @if($lista)<button type="button" class="primary-button" data-guild-action="cobrar" data-quest="{{ $entrada['clave'] }}" data-source="{{ $entrada['origen'] }}">{{ $d['tipo']==='entrega' ? 'Entregar 1 poción y cobrar' : 'Cobrar recompensa' }}</button>@endif
                 <details class="guild-abandon"><summary>Abandonar encargo</summary><p>No recibirás premio ni podrás aceptar otra vez este encargo del mismo tablón.</p><button type="button" class="subtle-button" data-guild-action="abandonar" data-quest="{{ $entrada['clave'] }}" data-source="{{ $entrada['origen'] }}">Confirmar abandono</button></details>
             @endif
+            @if(in_array($q['answer_feedback'] ?? null, ['correct','incorrect'], true))<div class="answer-feedback is-{{ $q['answer_feedback'] }}" role="status" data-answer-feedback="{{ $q['answer_feedback'] }}"><b>{{ $q['answer_feedback'] === 'correct' ? '¡Respuesta correcta!' : 'Respuesta incorrecta' }}</b><span>{{ $q['answer_feedback'] === 'correct' ? 'El encargo ya está listo para cobrar.' : 'El encargo termina, pero podrás encontrar otro reto.' }}</span></div>@endif
             @if(isset($q['mensaje']))<p class="event-hint">{{ $q['mensaje'] }}</p>@endif
             @if(isset($q['detalle']))<ul>@foreach($q['detalle'] as $detalle)<li>{{ $detalle }}</li>@endforeach</ul>@endif
             @if($estadoEncargo==='cobrado' && !empty($q['botin']) && $itemsDiario[$q['botin']]['tipo'] !== 'pocion' && empty($q['equipado']))

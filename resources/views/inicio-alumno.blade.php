@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CODEPLAY - Menú Principal</title>
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/all.min.css') }}">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="{{ asset('vendor/fonts/pixel-roboto-400-700.css') }}" rel="stylesheet">
     <style>
         :root {
             --primary-color: #6a11cb;
@@ -24,21 +24,70 @@
             overflow-x: hidden;
             overflow-y: auto;
             padding-bottom: 90px;
-            background: url('{{ asset("Imagenes/Pantalla_Inicio.jpg") }}') no-repeat center center fixed;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('{{ asset("Imagenes/Pantalla_Inicio.jpg") }}') no-repeat center center fixed;
             background-size: cover;
             color: white;
-            position: relative;
         }
-        
-        body::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            z-index: -1;
+
+        .adventure-trophy {
+            box-sizing: border-box;
+            width: min(440px, calc(100vw - 40px));
+            margin: 12px auto 14px;
+            padding: 12px 18px;
+            border: 2px solid #e4c98f;
+            border-radius: 16px;
+            background: linear-gradient(120deg, #172d30, #352c1e);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, .36);
+            color: #fff;
+            text-align: center;
+            transition: top .55s ease, left .55s ease, width .55s ease, padding .55s ease, border-radius .55s ease, transform .55s ease, box-shadow .3s ease;
+        }
+
+        .adventure-trophy.is-floating {
+            position: fixed;
+            z-index: 1001;
+            margin: 0;
+            transform: translateX(0);
+        }
+
+        .trophy-icon {
+            display: block;
+            font-size: 32px;
+            line-height: 1;
+            transition: font-size .45s ease, transform .45s ease;
+        }
+
+        .trophy-message {
+            display: grid;
+            gap: 8px;
+            max-height: 150px;
+            margin-top: 6px;
+            opacity: 1;
+            overflow: hidden;
+            transition: max-height .45s ease, margin .45s ease, opacity .24s ease;
+        }
+
+        .trophy-message h2 { margin: 0; font-size: 19px; color: #ffe1a0; }
+        .trophy-message p { margin: 0; }
+        .trophy-message a { color: #a6efcf; }
+
+        .adventure-trophy.is-floating.is-collapsed {
+            top: 82px;
+            left: 20px;
+            width: 54px;
+            padding: 7px;
+            border-radius: 50%;
+            box-shadow: 0 7px 18px rgba(0, 0, 0, .45);
+            cursor: pointer;
+            transform: translateX(0);
+        }
+
+        .adventure-trophy.is-floating.is-collapsed:hover { transform: translateY(-2px) scale(1.06); }
+        .adventure-trophy.is-collapsed .trophy-icon { font-size: 32px; }
+        .adventure-trophy.is-collapsed .trophy-message { max-height: 0; margin-top: 0; opacity: 0; }
+
+        @media (max-width: 768px) {
+            .adventure-trophy.is-floating.is-collapsed { top: 70px; left: 14px; }
         }
         
         .game-header {
@@ -63,6 +112,8 @@
             flex-direction: column;
             justify-content: center;
         }
+
+        .menu-gap { height: 24px; }
         
         .menu-option {
             background: rgba(0, 0, 0, 0.7);
@@ -89,16 +140,39 @@
             flex-shrink: 0;
         }
         
-        .player-name-display {
+        .player-menu {
             position: absolute;
             top: 20px;
             right: 20px;
+            z-index: 1000;
+        }
+
+        .player-name-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            list-style: none;
             background: rgba(0, 0, 0, 0.7);
             padding: 10px 20px;
             border-radius: 20px;
             border: 2px solid var(--accent-color);
             backdrop-filter: blur(5px);
-            z-index: 1000;
+            cursor: pointer;
+            transition: background .2s ease, box-shadow .2s ease;
+        }
+
+        .player-name-display::-webkit-details-marker { display: none; }
+        .player-name-display::marker { content: ''; }
+        .player-name-display:hover, .player-menu[open] .player-name-display { background: rgba(0, 36, 31, .92); box-shadow: 0 0 16px rgba(0, 255, 157, .28); }
+        .player-menu-chevron { font-size: .72rem; color: var(--accent-color); transition: transform .2s ease; }
+        .player-menu[open] .player-menu-chevron { transform: rotate(180deg); }
+
+        .logout-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            margin: 0;
+            min-width: 100%;
         }
         
         .points-display {
@@ -136,22 +210,20 @@
         }
         
         .logout-btn {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(220, 53, 69, 0.8);
-            border: 2px solid #dc3545;
+            width: 100%;
+            background: rgba(8, 27, 29, .96);
+            border: 1px solid rgba(166, 239, 207, .7);
             color: white;
             padding: 8px 16px;
-            border-radius: 20px;
-            text-decoration: none;
+            border-radius: 12px;
             transition: all 0.3s;
             backdrop-filter: blur(5px);
         }
         
         .logout-btn:hover {
-            background: rgba(220, 53, 69, 1);
-            transform: scale(1.05);
+            background: rgba(26, 69, 57, .98);
+            border-color: var(--accent-color);
+            transform: translateY(-1px);
         }
         
         .menu-title {
@@ -272,22 +344,21 @@
         <span class="points-badge">PUNTOS</span>
     </div>
 
-    <!-- Nombre del jugador -->
-    <div class="player-name-display">
-        <i class="fas fa-user me-2"></i>
-        <span id="playerNameDisplay">{{ session('usuario_nombre') }}</span>
-        <span class="badge bg-success ms-2">Alumno</span>
-    </div>
+    <!-- Menú del jugador -->
+    <details class="player-menu">
+        <summary class="player-name-display" aria-label="Abrir menú de usuario">
+            <i class="fas fa-user"></i>
+            <span id="playerNameDisplay">{{ session('usuario_nombre') }}</span>
+            <span class="badge bg-success">Alumno</span>
+            <i class="fas fa-chevron-down player-menu-chevron" aria-hidden="true"></i>
+        </summary>
+        <form action="{{ route('logout') }}" method="POST" class="logout-menu">
+            @csrf
+            <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt me-1"></i> Cerrar sesión</button>
+        </form>
+    </details>
 
     <div class="container">
-        @if(!empty($trofeoAventura))
-        <aside class="adventure-trophy" style="margin:24px auto;padding:22px;border:2px solid #e4c98f;border-radius:16px;background:linear-gradient(120deg,#172d30,#352c1e);color:#fff;text-align:center;max-width:850px">
-            <div aria-hidden="true" style="font-size:42px">🏆</div>
-            <h2 style="font-size:22px;color:#ffe1a0">Conquistador de la Aventura</h2>
-            <p>Derrotaste al Dragón y completaste Aprender Jugando.</p>
-            <a style="color:#a6efcf" href="{{ route('alumno.aventura.final',['expedicion'=>$trofeoAventura->expedicion_id]) }}">Recordar el final de mi aventura →</a>
-        </aside>
-        @endif
         <!-- Título CODEPLAY arriba -->
         <div class="row text-center">
             <div class="col-12">
@@ -296,7 +367,18 @@
             </div>
         </div>
 
-        <br><br><br><br>
+        @if(!empty($trofeoAventura))
+        <aside id="adventureTrophy" class="adventure-trophy" aria-live="polite" role="button" tabindex="0" aria-label="Mostrar el logro Conquistador de la Aventura">
+            <span class="trophy-icon" aria-hidden="true">🏆</span>
+            <div class="trophy-message">
+                <h2>Conquistador de la Aventura</h2>
+                <p>Derrotaste al Dragón y completaste Aprender Jugando.</p>
+                <a href="{{ route('alumno.aventura.final',['expedicion'=>$trofeoAventura->expedicion_id]) }}">Recordar el final de mi aventura →</a>
+            </div>
+        </aside>
+        @endif
+
+        <div class="menu-gap" aria-hidden="true"></div>
 
         <!-- Menú central mejorado con Grid -->
         <div class="row justify-content-center menu-container">
@@ -306,7 +388,7 @@
                     <div class="menu-item" onclick="navegarA('documentacion')">
                         <i class="menu-icon fas fa-book"></i>
                         <div class="menu-content">
-                            <h4 class="menu-title">📚 Documentación</h4>
+                            <h4 class="menu-title">Documentación</h4>
                             <p class="menu-description">Aprende los conceptos básicos de programación</p>
                         </div>
                     </div>
@@ -314,7 +396,7 @@
                     <div class="menu-item" onclick="navegarA('tutoriales')">
                         <i class="menu-icon fas fa-graduation-cap"></i>
                         <div class="menu-content">
-                            <h4 class="menu-title">🎓 Tutoriales Interactivos</h4>
+                            <h4 class="menu-title">Tutoriales Interactivos</h4>
                             <p class="menu-description">Sigue guías paso a paso con ejemplos prácticos</p>
                         </div>
                     </div>
@@ -323,7 +405,7 @@
                     <div class="menu-item" onclick="navegarA('desafios')">
                         <i class="menu-icon fas fa-gamepad"></i>
                         <div class="menu-content">
-                            <h4 class="menu-title">⚔️ Desafíos de Programación y Aprender Jugando</h4>
+                            <h4 class="menu-title">Desafíos de Programación y Aprender Jugando</h4>
                             <p class="menu-description">Completa niveles y gana puntos</p>
                         </div>
                     </div>
@@ -331,7 +413,7 @@
                     <div class="menu-item" onclick="navegarA('tests')">
                         <i class="menu-icon fas fa-clipboard-check"></i>
                         <div class="menu-content">
-                            <h4 class="menu-title">📝 Tests y Evaluaciones</h4>
+                            <h4 class="menu-title">Tests y Evaluaciones</h4>
                             <p class="menu-description">Pon a prueba tus conocimientos</p>
                         </div>
                     </div>
@@ -340,7 +422,7 @@
                     <div class="menu-item" onclick="navegarA('progreso')" style="grid-column: 1 / -1; max-width: 500px; margin: 0 auto;">
                         <i class="menu-icon fas fa-chart-line"></i>
                         <div class="menu-content">
-                            <h4 class="menu-title">📊 Mi Progreso</h4>
+                            <h4 class="menu-title">Mi Progreso</h4>
                             <p class="menu-description">Revisa tus estadísticas y logros</p>
                         </div>
                     </div>
@@ -349,16 +431,8 @@
         </div>
     </div>
 
-    <!-- Botón de cerrar sesión -->
-    <form action="{{ route('logout') }}" method="POST" class="d-inline">
-        @csrf
-        <button type="submit" class="logout-btn">
-            <i class="fas fa-sign-out-alt me-1"></i> Cerrar Sesión
-        </button>
-    </form>
-
     <!-- Bootstrap JS Bundle + Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
     
     <script>
         // Variable para almacenar los puntos actuales
@@ -454,6 +528,45 @@
         // Verificar puntos inmediatamente al cargar la página
         document.addEventListener('DOMContentLoaded', function() {
             verificarActualizacionPuntos();
+
+            const trophy = document.getElementById('adventureTrophy');
+            if (trophy) {
+                let trophyTimer;
+                const collapseTrophy = () => {
+                    const position = trophy.getBoundingClientRect();
+                    trophy.style.top = `${position.top}px`;
+                    trophy.style.left = `${position.left}px`;
+                    trophy.style.width = `${position.width}px`;
+                    trophy.classList.add('is-floating');
+                    window.requestAnimationFrame(() => {
+                        trophy.classList.add('is-collapsed');
+                        trophy.style.removeProperty('top');
+                        trophy.style.removeProperty('left');
+                        trophy.style.removeProperty('width');
+                    });
+                };
+                const showTrophy = () => {
+                    trophy.classList.remove('is-collapsed');
+                    trophy.classList.remove('is-floating');
+                    trophy.style.removeProperty('top');
+                    trophy.style.removeProperty('left');
+                    trophy.style.removeProperty('width');
+                    window.clearTimeout(trophyTimer);
+                    trophyTimer = window.setTimeout(collapseTrophy, 5000);
+                };
+
+                trophy.addEventListener('click', event => {
+                    if (!trophy.classList.contains('is-collapsed') || event.target.closest('a')) return;
+                    showTrophy();
+                });
+                trophy.addEventListener('keydown', event => {
+                    if (!trophy.classList.contains('is-collapsed') || !['Enter', ' '].includes(event.key)) return;
+                    event.preventDefault();
+                    showTrophy();
+                });
+
+                showTrophy();
+            }
             
             // Mostrar puntos actuales en consola para debug
             console.log('Puntos disponibles actuales:', puntosActuales);

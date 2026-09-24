@@ -175,6 +175,7 @@ class AventuraGremio
                         if (!$pregunta) { $q['estado']='cancelado'; $q['mensaje']='La inscripción desapareció. El encargo se cancela sin penalización.'; }
                         else {
                             $q['correcta']=!$agotado && $pregunta->esRespuestaCorrecta($a['respuesta']);
+                            $q['answer_feedback'] = $q['correcta'] ? 'correct' : 'incorrect';
                             $q['mensaje']=$q['correcta']?'¡Correcto! Ya puedes cobrar este encargo.':($agotado ? 'El tiempo se agotó. ' : '').'La respuesta correcta era: '.$pregunta->{'opcion_'.$pregunta->respuesta_correcta}.'. Sigue aprendiendo; encontrarás nuevos encargos.';
                             if (!$q['correcta']) $q['estado']='fallido';
                         }

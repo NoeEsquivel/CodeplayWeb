@@ -90,6 +90,17 @@
         if(kind==='hit') { fighter.classList.add('damage-flash'); setTimeout(()=>fighter.classList.remove('damage-flash'),950); }
         if(kind==='restore') { fighter.classList.add('heal-flash'); setTimeout(()=>fighter.classList.remove('heal-flash'),1100); }
     }
+    function setHeroSprite(player, pose) {
+        const sprite = player?.querySelector('[data-hero-sprite]');
+        if (!sprite || sprite.dataset.heroPose === pose) return;
+        const source = sprite.dataset[`hero${pose[0].toUpperCase()}${pose.slice(1)}`];
+        if (!source) return;
+        sprite.dataset.heroPose = pose;
+        sprite.src = source;
+    }
+    function restoreHeroSprite(player, vida, vidaMaxima) {
+        setHeroSprite(player, vida > 0 && vida / Math.max(1, vidaMaxima) < .25 ? 'wounded' : 'default');
+    }
     function slash(arena,target,enemy=false) {
         if(!arena||!target) return;
         const bounds=target.getBoundingClientRect(), stage=arena.getBoundingClientRect();
@@ -130,13 +141,25 @@
         for(const event of sequence) {
             const visualEffects=[];
             const actor=theatre.querySelector(`[data-actor="${event.actor}"]`);
-            theatre.querySelector('.battle-narration').textContent=event.texto||'El turno continúa.';
+            const narration = theatre.querySelector('.battle-narration');
+            narration.textContent=event.texto||'El turno continúa.';
+            narration.classList.toggle('is-correct', event.answer_feedback === 'correct');
+            narration.classList.toggle('is-incorrect', event.answer_feedback === 'incorrect');
+            // La narración puede avanzar desde que aparece. No debe quedar
+            // bloqueada por el tiempo que el retrato temporal permanezca visible.
+            const continueTurn = waitForContinue();
             arena.dataset.effect=event.tipo;
             tone(event.tipo);
             const player=theatre.querySelector('[data-actor="jugador"]');
+            const heroSprite = player.querySelector('[data-hero-sprite]');
             const enemyHitIndex=event.enemigos.findIndex((enemy,index)=>enemy.vida<Number(theatre.querySelector(`[data-actor="enemigo-${index}"]`)?.dataset.hp));
             const playerWasHit=event.actor.startsWith('enemigo-') && event.vida<Number(player.dataset.hp);
             const playerStruck=event.actor==='jugador' && enemyHitIndex>=0;
+            const heroAction = event.actor === 'jugador' && ['atacar','defender','pocion'].includes(event.tipo) ? event.tipo : null;
+            const heroPoseEndsAt = heroAction && heroAction !== 'defender'
+                ? performance.now() + (4200 / Number(speed))
+                : null;
+            if (heroAction) setHeroSprite(player, heroAction === 'atacar' ? 'attack' : heroAction === 'defender' ? 'defense' : 'potion');
             animate(actor,event.tipo==='hechizo'?'magic':event.tipo==='defender'?'guard':event.tipo==='pocion'?'restore':playerWasHit?'enemy-strike':'strike');
             if(playerStruck) {
                 const i=enemyHitIndex;
@@ -146,7 +169,9 @@
                 const i=event.enemigos.findIndex((enemy,i)=>enemy.vida<Number(theatre.querySelector(`[data-actor="enemigo-${i}"]`)?.dataset.hp));
                 if(i>=0)projectile(arena,actor,theatre.querySelector(`[data-actor="enemigo-${i}"]`));
             }
-            await pause(650);
+            // Conserva el efecto de golpe, pero permite continuar en cuanto el
+            // jugador lo decida. El sprite temporal sigue en pantalla aparte.
+            await Promise.race([pause(650), continueTurn]);
             const hpLabel=theatre.querySelector('[data-player-hp]'),manaLabel=theatre.querySelector('[data-player-mana]');
             const maxHp=Number(hpLabel.textContent.split('/')[1]),maxMana=Number(manaLabel.textContent.split('/')[1]);
             const delta=event.vida-Number(player.dataset.hp);number(arena,player,delta);if(delta)animate(player,delta>0?'restore':'hit');
@@ -177,7 +202,17 @@
                 target.querySelector('[data-hp-bar]').style.width=(100*enemy.vida/enemy.max)+'%';
             });
             theatre.querySelector('.opponents').style.setProperty('--opponents',event.enemigos.length);
-            await waitForContinue();
+            let restoreSpriteTimer = null;
+            if (heroPoseEndsAt) {
+                const remaining = Math.max(0, heroPoseEndsAt - performance.now());
+                restoreSpriteTimer = window.setTimeout(() => restoreHeroSprite(player, event.vida, maxHp), remaining);
+            }
+            await continueTurn;
+            // Al continuar, el siguiente evento puede ser un ataque enemigo.
+            // Restablecemos aquí para que nunca conserve el sprite anterior.
+            if (restoreSpriteTimer !== null) window.clearTimeout(restoreSpriteTimer);
+            if (heroAction === 'atacar' || heroAction === 'pocion' || (event.actor.startsWith('enemigo-') && heroSprite?.dataset.heroPose === 'defense')) restoreHeroSprite(player,event.vida,maxHp);
+            narration.classList.remove('is-correct', 'is-incorrect');
             visualEffects.forEach(effect=>effect?.remove());
         }
         continueResolve=null;theatre.removeAttribute('aria-busy');theatre.classList.remove('is-playing');hint.hidden=true;

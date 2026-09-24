@@ -37,7 +37,10 @@
         @else<button type="button" class="primary-button" data-event-action="responder" data-answer="a">Continuar sin penalización</button>@endif
     </div>
 @else
-    <div class="event-result" role="status"><p>{{ $n['resultado'] }}</p><ul>@foreach($n['detalle'] as $detalle)<li>{{ $detalle }}</li>@endforeach</ul></div>
+    @php
+        $feedbackRespuesta = array_key_exists('correcta', $n) ? ($n['correcta'] ? 'correct' : 'incorrect') : null;
+    @endphp
+    <div class="event-result {{ $feedbackRespuesta ? 'is-'.$feedbackRespuesta : '' }}" role="status" @if($feedbackRespuesta) data-answer-feedback="{{ $feedbackRespuesta }}" @endif><p>{{ $n['resultado'] }}</p><ul>@foreach($n['detalle'] as $detalle)<li>{{ $detalle }}</li>@endforeach</ul></div>
     @if(!empty($n['mejora_hechizo']))
         <div class="event-loot"><p class="eyebrow">FOCO ARCANO · MUY RARO</p><h3>Elige un hechizo para mejorar</h3><p>La mejora dura toda esta aventura. El hechizo subirá un nivel y ganará 10% de daño, curación o protección.</p>
         <div class="event-actions">@foreach($run['equipo']['hechizos'] as $hechizo)<button type="button" class="subtle-button" data-event-action="mejorar_hechizo" data-spell="{{ $hechizo }}">Mejorar {{ $catalogoEvento[$hechizo]['nombre'] }} →</button>@endforeach</div></div>

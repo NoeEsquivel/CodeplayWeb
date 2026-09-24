@@ -6,23 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CODEPLAY - Desafío 1: Hola Mundo</title>
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/all.min.css') }}">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="{{ asset('vendor/fonts/pixel-roboto-400-700.css') }}" rel="stylesheet">
     <!-- CodeMirror (editor de código) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+    <link rel="stylesheet" href="{{ asset('vendor/codemirror/codemirror.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/codemirror/dracula.min.css') }}">
+    <script src="{{ asset('vendor/codemirror/codemirror.min.js') }}"></script>
+    <script src="{{ asset('vendor/codemirror/htmlmixed.min.js') }}"></script>
+    <script src="{{ asset('vendor/codemirror/xml.min.js') }}"></script>
+    <script src="{{ asset('vendor/codemirror/javascript.min.js') }}"></script>
+    <script src="{{ asset('vendor/codemirror/css.min.js') }}"></script>
     <!-- Animate.css -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="{{ asset('vendor/animate/animate.min.css') }}">
     <!-- Confetti -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="{{ asset('vendor/confetti/confetti.browser.min.js') }}"></script>
     <style>
         :root {
             --primary-color: #6a11cb;
@@ -292,7 +292,7 @@
                 <a class="btn btn-home me-2" href="{{ route('alumno.desafios.programacion') }}">
                     <i class="fas fa-arrow-left text-white"></i>
                 </a>
-                <img src="https://img.icons8.com/nolan/48/code.png" alt="Logo" width="40" height="40">
+                <img src="{{ asset('images/local/code-icon-48.png') }}" alt="Logo" width="40" height="40">
             </div>
             
             <!-- Título Centrado -->
@@ -391,7 +391,7 @@
     </div>
 
     <!-- Bootstrap JS Bundle + Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
     
     <script>
         // Inicializar el editor de código

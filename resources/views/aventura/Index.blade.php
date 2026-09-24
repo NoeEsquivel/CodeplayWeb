@@ -8,7 +8,7 @@
     <title>Campamento · Aventura CodePlay</title>
     <link rel="stylesheet" href="{{ asset('css/aventura.css') }}?v={{ filemtime(public_path('css/aventura.css')) }}">
 </head>
-<body>
+<body class="camp-page">
 <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
         <symbol id="i-sword" viewBox="0 0 64 64"><path d="M45 5 59 5 59 19 28 48 17 37Z"/><path d="m21 43-12 12m1-23 23 23M7 53l4 4"/><path d="M27 36 50 13"/></symbol>
@@ -58,11 +58,12 @@
             <section id="armeria" class="shop" aria-labelledby="shopTitle">
                 <div class="section-heading"><div><p class="eyebrow">LA ARMERÍA DEL CAMPAMENTO</p><h2 id="shopTitle">Encuentra tu estilo.</h2></div><button type="button" id="starterKit" class="subtle-button">✧ Sugerir equipo inicial</button></div>
                 <p class="shop-intro">Fuerza, magia o resistencia: combina tus ventajas. Puedes cambiar tu elección antes de confirmar.</p>
+                <p class="category-tabs-hint">Elige una categoría para explorar el equipo disponible.</p>
                 <div class="category-tabs" role="tablist" aria-label="Categorías de equipo">
-                    <button type="button" role="tab" aria-selected="true" aria-controls="catalogue" data-category="arma" id="cat-arma">Armas</button>
-                    <button type="button" role="tab" aria-selected="false" aria-controls="catalogue" data-category="armadura" id="cat-armadura" tabindex="-1">Armaduras</button>
-                    <button type="button" role="tab" aria-selected="false" aria-controls="catalogue" data-category="hechizo" id="cat-hechizo" tabindex="-1">Hechizos</button>
-                    <button type="button" role="tab" aria-selected="false" aria-controls="catalogue" data-category="pocion" id="cat-pocion" tabindex="-1">Pociones</button>
+                    <button type="button" role="tab" aria-selected="true" aria-controls="catalogue" data-category="arma" id="cat-arma"><span class="category-tab-icon" aria-hidden="true">⚔</span><span><strong>Armas</strong><small>Daño directo</small></span></button>
+                    <button type="button" role="tab" aria-selected="false" aria-controls="catalogue" data-category="armadura" id="cat-armadura" tabindex="-1"><span class="category-tab-icon" aria-hidden="true">🛡</span><span><strong>Armaduras</strong><small>Protección</small></span></button>
+                    <button type="button" role="tab" aria-selected="false" aria-controls="catalogue" data-category="hechizo" id="cat-hechizo" tabindex="-1"><span class="category-tab-icon" aria-hidden="true">✦</span><span><strong>Hechizos</strong><small>Poder mágico</small></span></button>
+                    <button type="button" role="tab" aria-selected="false" aria-controls="catalogue" data-category="pocion" id="cat-pocion" tabindex="-1"><span class="category-tab-icon" aria-hidden="true">⚗</span><span><strong>Pociones</strong><small>Apoyo y curación</small></span></button>
                 </div>
                 <div class="shop-filters"><label>Rareza <select id="rarityFilter"><option value="">Todas las rarezas</option>@foreach(\App\Services\AventuraCatalogo::RAREZAS as $valor => $nombre)<option value="{{ $valor }}">{{ $nombre }}</option>@endforeach</select></label><label class="available-filter"><input type="checkbox" id="unlockedFilter"> Solo desbloqueados</label><span id="itemCount"></span></div>
                 <p id="shopNotice" class="shop-notice" role="status" hidden></p>

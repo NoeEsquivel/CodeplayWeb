@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CODEPLAY - Aprende Programación Jugando</title>
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
     <!-- Font Awesome para íconos -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/all.min.css') }}">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="{{ asset('vendor/fonts/pixel-roboto-400-700.css') }}" rel="stylesheet">
     <style>
         :root {
             --primary-color: #6a11cb;
@@ -103,7 +103,7 @@
             <div class="col-md-6 col-lg-4">
                 <div class="login-box p-4 text-center">
                     <!-- Logo/Título -->
-                    <img src="https://img.icons8.com/nolan/96/code.png" alt="CODEPLAY Logo" class="mb-3 pixel-char">
+                    <img src="{{ asset('images/local/code-icon-96.png') }}" alt="CODEPLAY Logo" class="mb-3 pixel-char">
                     <h1 class="game-title mb-4">CODEPLAY</h1>
                     
                     <!-- Mensajes de error -->
@@ -147,7 +147,7 @@
     </div>
 
     <!-- Bootstrap JS Bundle + Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
     
     <!-- Script para animación de carga -->
     <script>

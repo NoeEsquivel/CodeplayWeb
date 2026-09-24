@@ -12,6 +12,7 @@ class AventuraCombate
     private function escena(AventuraExpedicion $run, array $b, string $tipo, string $actor, int $desde): void
     {
         $this->secuencia[]=['tipo'=>$tipo,'actor'=>$actor,'texto'=>implode(' ',array_slice($b['registro'],$desde)),
+            'answer_feedback'=>$tipo === 'respuesta' ? ($b['answer_feedback'] ?? null) : null,
             'vida'=>$run->vida_actual,'mana'=>$run->mana_actual,
             'enemigos'=>array_map(fn($e)=>array_intersect_key($e,array_flip(['clave','nombre','vida','max'])), $b['enemigos'])];
     }
@@ -30,10 +31,42 @@ class AventuraCombate
         return ['id'=>$modelo->id,'clave'=>$modelo->clave,'nombre'=>$modelo->nombre,'nivel'=>$nivel,
             'vida'=>$modelo->vida + $extra * 3,'max'=>$modelo->vida + $extra * 3,
             'ataque'=>$modelo->{'daño'} + intdiv($extra,2),'defensa'=>$modelo->defensa,
+            'ataque_base'=>$modelo->{'daño'} + intdiv($extra,2),'defensa_base'=>$modelo->defensa,'fase'=>1,
             'xp'=>$modelo->rasgos['experiencia'] + $extra * 2, 'oro'=>$modelo->recompensa_puntos,
             'habilidad'=>$modelo->rasgos['habilidad'],'descripcion'=>$descripcion,
             'region'=>$region,'ataque_especial'=>$modelo->rasgos['ataque_especial'] ?? 'Raíces rúnicas',
             'dividido'=>false,'robo'=>false,'invocado'=>false];
+    }
+
+    private function multiplicadorFase(array $enemy, int $fase): float
+    {
+        if ($enemy['clave'] === 'dragon') return 1 + (.15 * ($fase - 1));
+        return $fase === 2 ? 1.2 : 1;
+    }
+
+    private function actualizarFase(array &$enemy): ?int
+    {
+        if (($enemy['habilidad'] ?? null) !== 'jefe') return null;
+        $fase = $enemy['clave'] === 'dragon'
+            ? AventuraDragon::fase($enemy)
+            : ($enemy['vida'] <= $enemy['max'] / 2 ? 2 : 1);
+        $faseAnterior = (int) ($enemy['fase'] ?? 1);
+        $enemy['ataque_base'] ??= $enemy['ataque'];
+        $enemy['defensa_base'] ??= $enemy['defensa'];
+        if ($fase === $faseAnterior) return null;
+
+        $multiplicador = $this->multiplicadorFase($enemy, $fase);
+        $enemy['fase'] = $fase;
+        $enemy['ataque'] = (int) ceil($enemy['ataque_base'] * $multiplicador);
+        $enemy['defensa'] = (int) ceil($enemy['defensa_base'] * $multiplicador);
+        return $fase;
+    }
+
+    private function anunciarFase(array &$battle, array $enemy, int $fase): void
+    {
+        $porcentaje = (int) round(($this->multiplicadorFase($enemy, $fase) - 1) * 100);
+        $nombreFase = $enemy['clave'] === 'dragon' ? ': '.AventuraDragon::nombre($fase) : '';
+        $battle['registro'][] = $enemy['nombre'].' entra en fase '.$fase.$nombreFase.'. Su ataque y defensa aumentan '.$porcentaje.'%.';
     }
 
     private function crear(AventuraExpedicion $run): array
@@ -122,6 +155,7 @@ class AventuraCombate
     private function jugador(AventuraExpedicion $run, array &$b, array $a, array $stats): void
     {
         $desde=count($b['registro']);
+        unset($b['answer_feedback']);
         $tipo = $a['accion']; $dano = 0; $elemento = 'fisico';
         $equipo = $run->equipo;
         $b['defendiendo'] = false;
@@ -229,11 +263,10 @@ class AventuraCombate
                 if ($elemento === 'fuego') $dano=max(1,(int)ceil($dano*.5));
                 elseif ($elemento === 'fisico' && AventuraDragon::fase($enemy)===1) $dano=max(1,(int)ceil($dano*.7));
                 if (!empty($enemy['expuesto'])) { $dano=(int)ceil($dano*1.5); $enemy['expuesto']=false; $b['registro'][]='¡Aprovechas la apertura de las runas! Tu golpe causa 50% más daño.'; }
-                $faseAnterior=AventuraDragon::fase($enemy);
             }
             $efectivo = min($enemy['vida'],$dano);
             $enemy['vida'] = max(0,$enemy['vida']-$dano);
-            if ($enemy['clave']==='dragon' && $enemy['vida']>0 && AventuraDragon::fase($enemy)!==$faseAnterior) $b['registro'][]='Ignar entra en fase '.AventuraDragon::fase($enemy).': '.AventuraDragon::nombre(AventuraDragon::fase($enemy)).'.';
+            if ($enemy['vida'] > 0 && ($fase = $this->actualizarFase($enemy)) !== null) $this->anunciarFase($b, $enemy, $fase);
             $curacion = (int)floor($efectivo*AventuraMejoras::valor($run,'robo_vida')/100);
             if ($curacion > 0) { $run->vida_actual = min($stats['vida'],$run->vida_actual+$curacion); $b['registro'][] = 'Tu vínculo vital recupera hasta '.$curacion.' de vida.'; }
             $b['registro'][] = 'Golpeas a '.$enemy['nombre'].' por '.$dano.' de daño.';
@@ -283,9 +316,8 @@ class AventuraCombate
                 }
                 $b['registro'][] = 'Las runas están apagadas. El guardián usa un ataque normal.';
             }
+            if (($fase = $this->actualizarFase($enemy)) !== null) $this->anunciarFase($b, $enemy, $fase);
             $dano = $enemy['ataque'];
-            if ($enemy['clave']==='dragon') $dano=(int)ceil($dano*[1=>1,2=>1.15,3=>1.35][AventuraDragon::fase($enemy)]);
-            elseif ($enemy['habilidad'] === 'jefe' && $enemy['vida'] <= $enemy['max']/2) $dano = (int) ceil($dano*1.4);
             if ($enemy['habilidad'] === 'embestida' && $b['turno'] % 3 === 0) { $dano *= 2; $b['registro'][] = '¡'.$enemy['nombre'].' se abalanza!'; }
             $vidaAnterior=$run->vida_actual;
             $this->recibir($run,$b,max(1,$dano-$stats['total']['armadura']),$enemy['nombre']);
@@ -402,6 +434,7 @@ class AventuraCombate
         if (!$pregunta) $b['registro'][] = 'La inscripción desapareció. El ataque rúnico se disipa.';
         elseif (!$agotado && $pregunta->esRespuestaCorrecta($a['respuesta'])) {
             $b['aciertos'] = ($b['aciertos'] ?? 0) + 1;
+            $b['answer_feedback'] = 'correct';
             $b['registro'][] = '¡Correcto! Entiendes las runas e interrumpes el ataque del guardián.';
             if ($b['enemigos'][0]['clave']==='dragon') {
                 $b['enemigos'][0]['expuesto']=true;
@@ -410,12 +443,18 @@ class AventuraCombate
             }
         }
         else {
+            $b['answer_feedback'] = 'incorrect';
             $b['registro'][] = ($agotado ? 'El tiempo se agotó. ' : '').'La respuesta correcta era '.$pregunta->{'opcion_'.$pregunta->respuesta_correcta}.'. El guardián libera su ataque.';
-            $enemy = $b['enemigos'][0];
-            $multiplicador=$enemy['clave']==='dragon' ? [1=>2,2=>2.3,3=>2.6][AventuraDragon::fase($enemy)] : ($enemy['vida'] <= $enemy['max']/2 ? 2.6 : 2);
-            $this->recibir($run,$b,max(1,(int)ceil($enemy['ataque']*$multiplicador)-$stats['total']['armadura']),$enemy['ataque_especial'] ?? 'Raíces rúnicas');
-            if ($enemy['clave']==='archivista') { $perdida=min(6,$run->mana_actual); $run->mana_actual-=$perdida; $b['registro'][]='El sello consume '.$perdida.' de maná.'; }
-            if ($enemy['clave']==='matriarca') { $this->envenenar($run,4); $b['registro'][]='La marea deja veneno durante tres turnos.'; }
+            $enemy = &$b['enemigos'][0];
+            if (($fase = $this->actualizarFase($enemy)) !== null) $this->anunciarFase($b, $enemy, $fase);
+            // Los ataques especiales parten de un golpe doble. Como el ataque
+            // del jefe ya crece con su fase, el daño rúnico recibe el mismo
+            // aumento sin aplicar un segundo multiplicador oculto.
+            $this->recibir($run,$b,max(1,($enemy['ataque'] * 2)-$stats['total']['armadura']),$enemy['ataque_especial'] ?? 'Raíces rúnicas');
+            $potenciaFase = $this->multiplicadorFase($enemy, (int) ($enemy['fase'] ?? 1));
+            if ($enemy['clave']==='archivista') { $perdida=min((int)ceil(6*$potenciaFase),$run->mana_actual); $run->mana_actual-=$perdida; $b['registro'][]='El sello consume '.$perdida.' de maná.'; }
+            if ($enemy['clave']==='matriarca') { $veneno=(int)ceil(4*$potenciaFase); $this->envenenar($run,$veneno); $b['registro'][]='La marea deja veneno de '.$veneno.' de daño durante tres turnos.'; }
+            unset($enemy);
         }
         $b['pregunta'] = null; $b['estado'] = 'jugador';
         $this->escena($run,$b,'respuesta','enemigo-0',$desde);
