@@ -22,7 +22,7 @@ class AventuraDragonTest extends TestCase
         DB::table('documentacion')->insert(['id'=>1,'titulo'=>'Prueba','contenido'=>'Prueba']);
         DB::table('tests')->insert(['id'=>1,'documentacion_id'=>1,'titulo'=>'Prueba','modulo'=>'mundo1']);
         foreach(range(1,3) as $i) DB::table('preguntas_test')->insert(['test_id'=>1,'pregunta'=>'Runas '.$i,'opcion_a'=>'Correcta','opcion_b'=>'Incorrecta','opcion_c'=>'Otra','opcion_d'=>'Otra más','respuesta_correcta'=>'a']);
-        $this->user=Usuario::create(['nombre'=>'Prueba','clave'=>'fixture','puntos_totales'=>8000]);
+        $this->user=Usuario::create(['nombre'=>'Prueba','clave'=>'fixture','rol'=>'Alumno','puntos_totales'=>8000]);
         $this->engine=new class extends AventuraCombate { protected function azar(int $min,int $max): int { return $max; } };
         $this->withSession(['usuario_id'=>$this->user->id]);
     }
@@ -115,7 +115,7 @@ class AventuraDragonTest extends TestCase
         $this->postJson('/alumno/aventura/completar',['expedicion_id'=>$id,'version'=>$v])->assertStatus(409);
         self::assertSame('activa',$this->run->fresh()->estado);
         $this->cambiar(fn(&$b)=>$b['enemigos'][0]['vida']=1); $this->accion(['accion'=>'atacar','objetivo'=>0]);
-        $other=Usuario::create(['nombre'=>'Otra cuenta','clave'=>'fixture']);
+        $other=Usuario::create(['nombre'=>'Otra cuenta','clave'=>'fixture','rol'=>'Alumno']);
         $this->withSession(['usuario_id'=>$other->id]);
         $this->get('/alumno/aventura/final/'.$id)->assertNotFound();
         $this->get('/inicio-alumno')->assertOk()->assertDontSee('Conquistador de la Aventura');
@@ -169,7 +169,7 @@ class AventuraDragonTest extends TestCase
     public function test_other_users_and_forged_encounters_cannot_control_the_dragon(): void
     {
         $this->preparar(); $v=$this->run->fresh()->version;
-        $other=Usuario::create(['nombre'=>'Otro','clave'=>'fixture']); $this->withSession(['usuario_id'=>$other->id]);
+        $other=Usuario::create(['nombre'=>'Otro','clave'=>'fixture','rol'=>'Alumno']); $this->withSession(['usuario_id'=>$other->id]);
         $this->postJson('/alumno/aventura/combate',['expedicion_id'=>$this->run->id,'version'=>$v,'accion'=>'atacar','objetivo'=>0])->assertNotFound();
         self::assertSame($v,$this->run->fresh()->version);
         $this->withSession(['usuario_id'=>$this->user->id]);

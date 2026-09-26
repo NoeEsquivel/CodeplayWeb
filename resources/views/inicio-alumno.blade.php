@@ -584,7 +584,8 @@
             const rutas = {
                 'documentacion': "{{ route('alumno.documentacion') }}",
                 'tutoriales': "{{ route('alumno.tutoriales') }}",
-                'desafios': "{{ route('alumno.desafios') }}"
+                'desafios': "{{ route('alumno.desafios') }}",
+                'progreso': "{{ route('alumno.progreso') }}"
             };
 
             // Si es una ruta existente, redirigir directamente
@@ -603,11 +604,6 @@
                     mensaje: 'Próximamente: Pon a prueba tus conocimientos',
                     color: '#ff6b6b'
                 },
-                'progreso': {
-                    titulo: '📊 Mi Progreso',
-                    mensaje: 'Próximamente: Revisa tus estadísticas y logros',
-                    color: '#ffd93d'
-                }
             };
 
             const info = mensajes[destino] || {

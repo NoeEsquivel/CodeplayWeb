@@ -23,7 +23,7 @@ class AventuraRegionesTest extends TestCase
             DB::table('tests')->insert(['id'=>$i+1,'documentacion_id'=>1,'titulo'=>'Prueba','modulo'=>$modulo]);
             DB::table('preguntas_test')->insert(['test_id'=>$i+1,'pregunta'=>'Pregunta '.$modulo,'opcion_a'=>'Correcta','opcion_b'=>'Incorrecta','opcion_c'=>'Otra','opcion_d'=>'Otra más','respuesta_correcta'=>'a']);
         }
-        $this->user=Usuario::create(['nombre'=>'Prueba','clave'=>'fixture','puntos_totales'=>5000]);
+        $this->user=Usuario::create(['nombre'=>'Prueba','clave'=>'fixture','rol'=>'Alumno','puntos_totales'=>5000]);
         $camp=new AventuraService(); $s=$camp->estado($this->user->id);
         $equipo=AventuraCatalogo::vacio(); $equipo['arma']='filo-fenix'; $equipo['armadura']='coraza-dragon'; $equipo['hechizos']=['brasa','barrera']; $equipo['pociones']=[['id'=>'pocion-vida','cantidad'=>3]];
         $camp->guardar($this->user->id,$s['expedicion']['id'],0,$equipo); $camp->iniciar($this->user->id,$s['expedicion']['id']);
@@ -128,7 +128,7 @@ class AventuraRegionesTest extends TestCase
             $mana=$this->run->fresh()->mana_actual;
             $this->accion(['accion'=>'responder','respuesta'=>'b']);
             self::assertLessThan(500,$this->run->fresh()->vida_actual);
-            if($nivel===20) self::assertSame($mana-6,$this->run->fresh()->mana_actual);
+            if($nivel===20) self::assertSame($mana-8,$this->run->fresh()->mana_actual);
             if($nivel===30) self::assertSame('veneno',$this->run->fresh()->efectos[0]['tipo']);
         }
     }

@@ -22,7 +22,7 @@ class AventuraGremioTest extends TestCase
         DB::table('documentacion')->insert(['id'=>1,'titulo'=>'HTML','contenido'=>'Prueba']);
         DB::table('tests')->insert(['id'=>1,'documentacion_id'=>1,'titulo'=>'HTML','modulo'=>'html1']);
         DB::table('preguntas_test')->insert(['test_id'=>1,'pregunta'=>'¿Qué crea un párrafo?','opcion_a'=>'<p>','opcion_b'=>'<img>','opcion_c'=>'<a>','opcion_d'=>'<br>','respuesta_correcta'=>'a']);
-        $this->user=Usuario::create(['nombre'=>'Explorador','clave'=>'fixture','puntos_totales'=>1200,'puntos_usados'=>100]);
+        $this->user=Usuario::create(['nombre'=>'Explorador','clave'=>'fixture','rol'=>'Alumno','puntos_totales'=>1200,'puntos_usados'=>100]);
         $this->camp=new AventuraService(); $s=$this->camp->estado($this->user->id);
         $this->camp->iniciar($this->user->id,$s['expedicion']['id']);
         $this->run=AventuraExpedicion::findOrFail($s['expedicion']['id']);
@@ -112,9 +112,9 @@ class AventuraGremioTest extends TestCase
         $this->guild('aceptar','lobo')->assertStatus(409);
         $this->guild('aceptar','runas')->assertOk();
         $this->guild('cobrar',"' OR 1=1 --")->assertNotFound();
-        $other=Usuario::create(['nombre'=>'Otro','clave'=>'fixture']);
+        $other=Usuario::create(['nombre'=>'Otro','clave'=>'fixture','rol'=>'Alumno']);
         $this->withSession(['usuario_id'=>$other->id]); $this->guild('salir')->assertNotFound();
-        $this->flushSession(); $this->guild('salir')->assertRedirect('/login');
+        $this->flushSession(); $this->guild('salir')->assertUnauthorized();
     }
 
     public function test_wrong_or_deleted_question_releases_slot_without_reward(): void

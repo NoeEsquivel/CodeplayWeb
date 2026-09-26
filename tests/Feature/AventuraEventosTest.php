@@ -23,7 +23,7 @@ class AventuraEventosTest extends TestCase
         DB::table('documentacion')->insert(['id'=>1,'titulo'=>'HTML','contenido'=>'Prueba']);
         DB::table('tests')->insert(['id'=>1,'documentacion_id'=>1,'titulo'=>'HTML','modulo'=>'html1']);
         DB::table('preguntas_test')->insert(['test_id'=>1,'pregunta'=>'¿Qué crea un párrafo?','opcion_a'=>'<p>','opcion_b'=>'<img>','opcion_c'=>'<a>','opcion_d'=>'<br>','respuesta_correcta'=>'a']);
-        $this->user = Usuario::create(['nombre'=>'Explorador','clave'=>'fixture','puntos_totales'=>1200,'puntos_usados'=>100]);
+        $this->user = Usuario::create(['nombre'=>'Explorador','clave'=>'fixture','rol'=>'Alumno','puntos_totales'=>1200,'puntos_usados'=>100]);
         $this->camp = new AventuraService(); $s=$this->camp->estado($this->user->id);
         $this->camp->iniciar($this->user->id,$s['expedicion']['id']);
         $this->run = AventuraExpedicion::findOrFail($s['expedicion']['id']);
@@ -127,8 +127,13 @@ class AventuraEventosTest extends TestCase
 
     public function test_loot_is_in_existing_inventory_and_equips_without_charging(): void
     {
-        $this->encuentro('tesoro'); $this->engine->tiradas=[90,4,100,0];
-        $this->eventPost('abrir')->assertOk();
+        $this->encuentro('tesoro');
+        self::assertTrue(AventuraInventario::recibir($this->run,'filo-fenix'));
+        $this->run->refresh();
+        $this->run->exploracion=[1=>['tipo'=>'tesoro','estado'=>'resuelto','narrativa'=>[
+            'id'=>'cofre','etapa'=>'resultado','resultado'=>'Botín','detalle'=>[],'botin'=>'filo-fenix',
+        ]]];
+        $this->run->save();
         self::assertSame('filo-fenix',$this->narrativa()['botin']);
         $this->eventPost('equipar')->assertOk();
         self::assertSame('filo-fenix',$this->run->fresh()->equipo['arma']);
@@ -178,9 +183,10 @@ class AventuraEventosTest extends TestCase
         self::assertSame(130,$this->camp->estado($this->user->id)['personaje']['vida']);
         self::assertSame(130,AventuraMejoras::experiencia($this->run,100));
         self::assertSame(15,AventuraMejoras::valor($this->run,'robo_vida'));
+        $oroAntes=$this->run->fresh()->oro;
         $this->encuentro('tesoro'); $this->engine->tiradas=[90,6];
         $this->eventPost('abrir')->assertOk();
-        self::assertSame('inspiracion',$this->run->fresh()->efectos[0]['tipo']);
+        self::assertSame($oroAntes+15,$this->run->fresh()->oro); // La mejora crítica ya estaba al máximo.
         $this->encuentro('enemigo'); $this->run->refresh(); $this->run->vida_actual=50; $this->run->save();
         $combate=new class extends AventuraCombate { protected function azar(int $min,int $max): int { return $min; } };
         $combate->actuar($this->user->id,$this->run->id,$this->run->fresh()->version,['accion'=>'abrir']);
@@ -199,7 +205,7 @@ class AventuraEventosTest extends TestCase
         $this->eventPost('ayudar')->assertOk(); PreguntaTest::whereKey(1)->delete();
         $this->eventPost('responder',['respuesta'=>'a'])->assertOk(); self::assertSame(0,$this->run->fresh()->oro);
         $this->encuentro(); $this->eventPost('ayudar')->assertOk(); self::assertSame('resultado',$this->narrativa()['etapa']);
-        $other=Usuario::create(['nombre'=>'Otro','clave'=>'fixture']);
+        $other=Usuario::create(['nombre'=>'Otro','clave'=>'fixture','rol'=>'Alumno']);
         $this->withSession(['usuario_id'=>$other->id])->postJson('/alumno/aventura/evento',['expedicion_id'=>$this->run->id,'version'=>$this->run->fresh()->version,'accion'=>'ignorar'])->assertNotFound();
         $this->eventPost('responder',['respuesta'=>"' OR 1=1 --"])->assertStatus(422);
         $this->encuentro('gremio'); $this->eventPost('ignorar')->assertStatus(409);

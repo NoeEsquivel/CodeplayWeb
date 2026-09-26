@@ -1,733 +1,116 @@
 @extends('layouts.app')
 
-@section('title', 'Inicio Administrador - CodePlay')
+@section('title', 'Panel del Profesor - CodePlay')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="game-card p-4 text-center text-white">
-                <h1 class="mb-4">👨‍💼 Panel de Administración</h1>
-                <h3 class="text-warning">{{ session('usuario_nombre') }}</h3>
-                <p class="lead">Gestión de usuarios alumnos del sistema</p>
-                
-                <div class="row mt-4">
-                    <!-- Solo mostramos Gestión de Alumnos -->
-                    <div class="col-md-8 offset-md-2 mb-3">
-                        <div class="game-card p-4">
-                            <i class="fas fa-user-graduate fa-3x text-info mb-3"></i>
-                            <h4>Gestión de Alumnos</h4>
-                            <p class="mb-3">Administra los usuarios alumnos del sistema</p>
-                            
-                            <div class="d-grid">
-                                <button class="btn btn-outline-info btn-lg" 
-                                        onclick="mostrarGestionAlumnos()">
-                                    <i class="fas fa-users me-2"></i>
-                                    Administrar Usuarios Alumnos
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Sección para mostrar la gestión de alumnos -->
-                <div id="gestion-alumnos" style="display: none;">
-                    <!-- Aquí se cargará el contenido dinámicamente -->
-                </div>
-                
-                <div class="mt-4">
-                    <span class="badge bg-warning fs-6 p-2">
-                        <i class="fas fa-user-shield me-1"></i> ADMINISTRADOR
-                    </span>
-                </div>
+<div class="container py-4 text-white">
+    <div class="game-card p-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <div>
+                <span class="text-warning text-uppercase small">Seguimiento académico</span>
+                <h1 class="mb-1"><i class="fas fa-chalkboard-teacher me-2 text-warning"></i>Panel del Profesor</h1>
+                <p class="mb-0">{{ session('usuario_colegio_nombre') }}</p>
+            </div>
+            <div class="text-end">
+                <strong>{{ session('usuario_nombre') }}</strong>
+                <form method="POST" action="{{ route('logout') }}" class="mt-2">@csrf
+                    <button class="btn btn-sm btn-outline-light" type="submit"><i class="fas fa-sign-out-alt me-1"></i>Cerrar sesión</button>
+                </form>
             </div>
         </div>
+
+        <div id="mensaje-profesor"></div>
+        <div id="menu-profesor" class="row g-3">
+            <div class="col-md-6">
+                <button class="teacher-option w-100 h-100" onclick="mostrarAlumnos()">
+                    <i class="fas fa-user-graduate"></i><strong>Mis alumnos</strong>
+                    <span>Crear alumnos, asignar clases y restablecer contraseñas</span>
+                </button>
+            </div>
+            <div class="col-md-6">
+                <button class="teacher-option w-100 h-100" onclick="mostrarProgreso()">
+                    <i class="fas fa-chart-bar"></i><strong>Progreso de mis clases</strong>
+                    <span>Filtrar y exportar avances por alumno, clase y módulo</span>
+                </button>
+            </div>
+        </div>
+        <section id="contenido-profesor" class="mt-4" style="display:none"></section>
     </div>
 </div>
 
 <style>
-    /* Estilos para las notificaciones modales */
-    .notification-modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10000;
-        backdrop-filter: blur(10px);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .notification-modal.show {
-        opacity: 1;
-    }
-
-    .notification-content {
-        background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
-        padding: 40px;
-        border-radius: 20px;
-        text-align: center;
-        max-width: 400px;
-        width: 90%;
-        border: 3px solid;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        transform: scale(0.7);
-        opacity: 0;
-        transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .notification-modal.show .notification-content {
-        transform: scale(1);
-        opacity: 1;
-    }
-
-    .notification-icon {
-        font-size: 4rem;
-        margin-bottom: 20px;
-        animation: bounceIn 0.6s ease-out;
-    }
-
-    .notification-title {
-        color: white;
-        font-size: 1.5rem;
-        margin-bottom: 10px;
-        font-weight: bold;
-    }
-
-    .notification-message {
-        color: #ccc;
-        margin-bottom: 25px;
-        line-height: 1.5;
-    }
-
-    .notification-button {
-        background: linear-gradient(45deg, #00ff9d, #00a1ff);
-        color: #000;
-        border: none;
-        padding: 12px 30px;
-        border-radius: 25px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.3s;
-        font-family: 'Roboto', sans-serif;
-    }
-
-    .notification-button:hover {
-        transform: scale(1.05);
-        box-shadow: 0 5px 15px rgba(0, 255, 157, 0.4);
-    }
-
-    .success-border { border-color: #00ff9d; }
-    .warning-border { border-color: #ffd93d; }
-    .error-border { border-color: #ff6b6b; }
-    .info-border { border-color: #2575fc; }
-
-    .success-icon { color: #00ff9d; }
-    .warning-icon { color: #ffd93d; }
-    .error-icon { color: #ff6b6b; }
-    .info-icon { color: #2575fc; }
-
-    /* Estilos para los modales de confirmación */
-    .confirmation-modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10000;
-        backdrop-filter: blur(10px);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .confirmation-modal.show {
-        opacity: 1;
-    }
-
-    .confirmation-content {
-        background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
-        padding: 40px;
-        border-radius: 20px;
-        text-align: center;
-        max-width: 450px;
-        width: 90%;
-        border: 3px solid;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        transform: scale(0.7);
-        opacity: 0;
-        transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-
-    .confirmation-modal.show .confirmation-content {
-        transform: scale(1);
-        opacity: 1;
-    }
-
-    .confirmation-icon {
-        font-size: 3.5rem;
-        margin-bottom: 20px;
-        animation: bounceIn 0.6s ease-out;
-    }
-
-    .confirmation-title {
-        color: white;
-        font-size: 1.4rem;
-        margin-bottom: 15px;
-        font-weight: bold;
-    }
-
-    .confirmation-message {
-        color: #ccc;
-        margin-bottom: 30px;
-        line-height: 1.5;
-        font-size: 1rem;
-    }
-
-    .confirmation-buttons {
-        display: flex;
-        gap: 15px;
-        justify-content: center;
-    }
-
-    .confirm-btn {
-        background: linear-gradient(45deg, #00ff9d, #00a1ff);
-        color: #000;
-        border: none;
-        padding: 12px 25px;
-        border-radius: 25px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.3s;
-        font-family: 'Roboto', sans-serif;
-        min-width: 120px;
-    }
-
-    .confirm-btn:hover {
-        transform: scale(1.05);
-        box-shadow: 0 5px 15px rgba(0, 255, 157, 0.4);
-    }
-
-    .cancel-btn {
-        background: rgba(108, 117, 125, 0.8);
-        color: white;
-        border: 2px solid #6c757d;
-        padding: 12px 25px;
-        border-radius: 25px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.3s;
-        font-family: 'Roboto', sans-serif;
-        min-width: 120px;
-    }
-
-    .cancel-btn:hover {
-        background: rgba(108, 117, 125, 1);
-        transform: scale(1.05);
-    }
-
-    .warning-border { border-color: #ffd93d; }
-    .danger-border { border-color: #ff6b6b; }
-
-    .warning-icon { color: #ffd93d; }
-    .danger-icon { color: #ff6b6b; }
-
-    @keyframes bounceIn {
-        0% { transform: scale(0.3); opacity: 0; }
-        50% { transform: scale(1.1); }
-        70% { transform: scale(0.9); }
-        100% { transform: scale(1); opacity: 1; }
-    }
-
-    @keyframes checkmark {
-        0% { transform: scale(0); }
-        50% { transform: scale(1.2); }
-        100% { transform: scale(1); }
-    }
-
-    .checkmark {
-        animation: checkmark 0.6s ease-out;
-    }
+.teacher-option{display:flex;flex-direction:column;align-items:flex-start;gap:.6rem;padding:1.5rem;text-align:left;color:#fff;background:rgba(10,31,38,.88);border:1px solid rgba(109,231,195,.45);border-radius:14px;transition:.2s}
+.teacher-option:hover{transform:translateY(-3px);border-color:#6de7c3;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.teacher-option i{font-size:2rem;color:#6de7c3}.teacher-option strong{font-size:1.2rem}.teacher-option span{color:#b8c9cd}
+.teacher-card{background:rgba(7,28,34,.8);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:1.2rem}
+.progress{height:1.15rem;background:#152d34}.progress-bar{color:#071a20;font-weight:700}
 </style>
 
 <script>
-// Función para mostrar notificaciones modales
-function mostrarNotificacion(tipo, titulo, mensaje, autoCerrar = true) {
-    const modal = document.createElement('div');
-    modal.className = 'notification-modal';
-    
-    const config = {
-        success: { icon: '✅', class: 'success', buttonText: '¡Perfecto!' },
-        warning: { icon: '⚠️', class: 'warning', buttonText: 'Entendido' },
-        error: { icon: '❌', class: 'error', buttonText: 'Reintentar' },
-        info: { icon: 'ℹ️', class: 'info', buttonText: 'Continuar' }
-    }[tipo] || { icon: '🔔', class: 'info', buttonText: 'OK' };
+const csrf='{{ csrf_token() }}';
+let clasesProfesor=[];
+let alumnosProfesor=[];
 
-    modal.innerHTML = `
-        <div class="notification-content ${config.class}-border">
-            <div class="notification-icon ${config.class}-icon checkmark">
-                ${config.icon}
-            </div>
-            <h3 class="notification-title">${titulo}</h3>
-            <p class="notification-message">${mensaje}</p>
-            <button class="notification-button" onclick="cerrarNotificacion(this)">
-                ${config.buttonText}
-            </button>
-        </div>
-    `;
+function area(){return document.getElementById('contenido-profesor');}
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c];});}
+function cabecera(titulo,icono){return '<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4"><h2 class="h4 mb-0"><i class="fas '+icono+' me-2 text-warning"></i>'+titulo+'</h2><button class="btn btn-outline-light btn-sm" onclick="volverMenuProfesor()"><i class="fas fa-arrow-left me-1"></i>Menú</button></div>';}
+function abrir(html){document.getElementById('menu-profesor').style.display='none';area().style.display='block';area().innerHTML=html;}
+function volverMenuProfesor(){area().style.display='none';area().innerHTML='';document.getElementById('menu-profesor').style.display='';}
+function mensaje(tipo,texto){var c=document.getElementById('mensaje-profesor');c.innerHTML='<div class="alert alert-'+tipo+'">'+esc(texto)+'</div>';window.scrollTo({top:0,behavior:'smooth'});setTimeout(function(){c.innerHTML='';},5000);}
+async function api(url,opciones){opciones=opciones||{};opciones.headers=Object.assign({},opciones.headers||{},{'Accept':'application/json','X-CSRF-TOKEN':csrf});if(opciones.body)opciones.headers['Content-Type']='application/json';var r=await fetch(url,opciones);var d=await r.json().catch(function(){return {};});if(!r.ok)throw new Error(d.message||Object.values(d.errors||{})[0]?.[0]||'No fue posible completar la operación.');return d;}
 
-    document.body.appendChild(modal);
-
-    // Animación de entrada
-    setTimeout(() => modal.classList.add('show'), 10);
-
-    // Auto-cierre si está habilitado
-    if (autoCerrar) {
-        setTimeout(() => {
-            if (modal.parentElement) {
-                cerrarNotificacion(modal);
-            }
-        }, 3000);
-    }
-
-    return modal;
+async function cargarDatosBase(){
+    var datos=await Promise.all([api('/api/profesor/clases'),api('/api/usuarios-por-rol/Alumno')]);
+    clasesProfesor=datos[0];alumnosProfesor=datos[1];
 }
 
-function cerrarNotificacion(element) {
-    const modal = element.closest ? element.closest('.notification-modal') : element;
-    modal.classList.remove('show');
-    setTimeout(() => {
-        if (modal.parentElement) {
-            modal.remove();
-        }
-    }, 300);
+async function mostrarAlumnos(){
+    abrir(cabecera('Mis alumnos','fa-user-graduate')+'<p>Cargando alumnos...</p>');
+    try{
+        await cargarDatosBase();
+        var clasesPorAlumno={};
+        clasesProfesor.forEach(function(c){c.alumnos.forEach(function(a){if(!clasesPorAlumno[a.id])clasesPorAlumno[a.id]=[];clasesPorAlumno[a.id].push(c.nombre);});});
+        var filas=alumnosProfesor.map(function(a){return '<tr><td>'+esc(a.nombre)+'</td><td>'+esc((clasesPorAlumno[a.id]||[]).join(', '))+'</td><td>'+a.puntos_totales+'</td><td>'+(a.cambio_clave_requerido?'<span class="badge bg-warning text-dark">Cambio pendiente</span>':'<span class="badge bg-success">Actualizada</span>')+'</td><td><button class="btn btn-sm btn-warning" onclick="restablecer('+a.id+')"><i class="fas fa-key me-1"></i>Restablecer</button></td></tr>';}).join('');
+        abrir(cabecera('Mis alumnos','fa-user-graduate')+'<div class="d-flex justify-content-end mb-3"><button class="btn btn-success" onclick="formularioAlumno()"><i class="fas fa-plus me-1"></i>Nuevo alumno</button></div><div id="form-alumno"></div>'+(filas?'<div class="table-responsive"><table class="table table-dark table-striped align-middle"><thead><tr><th>Alumno</th><th>Mis clases</th><th>Puntos</th><th>Contraseña</th><th>Acciones</th></tr></thead><tbody>'+filas+'</tbody></table></div>':'<p class="text-muted">No hay alumnos vinculados a tus clases.</p>'));
+    }catch(e){mensaje('danger',e.message);}
 }
 
-// Función para mostrar modales de confirmación elegantes
-function mostrarConfirmacion(tipo, titulo, mensaje, onConfirm, onCancel = null) {
-    const modal = document.createElement('div');
-    modal.className = 'confirmation-modal';
-    
-    const config = {
-        warning: { 
-            icon: '⚠️', 
-            class: 'warning', 
-            confirmText: 'Sí, Resetear',
-            cancelText: 'Cancelar'
-        },
-        danger: { 
-            icon: '🗑️', 
-            class: 'danger', 
-            confirmText: 'Sí, Eliminar',
-            cancelText: 'Cancelar'
-        }
-    }[tipo] || { 
-        icon: '❓', 
-        class: 'warning', 
-        confirmText: 'Confirmar',
-        cancelText: 'Cancelar' 
-    };
-
-    modal.innerHTML = `
-        <div class="confirmation-content ${config.class}-border">
-            <div class="confirmation-icon ${config.class}-icon">
-                ${config.icon}
-            </div>
-            <h3 class="confirmation-title">${titulo}</h3>
-            <p class="confirmation-message">${mensaje}</p>
-            <div class="confirmation-buttons">
-                <button class="cancel-btn" onclick="cerrarConfirmacion(this, false)">
-                    ${config.cancelText}
-                </button>
-                <button class="confirm-btn" onclick="cerrarConfirmacion(this, true)">
-                    ${config.confirmText}
-                </button>
-            </div>
-        </div>
-    `;
-
-    // Guardar referencias directamente en el elemento modal
-    modal._onConfirm = onConfirm;
-    modal._onCancel = onCancel;
-
-    document.body.appendChild(modal);
-
-    // Animación de entrada
-    setTimeout(() => modal.classList.add('show'), 10);
-
-    return modal;
+function formularioAlumno(){
+    var opciones=clasesProfesor.filter(function(c){return c.activa;}).map(function(c){return '<option value="'+c.id+'">'+esc(c.nombre)+'</option>';}).join('');
+    document.getElementById('form-alumno').innerHTML='<div class="teacher-card mb-4"><h3 class="h5">Registrar alumno</h3>'+(opciones?'<form onsubmit="crearAlumno(event)"><div class="row g-3"><div class="col-md-6"><label class="form-label">Nombre de usuario</label><input class="form-control" name="nombre" maxlength="100" required></div><div class="col-md-6"><label class="form-label">Clase inicial</label><select class="form-select" name="clase_id" required><option value="">Selecciona una clase</option>'+opciones+'</select></div></div><p class="text-info small mt-3">Contraseña temporal: <strong>Ined1234</strong>.</p><button class="btn btn-success" type="submit">Crear y asignar</button></form>':'<p class="text-warning">Necesitas tener al menos una clase activa asignada para registrar alumnos.</p>')+'</div>';
+}
+async function crearAlumno(evento){
+    evento.preventDefault();var f=new FormData(evento.target);
+    try{var d=await api('/api/usuarios',{method:'POST',body:JSON.stringify({nombre:f.get('nombre'),rol:'Alumno',clase_id:f.get('clase_id'),clave:'Ined1234'})});mensaje('success',d.message);await mostrarAlumnos();}catch(e){mensaje('danger',e.message);}
+}
+function restablecer(id){
+    if(!confirm('La contraseña se restablecerá a Ined1234. ¿Continuar?'))return;
+    api('/api/usuarios/'+id+'/reset-password',{method:'POST',body:JSON.stringify({nueva_clave:'Ined1234'})}).then(function(d){mensaje('success',d.message);mostrarAlumnos();}).catch(function(e){mensaje('danger',e.message);});
 }
 
-function cerrarConfirmacion(element, confirmado) {
-    const modal = element.closest('.confirmation-modal');
-    modal.classList.remove('show');
-    
-    setTimeout(() => {
-        if (modal.parentElement) {
-            modal.remove();
-        }
-        // Ejecutar callback después de la animación
-        if (confirmado && modal._onConfirm) {
-            modal._onConfirm();
-        } else if (!confirmado && modal._onCancel) {
-            modal._onCancel();
-        }
-    }, 300);
+async function mostrarProgreso(){
+    abrir(cabecera('Progreso de mis clases','fa-chart-bar')+'<p>Cargando filtros...</p>');
+    try{
+        await cargarDatosBase();
+        var clases='<option value="">Todas mis clases</option>'+clasesProfesor.map(function(c){return '<option value="'+c.id+'">'+esc(c.nombre)+'</option>';}).join('');
+        var alumnos='<option value="">Todos mis alumnos</option>'+alumnosProfesor.map(function(a){return '<option value="'+a.id+'">'+esc(a.nombre)+'</option>';}).join('');
+        abrir(cabecera('Progreso de mis clases','fa-chart-bar')+'<div class="teacher-card mb-4"><div class="row g-3 align-items-end"><div class="col-md-3"><label class="form-label">Clase</label><select id="filtro-clase" class="form-select">'+clases+'</select></div><div class="col-md-3"><label class="form-label">Alumno</label><select id="filtro-alumno" class="form-select">'+alumnos+'</select></div><div class="col-md-3"><label class="form-label">Módulo</label><select id="filtro-modulo" class="form-select"><option value="todos">Todos</option><option value="documentacion">Documentación</option><option value="tutoriales">Tutoriales</option><option value="desafios">Desafíos</option><option value="aventura">Aventura</option></select></div><div class="col-md-3 d-flex gap-2"><button class="btn btn-info flex-fill" onclick="cargarProgreso()">Consultar</button><button class="btn btn-outline-success" onclick="exportarProgreso()"><i class="fas fa-file-csv"></i></button></div></div></div><div id="resultado-progreso"></div>');
+        await cargarProgreso();
+    }catch(e){mensaje('danger',e.message);}
 }
-
-// Variables globales para almacenar temporalmente los IDs de usuario
-let usuarioIdActual = null;
-
-function mostrarGestionAlumnos() {
-    // Ocultar botones principales
-    document.querySelector('.row.mt-4').style.display = 'none';
-    
-    // Mostrar sección de gestión
-    const gestionDiv = document.getElementById('gestion-alumnos');
-    gestionDiv.style.display = 'block';
-    
-    // Cargar contenido de alumnos
-    gestionDiv.innerHTML = `
-        <div class="game-card p-4 mt-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3 class="text-info mb-0">
-                    <i class="fas fa-user-graduate me-2"></i>Gestión de Alumnos
-                </h3>
-                <div>
-                    <button class="btn btn-success me-2" onclick="mostrarFormularioCrearAlumno()">
-                        <i class="fas fa-plus me-1"></i> Nuevo Alumno
-                    </button>
-                    <button class="btn btn-secondary" onclick="volverAlMenuAdmin()">
-                        <i class="fas fa-arrow-left me-1"></i> Volver
-                    </button>
-                </div>
-            </div>
-            <div id="lista-alumnos">
-                Cargando alumnos...
-            </div>
-            <div id="formulario-crear-alumno" style="display: none;"></div>
-        </div>
-    `;
-    cargarAlumnos();
+function filtros(){
+    var p=new URLSearchParams(),clase=document.getElementById('filtro-clase')?.value,alumno=document.getElementById('filtro-alumno')?.value,modulo=document.getElementById('filtro-modulo')?.value||'todos';
+    if(clase)p.set('clase_id',clase);if(alumno)p.set('alumno_id',alumno);p.set('modulo',modulo);return p;
 }
-
-function volverAlMenuAdmin() {
-    document.querySelector('.row.mt-4').style.display = 'block';
-    document.getElementById('gestion-alumnos').style.display = 'none';
+async function cargarProgreso(){
+    var caja=document.getElementById('resultado-progreso');caja.innerHTML='<p>Cargando progreso...</p>';
+    try{
+        var d=await api('/api/profesor/progreso?'+filtros().toString());
+        var promedios=Object.keys(d.resumen.promedios).map(function(m){return '<div class="col-6 col-lg-3"><div class="teacher-card"><div class="text-capitalize">'+esc(m)+'</div><strong class="fs-4 text-info">'+d.resumen.promedios[m]+'%</strong></div></div>';}).join('');
+        var filas=d.alumnos.map(function(a){var modulos=Object.keys(a.modulos).map(function(m){var p=a.modulos[m];return '<div class="mb-2"><div class="d-flex justify-content-between"><span class="text-capitalize">'+esc(m)+'</span><span>'+p.porcentaje+'%</span></div><div class="progress"><div class="progress-bar bg-info" style="width:'+p.porcentaje+'%">'+p.completados+'/'+p.total+'</div></div><small class="text-muted">'+esc(p.detalle)+'</small></div>';}).join('');return '<tr><td><strong>'+esc(a.nombre)+'</strong><br><small>'+esc(a.clases.join(', '))+'</small></td><td>'+a.puntos_totales+'</td><td>'+modulos+'</td></tr>';}).join('');
+        caja.innerHTML='<div class="row g-3 mb-4">'+promedios+'</div>'+(filas?'<div class="table-responsive"><table class="table table-dark table-striped align-middle"><thead><tr><th>Alumno</th><th>Puntos</th><th>Avance</th></tr></thead><tbody>'+filas+'</tbody></table></div>':'<p class="text-muted">No hay alumnos para los filtros seleccionados.</p>');
+    }catch(e){caja.innerHTML='<p class="text-danger">'+esc(e.message)+'</p>';}
 }
-
-function cargarAlumnos() {
-    fetch('/api/usuarios-por-rol/Alumno')
-        .then(response => response.json())
-        .then(alumnos => {
-            const listaDiv = document.getElementById('lista-alumnos');
-            
-            if (alumnos.length === 0) {
-                listaDiv.innerHTML = '<p class="text-center text-muted">No hay alumnos registrados.</p>';
-                return;
-            }
-            
-            let html = `
-                <div class="table-responsive">
-                    <table class="table table-dark table-striped">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre de Usuario</th>
-                                <th>Puntos Totales</th>
-                                <th>Fecha Creación</th>
-                                <th>Estado Contraseña</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-            
-            alumnos.forEach(alumno => {
-                const requiereCambio = alumno.cambio_clave_requerido ? 
-                    '<span class="badge bg-warning">Requiere cambio</span>' : 
-                    '<span class="badge bg-success">Actualizada</span>';
-                
-                html += `
-                    <tr>
-                        <td>${alumno.id}</td>
-                        <td>${alumno.nombre}</td>
-                        <td>${alumno.puntos_totales}</td>
-                        <td>${new Date(alumno.created_at).toLocaleDateString()}</td>
-                        <td>${requiereCambio}</td>
-                        <td>
-                            <button class="btn btn-sm btn-warning me-1" onclick="resetearPasswordAlumno(${alumno.id})">
-                                <i class="fas fa-key"></i> Resetear Clave
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="eliminarAlumno(${alumno.id})">
-                                <i class="fas fa-trash"></i> Eliminar
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-            
-            html += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
-            
-            listaDiv.innerHTML = html;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('lista-alumnos').innerHTML = '<p class="text-danger">Error al cargar los alumnos.</p>';
-        });
-}
-
-function mostrarFormularioCrearAlumno() {
-    const formularioDiv = document.getElementById('formulario-crear-alumno');
-    
-    // Ocultar la lista de alumnos
-    document.getElementById('lista-alumnos').style.display = 'none';
-    
-    formularioDiv.style.display = 'block';
-    formularioDiv.innerHTML = `
-        <div class="game-card p-4 mt-3">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="text-success mb-0">
-                    <i class="fas fa-user-plus me-2"></i>Registrar Nuevo Alumno
-                </h4>
-                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="ocultarFormularioYMostrarListaAlumnos()">
-                    <i class="fas fa-arrow-left me-1"></i> Volver a la lista
-                </button>
-            </div>
-            <form id="formCrearAlumno" onsubmit="crearAlumno(event)">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label text-white">Nombre de Usuario</label>
-                            <input type="text" class="form-control" name="nombre" required 
-                                   placeholder="Ingrese el nombre de usuario para el alumno" autofocus>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label text-white">Contraseña Temporal</label>
-                            <input type="text" class="form-control" value="Ined1234" readonly 
-                                   style="background-color: #e9ecef;">
-                            <small class="text-warning">
-                                <i class="fas fa-info-circle me-1"></i>
-                                El alumno deberá cambiar esta contraseña en su primer acceso
-                            </small>
-                        </div>
-                    </div>
-                </div>
-                <div class="alert alert-info">
-                    <small>
-                        <i class="fas fa-exclamation-triangle me-1"></i>
-                        <strong>Información:</strong> El nuevo alumno tendrá la contraseña temporal "Ined1234" 
-                        y se le solicitará cambiarla en su primer ingreso al sistema.
-                    </small>
-                </div>
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-save me-1"></i> Registrar Alumno
-                    </button>
-                    <button type="button" class="btn btn-secondary" onclick="ocultarFormularioYMostrarListaAlumnos()">
-                        <i class="fas fa-times me-1"></i> Cancelar
-                    </button>
-                </div>
-            </form>
-        </div>
-    `;
-    
-    // Enfocar automáticamente el campo de nombre
-    setTimeout(() => {
-        const nombreInput = document.querySelector('input[name="nombre"]');
-        if (nombreInput) nombreInput.focus();
-    }, 100);
-}
-
-function ocultarFormularioYMostrarListaAlumnos() {
-    const formularioDiv = document.getElementById('formulario-crear-alumno');
-    
-    // Ocultar formulario
-    formularioDiv.style.display = 'none';
-    
-    // Mostrar lista de alumnos
-    document.getElementById('lista-alumnos').style.display = 'block';
-}
-
-function ocultarFormularioAlumno() {
-    document.getElementById('formulario-crear-alumno').style.display = 'none';
-}
-
-function crearAlumno(event) {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const datos = {
-        nombre: formData.get('nombre'),
-        rol: 'Alumno', // Siempre será Alumno
-        clave: 'Ined1234' // Contraseña temporal fija
-    };
-    
-    // Mostrar loading
-    const btn = event.target.querySelector('button[type="submit"]');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Creando...';
-    btn.disabled = true;
-    
-    fetch('/api/usuarios', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify(datos)
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Restaurar botón
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-        
-        if (data.success) {
-            mostrarNotificacion('success', 
-                '✅ Alumno Creado', 
-                `El alumno "${datos.nombre}" ha sido registrado exitosamente.`,
-                false
-            );
-            ocultarFormularioYMostrarListaAlumnos();
-            cargarAlumnos(); // Recargar la lista
-        } else {
-            // Manejar errores específicos
-            let mensajeError = 'Ha ocurrido un error al crear el alumno.';
-            
-            if (data.message && data.message.includes('already been taken')) {
-                mensajeError = 'Este nombre de usuario ya existe. Prueba con otro o añade números.';
-            } else if (data.message && data.message.includes('The nombre has already been taken')) {
-                mensajeError = 'Este nombre de usuario ya existe. Prueba con otro o añade números.';
-            } else if (data.message) {
-                // Si hay otro mensaje de error, mostrarlo tal cual
-                mensajeError = data.message;
-            }
-            
-            mostrarNotificacion('error',
-                '❌ Error al Crear',
-                mensajeError,
-                false
-            );
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-        mostrarNotificacion('error',
-            '❌ Error de Conexión',
-            'No se pudo conectar con el servidor. Intenta nuevamente.',
-            false
-        );
-    });
-}
-
-// Función modificada para resetear contraseña
-function resetearPasswordAlumno(alumnoId) {
-    usuarioIdActual = alumnoId;
-    
-    mostrarConfirmacion(
-        'warning',
-        '🔑 Resetear Contraseña',
-        '¿Estás seguro de que deseas resetear la contraseña de este alumno a "Ined1234"?<br><br><small>El alumno deberá cambiar su contraseña en el próximo acceso.</small>',
-        function() {
-            // Código para resetear contraseña
-            fetch(`/api/usuarios/${usuarioIdActual}/reset-password`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ nueva_clave: 'Ined1234' })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    mostrarNotificacion('success',
-                        '🔑 Contraseña Reseteada',
-                        'La contraseña del alumno ha sido restablecida exitosamente a "Ined1234".',
-                        true
-                    );
-                    cargarAlumnos(); // Recargar la lista para actualizar estado
-                } else {
-                    mostrarNotificacion('error',
-                        '❌ Error al Resetear',
-                        data.message || 'Ha ocurrido un error al resetear la contraseña.',
-                        false
-                    );
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                mostrarNotificacion('error',
-                    '❌ Error de Conexión',
-                    'No se pudo conectar con el servidor. Intenta nuevamente.',
-                    false
-                );
-            });
-        }
-    );
-}
-
-// Función modificada para eliminar alumno
-function eliminarAlumno(alumnoId) {
-    usuarioIdActual = alumnoId;
-    
-    mostrarConfirmacion(
-        'danger',
-        '🗑️ Eliminar Alumno',
-        '¿Estás seguro de que deseas eliminar este alumno permanentemente?<br><br><small>Esta acción no se puede deshacer y se perderán todos los datos del alumno.</small>',
-        function() {
-            // Código para eliminar alumno
-            fetch(`/api/usuarios/${usuarioIdActual}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    mostrarNotificacion('warning',
-                        '🗑️ Alumno Eliminado',
-                        'El alumno ha sido eliminado exitosamente del sistema.',
-                        true
-                    );
-                    cargarAlumnos(); // Recargar la lista
-                } else {
-                    mostrarNotificacion('error',
-                        '❌ Error al Eliminar',
-                        data.message || 'Ha ocurrido un error al eliminar el alumno.',
-                        false
-                    );
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                mostrarNotificacion('error',
-                    '❌ Error de Conexión',
-                    'No se pudo conectar con el servidor. Intenta nuevamente.',
-                    false
-                );
-            });
-        }
-    );
-}
+function exportarProgreso(){window.location.href='/api/profesor/progreso/exportar?'+filtros().toString();}
 </script>
 @endsection

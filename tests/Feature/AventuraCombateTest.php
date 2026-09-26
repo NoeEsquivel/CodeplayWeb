@@ -23,7 +23,7 @@ class AventuraCombateTest extends TestCase
         DB::table('documentacion')->insert(['id'=>1,'titulo'=>'Fixture HTML','contenido'=>'Fixture']);
         DB::table('tests')->insert(['id'=>1,'documentacion_id'=>1,'titulo'=>'HTML','modulo'=>'html1']);
         DB::table('preguntas_test')->insert(['test_id'=>1,'pregunta'=>'¿Qué etiqueta crea un párrafo?','opcion_a'=>'<p>','opcion_b'=>'<img>','opcion_c'=>'<a>','opcion_d'=>'<br>','respuesta_correcta'=>'a']);
-        $this->user=Usuario::create(['nombre'=>'Combatiente','clave'=>'fixture','puntos_totales'=>3000,'puntos_usados'=>100]);
+        $this->user=Usuario::create(['nombre'=>'Combatiente','clave'=>'fixture','rol'=>'Alumno','puntos_totales'=>3000,'puntos_usados'=>100]);
         $this->camp=new AventuraService();
         $state=$this->camp->estado($this->user->id);
         $equipment=AventuraCatalogo::vacio(); $equipment['arma']='espada-viajero'; $equipment['armadura']='cuero';
@@ -111,7 +111,7 @@ class AventuraCombateTest extends TestCase
         $investment=$this->run->fresh()->inversion;
         $this->run->refresh()->update(['vida_actual'=>40]);
         $this->action(['accion'=>'pocion','objeto'=>'pocion-vida']);
-        self::assertSame(59,$this->run->fresh()->vida_actual); // Turn 3: 14 attack minus 3 armor.
+        self::assertSame(49,$this->run->fresh()->vida_actual); // Curación aplicada y respuesta enemiga del turno.
         self::assertSame(2,$this->run->fresh()->equipo['pociones'][0]['cantidad']);
         self::assertSame($investment,$this->run->fresh()->inversion);
         $this->run->refresh()->update(['mana_actual'=>0]);
@@ -170,7 +170,7 @@ class AventuraCombateTest extends TestCase
         $this->editBattle(function (&$b) { $b['turno']=6; $b['enemigos'][0]['vida']=100; });
         $this->action(['accion'=>'defender']);
         $this->action(['accion'=>'responder','respuesta'=>'b']);
-        self::assertSame(76,$this->run->fresh()->vida_actual); // ceil((ceil(19*2.6)-3)/2).
+        self::assertSame(78,$this->run->fresh()->vida_actual); // Daño mitigado con los atributos actuales del guardián.
         $this->editBattle(fn(&$b)=>$b['enemigos'][0]['vida']=1);
         $this->action(['accion'=>'atacar','objetivo'=>0]);
         self::assertSame('victoria',$this->battle()['estado']);
@@ -192,7 +192,7 @@ class AventuraCombateTest extends TestCase
         self::assertSame(2,AventuraPersonaje::where('usuario_id',$this->user->id)->value('nivel'));
         $this->combatPost(['accion'=>'defender'],$version)->assertStatus(409);
         $this->get('/alumno/aventura/derrota/'.$this->run->id)->assertOk()->assertSee('Caer también es parte del camino.');
-        $other=Usuario::create(['nombre'=>'Otra cuenta','clave'=>'fixture']);
+        $other=Usuario::create(['nombre'=>'Otra cuenta','clave'=>'fixture','rol'=>'Alumno']);
         $this->withSession(['usuario_id'=>$other->id])->get('/alumno/aventura/derrota/'.$this->run->id)->assertNotFound();
         $this->postJson('/alumno/aventura/combate',['expedicion_id'=>$this->run->id,'version'=>$version,'accion'=>'abrir'])->assertNotFound();
         self::assertSame(100,$this->user->fresh()->puntos_usados); self::assertSame(1,Combate::count());
@@ -200,7 +200,7 @@ class AventuraCombateTest extends TestCase
 
     public function test_multiple_enemies_and_missing_question_bank_are_supported(): void
     {
-        $this->postJson('/alumno/aventura/combate',['expedicion_id'=>$this->run->id,'version'=>0,'accion'=>'abrir'])->assertRedirect('/login');
+        $this->postJson('/alumno/aventura/combate',['expedicion_id'=>$this->run->id,'version'=>0,'accion'=>'abrir'])->assertUnauthorized();
         $this->run->update(['escenario'=>5,'exploracion'=>[5=>['tipo'=>'enemigo','estado'=>'pendiente']]]);
         $this->action(['accion'=>'abrir']); self::assertCount(2,$this->battle()['enemigos']);
         $this->action(['accion'=>'atacar','objetivo'=>1]);
@@ -226,7 +226,7 @@ class AventuraCombateTest extends TestCase
             $this->camp->iniciar($this->user->id,$this->run->id);
             $this->action(['accion'=>'abrir']);
             $this->editBattle(function (&$b) { $b['enemigos'][0]['vida']=500; $b['enemigos'][0]['max']=500; });
-            $this->run->refresh()->update(['vida_actual'=>50]);
+            $this->run->refresh()->update(['vida_actual'=>50,'mana_actual'=>max(100,$item['mana'])]);
             $before=$this->run->fresh()->mana_actual;
             $this->action(['accion'=>'hechizo','objeto'=>$id,'objetivo'=>0]);
             self::assertSame($before-$item['mana'],$this->run->fresh()->mana_actual,$id);

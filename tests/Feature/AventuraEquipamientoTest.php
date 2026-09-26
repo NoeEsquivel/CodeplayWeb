@@ -51,7 +51,7 @@ class AventuraEquipamientoTest extends TestCase
         $run = AventuraExpedicion::findOrFail($p['expedicion_id']);
         $run->update(['escenario'=>4, 'oro'=>30, 'mejoras'=>[['tipo'=>'dano','valor'=>10]]]);
         $request = ['expedicion_id'=>$run->id, 'version'=>$run->version];
-        $this->postJson('/alumno/aventura/reiniciar', $request)->assertRedirect('/login');
+        $this->postJson('/alumno/aventura/reiniciar', $request)->assertUnauthorized();
         $this->withSession(['usuario_id'=>$this->player->id]);
         $this->postJson('/alumno/aventura/reiniciar', ['expedicion_id'=>$run->id,'version'=>$run->version-1])->assertStatus(409);
         $this->postJson('/alumno/aventura/reiniciar', $request)->assertOk();
@@ -75,7 +75,7 @@ class AventuraEquipamientoTest extends TestCase
     public function test_menu_requires_session_and_initializes_permanent_stats_without_spending(): void
     {
         $this->get('/alumno/aventura')->assertRedirect('/login');
-        $this->postJson('/alumno/aventura/equipamiento', [])->assertRedirect('/login');
+        $this->postJson('/alumno/aventura/equipamiento', [])->assertUnauthorized();
         $this->withSession(['usuario_id' => $this->player->id])->get('/alumno/aventura')->assertOk()->assertSee('Antes del primer paso.');
         $state = $this->service->estado($this->player->id);
         self::assertSame(array_fill_keys(AventuraCatalogo::STATS, 1), $state['personaje']['base']);
@@ -207,6 +207,7 @@ class AventuraEquipamientoTest extends TestCase
         }
         self::assertSame(145, $catalogo->cotizar($equipo, [], 11)['costo']);
 
+        $this->service->estado($this->player->id);
         $personaje = AventuraPersonaje::where('usuario_id', $this->player->id)->firstOrFail();
         $personaje->update(['nivel' => 10, 'experiencia' => 0]);
         $service = new class extends AventuraService {
@@ -220,7 +221,7 @@ class AventuraEquipamientoTest extends TestCase
     public function test_other_users_cannot_modify_a_preparation_and_no_xp_endpoint_exists(): void
     {
         $payload = $this->payload(AventuraCatalogo::vacio());
-        $other = Usuario::create(['nombre' => 'Otro explorador', 'clave' => 'test', 'puntos_totales' => 500]);
+        $other = Usuario::create(['nombre' => 'Otro explorador', 'clave' => 'test','rol'=>'Alumno', 'puntos_totales' => 500]);
         $this->withSession(['usuario_id' => $other->id])->postJson('/alumno/aventura/equipamiento', $payload)->assertStatus(409);
         $this->postJson('/alumno/aventura/experiencia', ['cantidad' => 900])->assertNotFound();
         self::assertSame(100, $this->player->fresh()->puntos_usados);
@@ -299,7 +300,7 @@ class AventuraEquipamientoTest extends TestCase
     {
         $item = DB::table('items')->insertGetId(['nombre' => 'Recuerdo antiguo', 'tipo' => 'especial', 'descripcion' => 'Anterior', 'precio' => 0]);
         DB::table('inventario')->insert(['usuario_id' => $this->player->id, 'item_id' => $item, 'cantidad' => 7]);
-        $other = Usuario::create(['nombre' => 'Otra cuenta', 'clave' => 'test', 'puntos_totales' => 1000]);
+        $other = Usuario::create(['nombre' => 'Otra cuenta', 'clave' => 'test','rol'=>'Alumno', 'puntos_totales' => 1000]);
         $equipment = AventuraCatalogo::vacio(); $equipment['arma'] = 'espada-viajero';
         foreach ([$this->player->id, $other->id] as $id) {
             $state = $this->service->estado($id);
@@ -328,8 +329,8 @@ class AventuraEquipamientoTest extends TestCase
     public function test_map_preview_start_choice_and_reload_preserve_the_actual_run(): void
     {
         $this->get('/alumno/aventura/mapa')->assertRedirect('/login');
-        $this->postJson('/alumno/aventura/iniciar', [])->assertRedirect('/login');
-        $this->postJson('/alumno/aventura/camino', [])->assertRedirect('/login');
+        $this->postJson('/alumno/aventura/iniciar', [])->assertUnauthorized();
+        $this->postJson('/alumno/aventura/camino', [])->assertUnauthorized();
         $this->withSession(['usuario_id' => $this->player->id]);
         foreach (range(1, 5) as $region) $this->get('/alumno/aventura/mapa?region=' . $region)->assertOk()->assertSee('El conocimiento abre caminos.');
         $state = $this->service->estado($this->player->id);
@@ -340,7 +341,7 @@ class AventuraEquipamientoTest extends TestCase
         $this->postJson('/alumno/aventura/iniciar', $payload)->assertOk();
         $run = AventuraExpedicion::findOrFail($payload['expedicion_id']);
         self::assertSame(1, $run->version);
-        $this->get('/alumno/aventura/mapa')->assertSee('El camino se divide');
+        $this->get('/alumno/aventura/mapa')->assertSee('El campamento te recibe');
         $this->postJson('/alumno/aventura/camino', $payload + ['camino' => 0])->assertStatus(409);
         $payload['version'] = $run->version;
         $this->postJson('/alumno/aventura/camino', $payload + ['camino' => 7])->assertStatus(422);
@@ -357,7 +358,7 @@ class AventuraEquipamientoTest extends TestCase
         self::assertSame(1, $run->fresh()->escenario);
         self::assertSame(0, $run->fresh()->oro);
         self::assertSame(100, $this->player->fresh()->puntos_usados);
-        $other = Usuario::create(['nombre' => 'Otra sesión', 'clave' => 'test']);
+        $other = Usuario::create(['nombre' => 'Otra sesión', 'clave' => 'test','rol'=>'Alumno']);
         $this->withSession(['usuario_id' => $other->id])->postJson('/alumno/aventura/iniciar', $payload)->assertNotFound();
         $this->postJson('/alumno/aventura/camino', $payload + ['camino' => 0])->assertNotFound();
     }

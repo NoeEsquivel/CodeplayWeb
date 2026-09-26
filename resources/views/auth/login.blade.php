@@ -113,6 +113,12 @@
                         </div>
                     @endif
 
+                    @if(session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
                     @if($errors->any())
                         <div class="alert alert-danger">
                             @foreach($errors->all() as $error)
@@ -141,6 +147,7 @@
                             <i class="fas fa-gamepad me-2"></i> INGRESAR
                         </button>
                     </form>
+                    <a href="{{ route('recovery.form') }}" class="d-inline-block mt-3 text-info">¿Olvidaste tu usuario o contraseña?</a>
                 </div>
             </div>
         </div>

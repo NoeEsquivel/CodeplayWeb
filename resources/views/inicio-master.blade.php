@@ -10,7 +10,7 @@
                 <h1 class="mb-4">👑 Panel Master</h1>
                 <h3 class="text-warning">{{ session('usuario_nombre') }}</h3>
                 <p class="lead">Control total del sistema CodePlay</p>
-                
+
                 <div class="row mt-4">
                     <!-- Solo mostramos Gestión de Usuarios -->
                     <div class="col-md-6 offset-md-3 mb-3">
@@ -18,29 +18,53 @@
                             <i class="fas fa-users-cog fa-3x text-danger mb-3"></i>
                             <h4>Gestión de Usuarios</h4>
                             <p class="mb-3">Administra todos los usuarios del sistema</p>
-                            
+
                             <div class="d-grid gap-3">
-                                <button class="btn btn-outline-warning btn-lg" 
+                                <button class="btn btn-outline-warning btn-lg"
                                         onclick="mostrarGestion('administradores')">
                                     <i class="fas fa-user-shield me-2"></i>
-                                    Administrar Usuarios Administradores
+                                    Administrar Usuarios Profesores
                                 </button>
-                                
-                                <button class="btn btn-outline-info btn-lg" 
+
+                                <button class="btn btn-outline-success btn-lg"
+                                        onclick="mostrarGestionColegios()">
+                                    <i class="fas fa-school me-2"></i>
+                                    Administrar Colegios
+                                </button>
+
+                                <button class="btn btn-outline-danger btn-lg"
+                                        onclick="mostrarGestion('administradores-colegio')">
+                                    <i class="fas fa-user-shield me-2"></i>
+                                    Administradores de Colegio
+                                </button>
+
+                                <button class="btn btn-outline-info btn-lg"
                                         onclick="mostrarGestion('alumnos')">
                                     <i class="fas fa-user-graduate me-2"></i>
                                     Administrar Usuarios Alumnos
+                                </button>
+
+                                <button class="btn btn-outline-primary btn-lg"
+                                        onclick="mostrarJerarquia()">
+                                    <i class="fas fa-sitemap me-2"></i>
+                                    Consultar Jerarquía por Colegio
+                                </button>
+
+                                <button class="btn btn-outline-light btn-lg"
+                                        onclick="mostrarAuditoria()">
+                                    <i class="fas fa-clipboard-list me-2"></i>
+                                    Registro de Acciones
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Sección para mostrar la gestión específica -->
                 <div id="gestion-usuarios" style="display: none;">
                     <!-- Aquí se cargará el contenido dinámicamente -->
                 </div>
-                
+
                 <div class="mt-4">
                     <span class="badge bg-danger fs-6 p-2">
                         <i class="fas fa-crown me-1"></i> VISTA MASTER
@@ -271,7 +295,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.body.style.background = 'url("{{ asset("imagenes/Fondo_Master.jpg") }}") no-repeat center center fixed';
     document.body.style.backgroundSize = 'cover';
-    
+
     const overlay = document.createElement('div');
     overlay.style.position = 'fixed';
     overlay.style.top = '0';
@@ -281,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
     overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
     overlay.style.zIndex = '-1';
     document.body.appendChild(overlay);
-    
+
     document.querySelector('main').style.position = 'relative';
     document.querySelector('main').style.zIndex = '1';
 });
@@ -290,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function mostrarNotificacion(tipo, titulo, mensaje, autoCerrar = true) {
     const modal = document.createElement('div');
     modal.className = 'notification-modal';
-    
+
     const config = {
         success: { icon: '✅', class: 'success', buttonText: '¡Perfecto!' },
         warning: { icon: '⚠️', class: 'warning', buttonText: 'Entendido' },
@@ -342,25 +366,25 @@ function cerrarNotificacion(element) {
 function mostrarConfirmacion(tipo, titulo, mensaje, onConfirm, onCancel = null) {
     const modal = document.createElement('div');
     modal.className = 'confirmation-modal';
-    
+
     const config = {
-        warning: { 
-            icon: '⚠️', 
-            class: 'warning', 
+        warning: {
+            icon: '⚠️',
+            class: 'warning',
             confirmText: 'Sí, Resetear',
             cancelText: 'Cancelar'
         },
-        danger: { 
-            icon: '🗑️', 
-            class: 'danger', 
+        danger: {
+            icon: '🗑️',
+            class: 'danger',
             confirmText: 'Sí, Eliminar',
             cancelText: 'Cancelar'
         }
-    }[tipo] || { 
-        icon: '❓', 
-        class: 'warning', 
+    }[tipo] || {
+        icon: '❓',
+        class: 'warning',
         confirmText: 'Confirmar',
-        cancelText: 'Cancelar' 
+        cancelText: 'Cancelar'
     };
 
 modal.innerHTML = `
@@ -400,7 +424,7 @@ modal._onCancel = onCancel;
 function cerrarConfirmacion(element, confirmado) {
     const modal = element.closest('.confirmation-modal');
     modal.classList.remove('show');
-    
+
     setTimeout(() => {
         if (modal.parentElement) {
             modal.remove();
@@ -414,294 +438,416 @@ function cerrarConfirmacion(element, confirmado) {
     }, 300);
 }
 
-// Variables globales para almacenar temporalmente los IDs de usuario
 let usuarioIdActual = null;
+let rolGestionActual = null;
+
+const configuracionesRol = {
+    administradores: { rol: 'Profesor', titulo: 'Usuarios Profesores', singular: 'Profesor', listaId: 'lista-profesores', icono: 'fa-chalkboard-teacher', color: 'warning' },
+    'administradores-colegio': { rol: 'AdministradorColegio', titulo: 'Administradores de Colegio', singular: 'Administrador de Colegio', listaId: 'lista-administradores-colegio', icono: 'fa-user-shield', color: 'danger' },
+    alumnos: { rol: 'Alumno', titulo: 'Usuarios Alumnos', singular: 'Alumno', listaId: 'lista-alumnos', icono: 'fa-user-graduate', color: 'info' }
+};
+
+function configuracionPorRol(rol) {
+    return Object.values(configuracionesRol).find(configuracion => configuracion.rol === rol);
+}
+
+function escaparHtml(valor) {
+    return String(valor ?? '').replace(/[&<>"]/g, caracter => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[caracter]);
+}
 
 function mostrarGestion(tipo) {
-    // Ocultar botones principales
+    const configuracion = configuracionesRol[tipo];
+    if (!configuracion) return;
+
+    rolGestionActual = configuracion.rol;
     document.querySelector('.row.mt-4').style.display = 'none';
-    
-    // Mostrar sección de gestión
     const gestionDiv = document.getElementById('gestion-usuarios');
     gestionDiv.style.display = 'block';
-    
-    // Cargar contenido según el tipo
-    if (tipo === 'administradores') {
-        gestionDiv.innerHTML = `
-            <div class="game-card p-4 mt-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="text-warning mb-0">
-                        <i class="fas fa-user-shield me-2"></i>Usuarios Administradores
-                    </h3>
-                    <div>
-                        <button class="btn btn-success me-2" onclick="mostrarFormularioCrear('Administrador')">
-                            <i class="fas fa-plus me-1"></i> Nuevo Administrador
-                        </button>
-                        <button class="btn btn-secondary" onclick="volverAlMenu()">
-                            <i class="fas fa-arrow-left me-1"></i> Volver
-                        </button>
-                    </div>
+    gestionDiv.innerHTML = `
+        <div class="game-card p-4 mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <h3 class="text-${configuracion.color} mb-0"><i class="fas ${configuracion.icono} me-2"></i>${configuracion.titulo}</h3>
+                <div>
+                    <button class="btn btn-success me-2" onclick="mostrarFormularioCrear('${configuracion.rol}')"><i class="fas fa-plus me-1"></i> Nuevo ${configuracion.singular}</button>
+                    <button class="btn btn-secondary" onclick="volverAlMenu()"><i class="fas fa-arrow-left me-1"></i> Volver</button>
                 </div>
-                <div id="lista-administradores">
-                    Cargando administradores...
-                </div>
-                <div id="formulario-crear" style="display: none;"></div>
             </div>
-        `;
-        cargarUsuarios('Administrador');
-    } else {
-        gestionDiv.innerHTML = `
-            <div class="game-card p-4 mt-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="text-info mb-0">
-                        <i class="fas fa-user-graduate me-2"></i>Usuarios Alumnos
-                    </h3>
-                    <div>
-                        <button class="btn btn-success me-2" onclick="mostrarFormularioCrear('Alumno')">
-                            <i class="fas fa-plus me-1"></i> Nuevo Alumno
-                        </button>
-                        <button class="btn btn-secondary" onclick="volverAlMenu()">
-                            <i class="fas fa-arrow-left me-1"></i> Volver
-                        </button>
-                    </div>
-                </div>
-                <div id="lista-alumnos">
-                    Cargando alumnos...
-                </div>
-                <div id="formulario-crear" style="display: none;"></div>
-            </div>
-        `;
-        cargarUsuarios('Alumno');
-    }
+            <div id="${configuracion.listaId}">Cargando usuarios...</div>
+            <div id="formulario-crear" style="display: none;"></div>
+        </div>`;
+    cargarUsuarios(configuracion.rol);
 }
 
 function volverAlMenu() {
+    rolGestionActual = null;
     document.querySelector('.row.mt-4').style.display = 'block';
     document.getElementById('gestion-usuarios').style.display = 'none';
 }
 
 function cargarUsuarios(rol) {
-    const listaId = rol === 'Administrador' ? 'lista-administradores' : 'lista-alumnos';
-    
+    const configuracion = configuracionPorRol(rol);
+    if (!configuracion) return;
+
     fetch(`/api/usuarios-por-rol/${rol}`)
         .then(response => response.json())
         .then(usuarios => {
-            const listaDiv = document.getElementById(listaId);
-            
-            if (usuarios.length === 0) {
+            const listaDiv = document.getElementById(configuracion.listaId);
+            if (!listaDiv) return;
+            if (!Array.isArray(usuarios) || usuarios.length === 0) {
                 listaDiv.innerHTML = '<p class="text-center text-muted">No hay usuarios de este tipo.</p>';
                 return;
             }
-            
-            let html = `
-                <div class="table-responsive">
-                    <table class="table table-dark table-striped">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Puntos Totales</th>
-                                <th>Fecha Creación</th>
-                                <th>Estado Contraseña</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-            
+
+            let html = '<div class="table-responsive"><table class="table table-dark table-striped align-middle"><thead><tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Colegio</th><th>Estado</th><th>Puntos</th><th>Contraseña</th><th>Acciones</th></tr></thead><tbody>';
             usuarios.forEach(usuario => {
-                // Añadir el estado de la contraseña
-                const requiereCambio = usuario.cambio_clave_requerido ? 
-                    '<span class="badge bg-warning">Requiere cambio</span>' : 
-                    '<span class="badge bg-success">Actualizada</span>';
-                
-                html += `
-                    <tr>
-                        <td>${usuario.id}</td>
-                        <td>${usuario.nombre}</td>
-                        <td>${usuario.puntos_totales}</td>
-                        <td>${new Date(usuario.created_at).toLocaleDateString()}</td>
-                        <td>${requiereCambio}</td>
-                        <td>
-                            <button class="btn btn-sm btn-warning me-1" onclick="resetearPassword(${usuario.id})">
-                                <i class="fas fa-key"></i> Resetear Clave
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="eliminarUsuario(${usuario.id})">
-                                <i class="fas fa-trash"></i> Eliminar
-                            </button>
-                        </td>
-                    </tr>
-                `;
+                const requiereCambio = usuario.cambio_clave_requerido ? '<span class="badge bg-warning text-dark">Requiere cambio</span>' : '<span class="badge bg-success">Actualizada</span>';
+                const activo = usuario.activo !== false;
+                const estado = activo ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-secondary">Desactivado</span>';
+                html += `<tr><td>${usuario.id}</td><td>${escaparHtml(usuario.nombre)}</td><td>${escaparHtml(usuario.email || '—')}</td><td>${usuario.colegio ? escaparHtml(usuario.colegio.nombre) : '<span class="text-danger">Sin colegio</span>'}</td><td>${estado}</td><td>${usuario.puntos_totales}</td><td>${requiereCambio}</td><td><button class="btn btn-sm btn-warning me-1 mb-1" onclick="resetearPassword(${usuario.id})"><i class="fas fa-key"></i> Resetear</button><button class="btn btn-sm btn-outline-info me-1 mb-1" onclick="mostrarTraslado(${usuario.id}, ${usuario.colegio_id || 'null'}, '${configuracion.rol}')"><i class="fas fa-exchange-alt"></i> Trasladar</button><button class="btn btn-sm ${activo ? 'btn-outline-danger' : 'btn-outline-success'} mb-1" onclick="cambiarEstadoUsuario(${usuario.id}, ${!activo})">${activo ? 'Desactivar' : 'Activar'}</button></td></tr>`;
             });
-            
-            html += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
-            
-            listaDiv.innerHTML = html;
+            listaDiv.innerHTML = html + '</tbody></table></div>';
         })
         .catch(error => {
             console.error('Error:', error);
-            document.getElementById(listaId).innerHTML = '<p class="text-danger">Error al cargar los usuarios.</p>';
+            const listaDiv = document.getElementById(configuracion.listaId);
+            if (listaDiv) listaDiv.innerHTML = '<p class="text-danger">Error al cargar los usuarios.</p>';
         });
 }
 
 function mostrarFormularioCrear(rol) {
+    const configuracion = configuracionPorRol(rol);
+    if (!configuracion) return;
+
     const formularioDiv = document.getElementById('formulario-crear');
-    const listaId = rol === 'Administrador' ? 'lista-administradores' : 'lista-alumnos';
-    
-    // Ocultar la lista de usuarios
-    document.getElementById(listaId).style.display = 'none';
-    
+    const listaDiv = document.getElementById(configuracion.listaId);
+    if (listaDiv) listaDiv.style.display = 'none';
+    const requiereCorreo = rol === 'Profesor' || rol === 'AdministradorColegio';
+
     formularioDiv.style.display = 'block';
     formularioDiv.innerHTML = `
         <div class="game-card p-4 mt-3">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="text-success mb-0">
-                    <i class="fas fa-plus-circle me-2"></i>Crear Nuevo ${rol}
-                </h4>
-                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="ocultarFormularioYMostrarLista('${rol}')">
-                    <i class="fas fa-arrow-left me-1"></i> Volver a la lista
-                </button>
+                <h4 class="text-success mb-0"><i class="fas fa-plus-circle me-2"></i>Crear ${configuracion.singular}</h4>
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="ocultarFormularioYMostrarLista('${rol}')"><i class="fas fa-arrow-left me-1"></i> Volver</button>
             </div>
             <form id="formCrearUsuario" onsubmit="crearUsuario(event, '${rol}')">
                 <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label text-white">Nombre de Usuario</label>
-                            <input type="text" class="form-control" name="nombre" required 
-                                   placeholder="Ingrese el nombre de usuario" autofocus>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label text-white">Contraseña Temporal</label>
-                            <input type="text" class="form-control" value="Ined1234" readonly 
-                                   style="background-color: #e9ecef;">
-                            <small class="text-warning">Esta será la contraseña temporal del usuario</small>
-                        </div>
-                    </div>
+                    <div class="col-md-6"><div class="mb-3"><label class="form-label text-white">Nombre de Usuario</label><input type="text" class="form-control" name="nombre" required placeholder="Ingrese el nombre de usuario" autofocus></div></div>
+                    ${requiereCorreo ? `<div class="col-md-6"><div class="mb-3"><label class="form-label text-white">Correo electrónico</label><input type="email" class="form-control" name="email" required placeholder="usuario@colegio.edu"><small class="text-info">Se utilizará para recuperar la cuenta.</small></div></div>` : ''}
+                    <div class="col-md-6"><div class="mb-3"><label class="form-label text-white">Colegio</label><select class="form-select" name="colegio_id" required><option value="">Cargando colegios...</option></select></div></div>
+                    <div class="col-md-6"><div class="mb-3"><label class="form-label text-white">Contraseña Temporal</label><input type="text" class="form-control" value="Ined1234" readonly style="background-color: #e9ecef;"></div></div>
                 </div>
-                <div class="alert alert-info">
-                    <small>
-                        <i class="fas fa-info-circle me-1"></i>
-                        El usuario recibirá la contraseña temporal "Ined1234" y deberá cambiarla en su primer acceso.
-                    </small>
-                </div>
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-save me-1"></i> Crear Usuario
-                    </button>
-                    <button type="button" class="btn btn-secondary" onclick="ocultarFormularioYMostrarLista('${rol}')">
-                        <i class="fas fa-times me-1"></i> Cancelar
-                    </button>
-                </div>
+                <div class="alert alert-info">El usuario deberá cambiar la contraseña temporal <strong>Ined1234</strong> en su primer acceso.</div>
+                <div class="d-flex gap-2"><button type="submit" class="btn btn-success"><i class="fas fa-save me-1"></i> Crear Usuario</button><button type="button" class="btn btn-secondary" onclick="ocultarFormularioYMostrarLista('${rol}')">Cancelar</button></div>
             </form>
-        </div>
-    `;
-    
-    // Enfocar automáticamente el campo de nombre
-    setTimeout(() => {
-        const nombreInput = document.querySelector('input[name="nombre"]');
-        if (nombreInput) nombreInput.focus();
-    }, 100);
+        </div>`;
+
+    cargarOpcionesColegios(formularioDiv.querySelector('select[name="colegio_id"]'));
+    formularioDiv.querySelector('input[name="nombre"]')?.focus();
+}
+
+function cargarOpcionesColegios(select, seleccionado = null) {
+    fetch('/api/colegios')
+        .then(response => response.json())
+        .then(colegios => {
+            const activos = colegios.filter(colegio => colegio.activo);
+            select.innerHTML = '<option value="">Selecciona un colegio</option>' + activos.map(colegio => `<option value="${colegio.id}" ${String(colegio.id) === String(seleccionado) ? 'selected' : ''}>${colegio.nombre}</option>`).join('');
+        })
+        .catch(() => { select.innerHTML = '<option value="">No se pudieron cargar los colegios</option>'; });
 }
 
 function ocultarFormularioYMostrarLista(rol) {
-    const formularioDiv = document.getElementById('formulario-crear');
-    const listaId = rol === 'Administrador' ? 'lista-administradores' : 'lista-alumnos';
-    
-    // Ocultar formulario
-    formularioDiv.style.display = 'none';
-    
-    // Mostrar lista de usuarios
-    document.getElementById(listaId).style.display = 'block';
+    const configuracion = configuracionPorRol(rol);
+    document.getElementById('formulario-crear').style.display = 'none';
+    const listaDiv = configuracion ? document.getElementById(configuracion.listaId) : null;
+    if (listaDiv) listaDiv.style.display = 'block';
 }
 
-// Si quieres mantener la función original para otros usos, puedes dejarla así:
-function ocultarFormulario() {
-    document.getElementById('formulario-crear').style.display = 'none';
+function mostrarTraslado(usuarioId, colegioActual, rol) {
+    const configuracion = configuracionPorRol(rol);
+    const formulario = document.getElementById('formulario-crear');
+    const lista = configuracion ? document.getElementById(configuracion.listaId) : null;
+    if (lista) lista.style.display = 'none';
+    formulario.style.display = 'block';
+    formulario.innerHTML = `
+        <div class="game-card p-4 mt-3">
+            <h4 class="text-info mb-3"><i class="fas fa-exchange-alt me-2"></i>Trasladar usuario</h4>
+            <p class="text-light">El usuario dejará sus clases actuales y será agregado a la Clase General del nuevo colegio cuando corresponda.</p>
+            <form onsubmit="trasladarUsuario(event, ${usuarioId}, '${rol}')">
+                <div class="mb-3"><label class="form-label text-white">Colegio de destino</label><select class="form-select" name="colegio_id" required><option>Cargando colegios...</option></select></div>
+                <button class="btn btn-info" type="submit">Confirmar traslado</button>
+                <button class="btn btn-secondary" type="button" onclick="ocultarFormularioYMostrarLista('${rol}')">Cancelar</button>
+            </form>
+        </div>`;
+    cargarOpcionesColegios(formulario.querySelector('select'), colegioActual);
 }
 
-function ocultarFormulario() {
-    document.getElementById('formulario-crear').style.display = 'none';
+function trasladarUsuario(event, usuarioId, rol) {
+    event.preventDefault();
+    const colegioId = new FormData(event.target).get('colegio_id');
+    fetch(`/api/usuarios/${usuarioId}/colegio`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+        body: JSON.stringify({ colegio_id: colegioId })
+    }).then(async response => ({ ok: response.ok, data: await response.json() }))
+      .then(({ ok, data }) => {
+          if (!ok || !data.success) throw new Error(data.message || 'No fue posible trasladar el usuario.');
+          mostrarNotificacion('success', '✅ Usuario Trasladado', data.message, false);
+          ocultarFormularioYMostrarLista(rol);
+          cargarUsuarios(rol);
+      }).catch(error => mostrarNotificacion('error', '❌ Traslado no realizado', error.message, false));
+}
+
+function cambiarEstadoUsuario(usuarioId, activo) {
+    mostrarConfirmacion('warning', activo ? 'Activar Usuario' : 'Desactivar Usuario', `¿Deseas ${activo ? 'activar' : 'desactivar'} esta cuenta?`, function() {
+        fetch(`/api/usuarios/${usuarioId}/estado`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            body: JSON.stringify({ activo })
+        }).then(async response => ({ ok: response.ok, data: await response.json() }))
+          .then(({ ok, data }) => {
+              if (!ok || !data.success) throw new Error(data.message || 'No se pudo actualizar el estado.');
+              mostrarNotificacion('success', '✅ Estado Actualizado', data.message, false);
+              if (rolGestionActual) cargarUsuarios(rolGestionActual);
+          }).catch(error => mostrarNotificacion('error', '❌ Estado no actualizado', error.message, false));
+    });
 }
 
 function crearUsuario(event, rol) {
     event.preventDefault();
     const formData = new FormData(event.target);
-    const datos = {
-        nombre: formData.get('nombre'),
-        rol: rol,
-        clave: 'Ined1234' // Contraseña temporal fija
-    };
-    
-    // Mostrar loading
+    const datos = { nombre: formData.get('nombre'), email: formData.get('email') || null, colegio_id: formData.get('colegio_id'), rol, clave: 'Ined1234' };
     const btn = event.target.querySelector('button[type="submit"]');
     const originalText = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Creando...';
     btn.disabled = true;
-    
-    fetch('/api/usuarios', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify(datos)
+
+    fetch('/api/usuarios', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }, body: JSON.stringify(datos) })
+        .then(response => response.json())
+        .then(data => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            if (data.success) {
+                mostrarNotificacion('success', '✅ Usuario Creado', `El usuario "${datos.nombre}" fue creado correctamente.`, false);
+                ocultarFormularioYMostrarLista(rol);
+                cargarUsuarios(rol);
+                return;
+            }
+            if (data.code === 'USERNAME_TAKEN' && data.suggested_username) {
+                const nombreInput = event.target.querySelector('input[name="nombre"]');
+                if (nombreInput) { nombreInput.value = data.suggested_username; nombreInput.focus(); nombreInput.select(); }
+            }
+            mostrarNotificacion('error', '❌ Error al Crear', data.message || 'Ha ocurrido un error al crear el usuario.', false);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            mostrarNotificacion('error', '❌ Error de Conexión', 'No se pudo conectar con el servidor.', false);
+        });
+}
+function mostrarGestionColegios() {
+    rolGestionActual = null;
+    document.querySelector('.row.mt-4').style.display = 'none';
+    const gestionDiv = document.getElementById('gestion-usuarios');
+    gestionDiv.style.display = 'block';
+    gestionDiv.innerHTML = `
+        <div class="game-card p-4 mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <h3 class="text-success mb-0"><i class="fas fa-school me-2"></i>Colegios</h3>
+                <div>
+                    <button class="btn btn-success me-2" onclick="mostrarFormularioColegio()"><i class="fas fa-plus me-1"></i> Nuevo Colegio</button>
+                    <button class="btn btn-secondary" onclick="volverAlMenu()"><i class="fas fa-arrow-left me-1"></i> Volver</button>
+                </div>
+            </div>
+            <div id="lista-colegios">Cargando colegios...</div>
+            <div id="formulario-colegio" style="display: none;"></div>
+        </div>`;
+    cargarColegios();
+}
+
+function cargarColegios() {
+    fetch('/api/colegios')
+        .then(response => response.json())
+        .then(colegios => {
+            const lista = document.getElementById('lista-colegios');
+            if (!colegios.length) {
+                lista.innerHTML = '<p class="text-center text-muted">No hay colegios registrados.</p>';
+                return;
+            }
+
+            let html = '<div class="table-responsive"><table class="table table-dark table-striped align-middle"><thead><tr><th>Colegio</th><th>Código</th><th>Estado</th><th>Administradores</th><th>Profesores</th><th>Alumnos</th><th>Clases</th><th>Acciones</th></tr></thead><tbody>';
+            colegios.forEach(colegio => {
+                const nombreCodificado = encodeURIComponent(colegio.nombre);
+                const estado = colegio.activo ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-secondary">Desactivado</span>';
+                const accionEstado = colegio.activo ? 'Desactivar' : 'Activar';
+                const claseEstado = colegio.activo ? 'btn-outline-warning' : 'btn-outline-success';
+                html += `<tr><td><strong>${escaparHtml(colegio.nombre)}</strong></td><td>${escaparHtml(colegio.codigo)}</td><td>${estado}</td><td>${colegio.administradores_count}</td><td>${colegio.profesores_count}</td><td>${colegio.alumnos_count}</td><td>${colegio.clases_count}</td><td><button class="btn btn-sm btn-outline-primary me-1 mb-1" onclick="mostrarJerarquia(${colegio.id})"><i class="fas fa-sitemap"></i> Ver</button><button class="btn btn-sm btn-outline-info me-1 mb-1" onclick="mostrarFormularioColegio(${colegio.id}, decodeURIComponent('${nombreCodificado}'))"><i class="fas fa-pen"></i> Editar</button><button class="btn btn-sm ${claseEstado} me-1 mb-1" onclick="cambiarEstadoColegio(${colegio.id}, ${!colegio.activo})">${accionEstado}</button><button class="btn btn-sm btn-outline-danger mb-1" onclick="eliminarColegio(${colegio.id})"><i class="fas fa-trash"></i></button></td></tr>`;
+            });
+            lista.innerHTML = html + '</tbody></table></div>';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('lista-colegios').innerHTML = '<p class="text-danger">No se pudieron cargar los colegios.</p>';
+        });
+}
+
+function mostrarFormularioColegio(id = null, nombre = '') {
+    const formulario = document.getElementById('formulario-colegio');
+    document.getElementById('lista-colegios').style.display = 'none';
+    formulario.style.display = 'block';
+    formulario.innerHTML = `
+        <div class="game-card p-4 mt-3">
+            <h4 class="text-success mb-3">${id ? 'Editar Colegio' : 'Crear Colegio'}</h4>
+            <form onsubmit="guardarColegio(event, ${id || 'null'})">
+                <div class="mb-3"><label class="form-label text-white">Nombre del colegio</label><input class="form-control" name="nombre" maxlength="150" required value="${nombre.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}"></div>
+                <div class="d-flex gap-2"><button class="btn btn-success" type="submit"><i class="fas fa-save me-1"></i> Guardar</button><button class="btn btn-secondary" type="button" onclick="cerrarFormularioColegio()">Cancelar</button></div>
+            </form>
+        </div>`;
+    formulario.querySelector('input[name="nombre"]')?.focus();
+}
+
+function cerrarFormularioColegio() {
+    document.getElementById('formulario-colegio').style.display = 'none';
+    document.getElementById('lista-colegios').style.display = 'block';
+}
+
+function guardarColegio(event, id) {
+    event.preventDefault();
+    const nombre = new FormData(event.target).get('nombre');
+    const boton = event.target.querySelector('button[type="submit"]');
+    boton.disabled = true;
+
+    fetch(id ? `/api/colegios/${id}` : '/api/colegios', {
+        method: id ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+        body: JSON.stringify({ nombre })
     })
     .then(response => response.json())
     .then(data => {
-        // Restaurar botón
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-        
-            if (data.success) {
-                mostrarNotificacion('success', 
-                    '✅ Usuario Creado', 
-                    `El usuario "${datos.nombre}" ha sido creado exitosamente como ${rol}.`,
-                    false
-                );
-                ocultarFormularioYMostrarLista(rol);
-                cargarUsuarios(rol); // Recargar la lista
-        } else {
-            // Manejar errores específicos
-            let mensajeError = 'Ha ocurrido un error al crear el usuario.';
-            
-            if (data.message && data.message.includes('already been taken')) {
-                mensajeError = 'Este nombre de usuario ya existe. Prueba con otro o añade números.';
-            } else if (data.message && data.message.includes('The nombre has already been taken')) {
-                mensajeError = 'Este nombre de usuario ya existe. Prueba con otro o añade números.';
-            } else if (data.message) {
-                // Si hay otro mensaje de error, mostrarlo tal cual
-                mensajeError = data.message;
-            }
-            
-            mostrarNotificacion('error',
-                '❌ Error al Crear',
-                mensajeError,
-                false
-            );
+        boton.disabled = false;
+        if (!data.success) {
+            mostrarNotificacion('error', '❌ No se guardó', data.message || 'Revisa los datos ingresados.', false);
+            return;
         }
+        mostrarNotificacion('success', '✅ Colegio Guardado', data.message, false);
+        cerrarFormularioColegio();
+        cargarColegios();
     })
-    .catch(error => {
-        console.error('Error:', error);
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-        mostrarNotificacion('error',
-            '❌ Error de Conexión',
-            'No se pudo conectar con el servidor. Intenta nuevamente.',
-            false
-        );
+    .catch(() => {
+        boton.disabled = false;
+        mostrarNotificacion('error', '❌ Error de Conexión', 'No se pudo guardar el colegio.', false);
     });
 }
 
+function cambiarEstadoColegio(id, activo) {
+    mostrarConfirmacion('warning', activo ? 'Activar Colegio' : 'Desactivar Colegio', `¿Deseas ${activo ? 'activar' : 'desactivar'} este colegio?`, function() {
+        fetch(`/api/colegios/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            body: JSON.stringify({ activo })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                mostrarNotificacion('success', '✅ Estado Actualizado', data.message, false);
+                cargarColegios();
+            } else {
+                mostrarNotificacion('error', '❌ Error', data.message, false);
+            }
+        });
+    });
+}
+
+function eliminarColegio(id) {
+    mostrarConfirmacion('danger', 'Eliminar Colegio', 'Solo se puede eliminar un colegio sin usuarios. ¿Deseas continuar?', function() {
+        fetch(`/api/colegios/${id}`, { method: 'DELETE', headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' } })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    mostrarNotificacion('warning', '🗑️ Colegio Eliminado', data.message, false);
+                    cargarColegios();
+                } else {
+                    mostrarNotificacion('error', '❌ No se puede eliminar', data.message, false);
+                }
+            });
+    });
+}
+
+function mostrarJerarquia(colegioSeleccionado = null) {
+    rolGestionActual = null;
+    document.querySelector('.row.mt-4').style.display = 'none';
+    const gestion = document.getElementById('gestion-usuarios');
+    gestion.style.display = 'block';
+    gestion.innerHTML = `
+        <div class="game-card p-4 mt-4 text-start">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <h3 class="text-primary mb-0"><i class="fas fa-sitemap me-2"></i>Jerarquía por Colegio</h3>
+                <button class="btn btn-secondary" onclick="volverAlMenu()"><i class="fas fa-arrow-left me-1"></i> Volver</button>
+            </div>
+            <div class="mb-4"><label class="form-label text-white">Colegio</label><select id="colegio-jerarquia" class="form-select"><option value="">Selecciona un colegio</option></select></div>
+            <div id="resumen-jerarquia" class="text-light">Selecciona un colegio para consultar su estructura.</div>
+        </div>`;
+    const select = document.getElementById('colegio-jerarquia');
+    fetch('/api/colegios').then(r => r.json()).then(colegios => {
+        select.innerHTML = '<option value="">Selecciona un colegio</option>' + colegios.map(c => `<option value="${c.id}" ${String(c.id) === String(colegioSeleccionado) ? 'selected' : ''}>${escaparHtml(c.nombre)}${c.activo ? '' : ' (desactivado)'}</option>`).join('');
+        select.addEventListener('change', () => cargarJerarquia(select.value));
+        if (colegioSeleccionado) cargarJerarquia(colegioSeleccionado);
+    });
+}
+
+function cargarJerarquia(colegioId) {
+    const contenedor = document.getElementById('resumen-jerarquia');
+    if (!colegioId) { contenedor.innerHTML = 'Selecciona un colegio para consultar su estructura.'; return; }
+    contenedor.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Cargando estructura...';
+    fetch(`/api/colegios/${colegioId}/resumen`).then(async response => {
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'No fue posible consultar el colegio.');
+        return data;
+    }).then(data => {
+        const personas = lista => lista.length ? lista.map(u => `<li>${escaparHtml(u.nombre)} <small class="text-muted">${escaparHtml(u.email || '')}</small> ${u.activo === false ? '<span class="badge bg-secondary">Desactivado</span>' : ''}</li>`).join('') : '<li class="text-muted">Sin registros</li>';
+        const clases = data.clases.length ? data.clases.map(clase => `<div class="border border-secondary rounded p-3 mb-2"><strong>${escaparHtml(clase.nombre)}</strong> <span class="badge bg-info text-dark">${clase.profesores_count} profesores</span> <span class="badge bg-success">${clase.alumnos_count} alumnos</span><div class="small mt-2">Profesores: ${clase.profesores.length ? clase.profesores.map(p => escaparHtml(p.nombre)).join(', ') : 'Sin asignar'}</div></div>`).join('') : '<p class="text-muted">Sin clases.</p>';
+        contenedor.innerHTML = `<h4>${escaparHtml(data.colegio.nombre)} ${data.colegio.activo ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-secondary">Desactivado</span>'}</h4><div class="row mt-3"><div class="col-md-4"><h5>Administradores</h5><ul>${personas(data.administradores)}</ul></div><div class="col-md-4"><h5>Profesores</h5><ul>${personas(data.profesores)}</ul></div><div class="col-md-4"><h5>Alumnos</h5><ul>${personas(data.alumnos)}</ul></div></div><hr><h5>Clases</h5>${clases}`;
+    }).catch(error => { contenedor.innerHTML = `<p class="text-danger">${escaparHtml(error.message)}</p>`; });
+}
+
+function mostrarAuditoria() {
+    rolGestionActual = null;
+    document.querySelector('.row.mt-4').style.display = 'none';
+    const gestion = document.getElementById('gestion-usuarios');
+    gestion.style.display = 'block';
+    gestion.innerHTML = `
+        <div class="game-card p-4 mt-4 text-start">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2"><h3 class="text-light mb-0"><i class="fas fa-clipboard-list me-2"></i>Registro de Acciones</h3><button class="btn btn-secondary" onclick="volverAlMenu()">Volver</button></div>
+            <div class="row mb-3"><div class="col-md-6"><label class="form-label text-white">Filtrar por colegio</label><select id="auditoria-colegio" class="form-select"><option value="">Todos los colegios</option></select></div></div>
+            <div id="lista-auditoria">Cargando acciones...</div>
+        </div>`;
+    const select = document.getElementById('auditoria-colegio');
+    fetch('/api/colegios').then(r => r.json()).then(colegios => {
+        select.innerHTML = '<option value="">Todos los colegios</option>' + colegios.map(c => `<option value="${c.id}">${escaparHtml(c.nombre)}</option>`).join('');
+        select.addEventListener('change', cargarAuditoria);
+    });
+    cargarAuditoria();
+}
+
+function cargarAuditoria() {
+    const select = document.getElementById('auditoria-colegio');
+    const lista = document.getElementById('lista-auditoria');
+    const filtro = select?.value ? `?colegio_id=${encodeURIComponent(select.value)}&limite=100` : '?limite=100';
+    fetch('/api/auditoria' + filtro).then(async response => {
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'No fue posible cargar el registro.');
+        return data;
+    }).then(data => {
+        if (!data.data.length) { lista.innerHTML = '<p class="text-muted">No hay acciones registradas.</p>'; return; }
+        const filas = data.data.map(item => `<tr><td>${new Date(item.created_at).toLocaleString()}</td><td>${escaparHtml(item.actor?.nombre || 'Usuario eliminado')}</td><td><span class="badge bg-dark border">${escaparHtml(item.accion)}</span></td><td>${escaparHtml(item.objetivo_usuario?.nombre || item.entidad_tipo || '—')}</td><td>${escaparHtml(item.colegio?.nombre || '—')}</td></tr>`).join('');
+        lista.innerHTML = `<div class="table-responsive"><table class="table table-dark table-striped"><thead><tr><th>Fecha</th><th>Responsable</th><th>Acción</th><th>Objetivo</th><th>Colegio</th></tr></thead><tbody>${filas}</tbody></table></div>`;
+    }).catch(error => { lista.innerHTML = `<p class="text-danger">${escaparHtml(error.message)}</p>`; });
+}
 // Función modificada para resetear contraseña
 function resetearPassword(usuarioId) {
     usuarioIdActual = usuarioId;
-    
+
     mostrarConfirmacion(
         'warning',
         '🔑 Resetear Contraseña',
@@ -712,6 +858,7 @@ function resetearPassword(usuarioId) {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 body: JSON.stringify({ nueva_clave: 'Ined1234' })
@@ -724,13 +871,7 @@ function resetearPassword(usuarioId) {
                         'La contraseña ha sido restablecida exitosamente a "Ined1234".',
                         true
                     );
-                    // Recargar la lista actual para actualizar el estado
-                    const titulo = document.querySelector('#gestion-usuarios h3');
-                    if (titulo.textContent.includes('Administradores')) {
-                        cargarUsuarios('Administrador');
-                    } else {
-                        cargarUsuarios('Alumno');
-                    }
+                    if (rolGestionActual) cargarUsuarios(rolGestionActual);
                 } else {
                     mostrarNotificacion('error',
                         '❌ Error al Resetear',
@@ -754,7 +895,7 @@ function resetearPassword(usuarioId) {
 // Función modificada para eliminar usuario
 function eliminarUsuario(usuarioId) {
     usuarioIdActual = usuarioId;
-    
+
     mostrarConfirmacion(
         'danger',
         '🗑️ Eliminar Usuario',
@@ -775,13 +916,7 @@ function eliminarUsuario(usuarioId) {
                         'El usuario ha sido eliminado exitosamente del sistema.',
                         true
                     );
-                    // Recargar la lista actual
-                    const titulo = document.querySelector('#gestion-usuarios h3');
-                    if (titulo.textContent.includes('Administradores')) {
-                        cargarUsuarios('Administrador');
-                    } else {
-                        cargarUsuarios('Alumno');
-                    }
+                    if (rolGestionActual) cargarUsuarios(rolGestionActual);
                 } else {
                     mostrarNotificacion('error',
                         '❌ Error al Eliminar',

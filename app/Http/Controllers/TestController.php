@@ -2,43 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\TestAvailabilityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 
 class TestController extends Controller
 {
-    public function show($modulo)
+    public function show(string $modulo, TestAvailabilityService $availability)
     {
-        // Verificar si ya hizo el test hoy
         $usuarioId = session('usuario_id');
-        $hoy = Carbon::today();
-        
-        $testHoy = DB::table('resultados_test')
-            ->where('usuario_id', $usuarioId)
-            ->whereDate('created_at', $hoy)
-            ->where('test_id', function($query) use ($modulo) {
-                $query->select('id')
-                      ->from('tests')
-                      ->where('modulo', $modulo);
-            })
-            ->exists();
+        $test = $availability->testForModule($modulo);
+        $status = $availability->forTest((int) $usuarioId, (int) $test->id);
 
-        if ($testHoy) {
+        if (!$status['disponible']) {
             return redirect()->route('alumno.documentacion')
-                ->with('error', 'Ya realizaste este test hoy. Puedes intentarlo nuevamente mañana.');
+                ->with('error', 'Este test todavía está en espera. Consulta Mi Progreso para ver el tiempo restante.');
         }
 
         // Obtener 5 preguntas aleatorias del módulo
-        $test = DB::table('tests')
-            ->where('modulo', $modulo)
-            ->first();
-
-        if (!$test) {
-            abort(404, 'Test no encontrado');
-        }
-
         $preguntas = DB::table('preguntas_test')
             ->where('test_id', $test->id)
             ->inRandomOrder()
@@ -48,30 +30,16 @@ class TestController extends Controller
         return view('test.html1', compact('preguntas', 'modulo', 'test'));
     }
 
-    public function evaluar(Request $request, $modulo)
+    public function evaluar(Request $request, string $modulo, TestAvailabilityService $availability)
     {
         $usuarioId = session('usuario_id');
-        $hoy = Carbon::today();
-        
-        // Verificar nuevamente si ya hizo el test hoy
-        $testHoy = DB::table('resultados_test')
-            ->where('usuario_id', $usuarioId)
-            ->whereDate('created_at', $hoy)
-            ->where('test_id', function($query) use ($modulo) {
-                $query->select('id')
-                      ->from('tests')
-                      ->where('modulo', $modulo);
-            })
-            ->exists();
+        $test = $availability->testForModule($modulo);
+        $status = $availability->forTest((int) $usuarioId, (int) $test->id);
 
-        if ($testHoy) {
+        if (!$status['disponible']) {
             return redirect()->route('alumno.documentacion')
-                ->with('error', 'Ya realizaste este test hoy.');
+                ->with('error', 'Este test todavía está en espera. Consulta Mi Progreso para ver el tiempo restante.');
         }
-
-        $test = DB::table('tests')
-            ->where('modulo', $modulo)
-            ->first();
 
         $preguntas = DB::table('preguntas_test')
             ->where('test_id', $test->id)
@@ -125,37 +93,16 @@ class TestController extends Controller
         return view('test.resultado', compact('puntaje', 'resultados', 'modulo'));
     }
 
-    public function checkAvailability($modulo)
-{
-    $usuarioId = session('usuario_id');
-    $hoy = Carbon::today();
-    
-    $ultimoTest = DB::table('resultados_test')
-        ->where('usuario_id', $usuarioId)
-        ->where('test_id', function($query) use ($modulo) {
-            $query->select('id')
-                  ->from('tests')
-                  ->where('modulo', $modulo);
-        })
-        ->orderBy('created_at', 'desc')
-        ->first();
+    public function checkAvailability(string $modulo, TestAvailabilityService $availability)
+    {
+        $test = $availability->testForModule($modulo);
+        $status = $availability->forTest((int) session('usuario_id'), (int) $test->id);
 
-    if ($ultimoTest) {
-        $proximoDisponible = Carbon::parse($ultimoTest->created_at)->addHours(24);
-        
-        if (Carbon::now()->lt($proximoDisponible)) {
-            return response()->json([
-                'canTakeTest' => false,
-                'nextAvailableTime' => $proximoDisponible->toISOString()
-            ]);
-        }
+        return response()->json([
+            'canTakeTest' => $status['disponible'],
+            'nextAvailableTime' => $status['disponible'] ? null : $status['disponible_desde']?->toISOString(),
+        ]);
     }
-
-    return response()->json([
-        'canTakeTest' => true,
-        'nextAvailableTime' => null
-    ]);
-}
 
 
 

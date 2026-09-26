@@ -10,31 +10,57 @@ use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
-    /**
-     * The path to your application's "home" route.
-     *
-     * Typically, users are redirected here after authentication.
-     *
-     * @var string
-     */
     public const HOME = '/home';
 
-    /**
-     * Define your route model bindings, pattern filters, and other route configuration.
-     */
     public function boot(): void
     {
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
 
-        $this->routes(function () {
-            Route::middleware('api')
-                ->prefix('api')
-                ->group(base_path('routes/api.php'));
-
-            Route::middleware('web')
-                ->group(base_path('routes/web.php'));
+        RateLimiter::for('security-email-update', function (Request $request) {
+            return $this->accountLimit($request, 'security-email-update', 5, 10);
         });
+
+        RateLimiter::for('security-email-resend', function (Request $request) {
+            return $this->accountLimit($request, 'security-email-resend', 3, 10);
+        });
+
+        RateLimiter::for('security-two-factor', function (Request $request) {
+            return $this->accountLimit($request, 'security-two-factor', 10, 5);
+        });
+
+        RateLimiter::for('account-recovery', function (Request $request) {
+            $email = mb_strtolower(trim((string) $request->input('email')), 'UTF-8');
+            $response = fn (Request $request, array $headers) => redirect()->back()
+                ->withInput($request->except(['password', 'password_confirmation', 'token']))
+                ->with('error', 'Has realizado demasiados intentos. Espera unos minutos antes de volver a intentarlo.')
+                ->withHeaders($headers);
+
+            return [
+                Limit::perMinutes(10, 20)
+                    ->by('recovery-ip:'.$request->ip())
+                    ->response($response),
+                Limit::perMinutes(10, 5)
+                    ->by('recovery-email:'.hash('sha256', $email))
+                    ->response($response),
+            ];
+        });
+
+        $this->routes(function () {
+            Route::middleware('api')->prefix('api')->group(base_path('routes/api.php'));
+            Route::middleware('web')->group(base_path('routes/web.php'));
+        });
+    }
+
+    private function accountLimit(Request $request, string $prefix, int $attempts, int $minutes): Limit
+    {
+        $identity = $request->session()->get('usuario_id') ?: $request->ip();
+
+        return Limit::perMinutes($minutes, $attempts)
+            ->by($prefix.':'.$identity)
+            ->response(fn (Request $request, array $headers) => redirect()->back()
+                ->with('error', 'Has realizado demasiados intentos. Espera unos minutos antes de volver a intentarlo.')
+                ->withHeaders($headers));
     }
 }

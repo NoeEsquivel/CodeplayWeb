@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class DocumentacionController extends Controller
 {
@@ -40,6 +42,15 @@ class DocumentacionController extends Controller
         ];
 
         if (array_key_exists($documento, $documentos)) {
+            if (Schema::hasTable('progreso_documentacion') && session('usuario_id')) {
+                $clave = ['usuario_id' => (int) session('usuario_id'), 'documento' => $documento];
+                DB::table('progreso_documentacion')->insertOrIgnore($clave + [
+                    'visto_at' => now(), 'created_at' => now(), 'updated_at' => now(),
+                ]);
+                DB::table('progreso_documentacion')->where($clave)->update([
+                    'visto_at' => now(), 'updated_at' => now(),
+                ]);
+            }
             return view("documentacion.{$documentos[$documento]}");
         }
 
