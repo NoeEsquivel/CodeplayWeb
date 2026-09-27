@@ -81,6 +81,15 @@ class Usuario extends Model
         return $this->hasOne(TwoFactorAuthentication::class);
     }
 
+    public function bancosTestCreados() { return $this->hasMany(TestBanco::class, 'creador_usuario_id'); }
+
+    public function bancosTestBiblioteca(): BelongsToMany
+    {
+        return $this->belongsToMany(TestBanco::class, 'test_biblioteca_usuario', 'usuario_id', 'banco_id')
+            ->withPivot('agregado_por_codigo')
+            ->withTimestamps();
+    }
+
     public function progresoNiveles() { return $this->hasMany(ProgresoNivel::class); }
     public function resultadosTest() { return $this->hasMany(ResultadoTest::class); }
     public function combates() { return $this->hasMany(Combate::class); }

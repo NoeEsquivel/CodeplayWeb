@@ -585,6 +585,7 @@
                 'documentacion': "{{ route('alumno.documentacion') }}",
                 'tutoriales': "{{ route('alumno.tutoriales') }}",
                 'desafios': "{{ route('alumno.desafios') }}",
+                'tests': "{{ route('alumno.tests') }}",
                 'progreso': "{{ route('alumno.progreso') }}"
             };
 

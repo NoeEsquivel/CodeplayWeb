@@ -15,6 +15,9 @@ class Kernel extends ConsoleKernel
     {
         // Ejecutar diariamente a la 1:00 AM
         $schedule->command('usuarios:eliminar-inactivos')->dailyAt('15:00');
+        $schedule->command('tests:limpiar-sesiones --inactividad=24 --retencion=365')
+            ->hourly()
+            ->withoutOverlapping();
         
     }
 

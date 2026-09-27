@@ -4,14 +4,22 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AventuraController;
 use App\Http\Controllers\AdminAuditController;
 use App\Http\Controllers\ColegioController;
+use App\Http\Controllers\ClassroomTestController;
 use App\Http\Controllers\DesafioController;
 use App\Http\Controllers\DocumentacionController;
+use App\Http\Controllers\FriendCodeController;
+use App\Http\Controllers\FriendLiveTestController;
+use App\Http\Controllers\LiveTestEngineController;
 use App\Http\Controllers\RecoveryController;
 use App\Http\Controllers\SchoolAdminController;
 use App\Http\Controllers\SecurityController;
 use App\Http\Controllers\StudentProgressController;
+use App\Http\Controllers\StudentBankController;
+use App\Http\Controllers\StudentTestsController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\TeacherPanelController;
+use App\Http\Controllers\TeacherGradebookController;
+use App\Http\Controllers\TeacherTestController;
 use App\Http\Controllers\TutorialController;
 use App\Http\Controllers\UserManagementController;
 use App\Services\AventuraFinal;
@@ -55,6 +63,19 @@ Route::middleware('auth.custom')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
+
+Route::prefix('api/tests/en-vivo')
+    ->middleware(['auth.custom', 'role:Alumno,Profesor', 'throttle:live-tests'])
+    ->group(function () {
+        Route::post('/salas', [LiveTestEngineController::class, 'create'])->name('tests.live.create');
+        Route::post('/salas/unirse', [LiveTestEngineController::class, 'join'])->name('tests.live.join');
+        Route::post('/salas/{sesion}/abrir', [LiveTestEngineController::class, 'open'])->whereNumber('sesion')->name('tests.live.open');
+        Route::post('/salas/{sesion}/reconectar', [LiveTestEngineController::class, 'reconnect'])->whereNumber('sesion')->name('tests.live.reconnect');
+        Route::post('/salas/{sesion}/iniciar', [LiveTestEngineController::class, 'start'])->whereNumber('sesion')->name('tests.live.start');
+        Route::get('/salas/{sesion}/estado', [LiveTestEngineController::class, 'state'])->whereNumber('sesion')->name('tests.live.state');
+        Route::post('/salas/{sesion}/responder', [LiveTestEngineController::class, 'answer'])->whereNumber('sesion')->name('tests.live.answer');
+        Route::post('/salas/{sesion}/cerrar', [LiveTestEngineController::class, 'close'])->whereNumber('sesion')->name('tests.live.close');
+    });
 
 Route::middleware(['auth.custom', 'role:Alumno'])->group(function () {
     Route::get('/inicio-alumno', function () {
@@ -105,7 +126,86 @@ Route::middleware(['auth.custom', 'role:Alumno'])->group(function () {
         Route::post('/aventura/equipamiento', [AventuraController::class, 'guardar'])
             ->middleware('throttle:30,1')->name('alumno.aventura.equipamiento');
 
-        Route::get('/tests', fn () => view('alumno.tests'))->name('alumno.tests');
+        Route::get('/tests', [StudentTestsController::class, 'index'])->name('alumno.tests');
+        Route::get('/tests/clase', [ClassroomTestController::class, 'index'])->name('alumno.tests.clase');
+        Route::post('/tests/clase/{sesion}/entrar', [ClassroomTestController::class, 'enter'])->whereNumber('sesion')->name('alumno.tests.clase.enter');
+        Route::get('/tests/clase/{sesion}/trivia', [ClassroomTestController::class, 'trivia'])->whereNumber('sesion')->name('alumno.tests.clase.trivia');
+        Route::get('/tests/clase/{sesion}/examen', [ClassroomTestController::class, 'exam'])->whereNumber('sesion')->name('alumno.tests.clase.examen');
+        Route::post('/tests/clase/{sesion}/examen/{emision}/guardar', [ClassroomTestController::class, 'saveExam'])->whereNumber(['sesion','emision'])->name('alumno.tests.clase.examen.save');
+        Route::post('/tests/clase/{sesion}/examen/entregar', [ClassroomTestController::class, 'submitExam'])->whereNumber('sesion')->name('alumno.tests.clase.examen.submit');
+        Route::get('/tests/codeplay', [StudentTestsController::class, 'codeplay'])->name('alumno.tests.codeplay');
+        Route::post('/tests/codeplay/iniciar', [StudentTestsController::class, 'iniciar'])
+            ->middleware('throttle:10,1')->name('alumno.tests.codeplay.iniciar');
+        Route::get('/tests/codeplay/{sesion}', [StudentTestsController::class, 'jugar'])
+            ->whereNumber('sesion')->name('alumno.tests.codeplay.jugar');
+        Route::post('/tests/codeplay/{sesion}/responder', [StudentTestsController::class, 'responder'])
+            ->whereNumber('sesion')->middleware('throttle:60,1')->name('alumno.tests.codeplay.responder');
+        Route::get('/tests/codeplay/{sesion}/resultado', [StudentTestsController::class, 'resultado'])
+            ->whereNumber('sesion')->name('alumno.tests.codeplay.resultado');
+
+        Route::get('/tests/mis-bancos', [StudentBankController::class, 'index'])->name('alumno.bancos.index');
+        Route::get('/tests/mis-bancos/crear', [StudentBankController::class, 'create'])->name('alumno.bancos.create');
+        Route::post('/tests/mis-bancos', [StudentBankController::class, 'store'])
+            ->middleware('throttle:30,1')->name('alumno.bancos.store');
+        Route::get('/tests/mis-bancos/{banco}/editar', [StudentBankController::class, 'edit'])
+            ->whereNumber('banco')->name('alumno.bancos.edit');
+        Route::put('/tests/mis-bancos/{banco}', [StudentBankController::class, 'update'])
+            ->whereNumber('banco')->middleware('throttle:30,1')->name('alumno.bancos.update');
+        Route::delete('/tests/mis-bancos/{banco}', [StudentBankController::class, 'destroy'])
+            ->whereNumber('banco')->middleware('throttle:30,1')->name('alumno.bancos.destroy');
+        Route::post('/tests/mis-bancos/{banco}/duplicar', [StudentBankController::class, 'duplicate'])
+            ->whereNumber('banco')->middleware('throttle:20,1')->name('alumno.bancos.duplicate');
+        Route::post('/tests/mis-bancos/{banco}/publicar', [StudentBankController::class, 'publish'])
+            ->whereNumber('banco')->middleware('throttle:20,1')->name('alumno.bancos.publish');
+        Route::post('/tests/mis-bancos/{banco}/compartir', [StudentBankController::class, 'share'])
+            ->whereNumber('banco')->middleware('throttle:20,1')->name('alumno.bancos.share');
+        Route::post('/tests/mis-bancos/{banco}/probar', [StudentBankController::class, 'preview'])
+            ->whereNumber('banco')->middleware('throttle:10,1')->name('alumno.bancos.preview');
+        Route::post('/tests/mis-bancos/{banco}/dejar-compartir', [StudentBankController::class, 'stopSharing'])
+            ->whereNumber('banco')->middleware('throttle:20,1')->name('alumno.bancos.stop-sharing');
+
+        Route::get('/tests/codigo-amigo', [FriendCodeController::class, 'index'])->name('alumno.codigo-amigo.index');
+        Route::post('/tests/codigo-amigo/consultar', [FriendCodeController::class, 'lookup'])
+            ->middleware('throttle:30,1')->name('alumno.codigo-amigo.lookup');
+        Route::post('/tests/codigo-amigo/agregar', [FriendCodeController::class, 'add'])
+            ->middleware('throttle:20,1')->name('alumno.codigo-amigo.add');
+        Route::delete('/tests/codigo-amigo/{banco}', [FriendCodeController::class, 'remove'])
+            ->whereNumber('banco')->middleware('throttle:20,1')->name('alumno.codigo-amigo.remove');
+        Route::post('/tests/codigo-amigo/{banco}/copiar', [FriendCodeController::class, 'copy'])
+            ->whereNumber('banco')->middleware('throttle:20,1')->name('alumno.codigo-amigo.copy');
+        Route::post('/tests/codigo-amigo/{banco}/practicar', [FriendCodeController::class, 'practice'])
+            ->whereNumber('banco')->middleware('throttle:10,1')->name('alumno.codigo-amigo.practice');
+
+        Route::get('/tests/amigos', [FriendLiveTestController::class, 'index'])->name('alumno.tests.amigos.index');
+        Route::post('/tests/amigos/crear', [FriendLiveTestController::class, 'store'])
+            ->middleware('throttle:10,1')->name('alumno.tests.amigos.store');
+        Route::post('/tests/amigos/unirse', [FriendLiveTestController::class, 'join'])
+            ->middleware('throttle:20,1')->name('alumno.tests.amigos.join');
+        Route::get('/tests/amigos/{sesion}/sala', [FriendLiveTestController::class, 'room'])
+            ->whereNumber('sesion')->name('alumno.tests.amigos.room');
+        Route::post('/tests/amigos/{sesion}/iniciar', [FriendLiveTestController::class, 'start'])
+            ->whereNumber('sesion')->middleware('throttle:20,1')->name('alumno.tests.amigos.start');
+        Route::post('/tests/amigos/{sesion}/pausar', [FriendLiveTestController::class, 'pause'])
+            ->whereNumber('sesion')->middleware('throttle:20,1')->name('alumno.tests.amigos.pause');
+        Route::post('/tests/amigos/{sesion}/reanudar', [FriendLiveTestController::class, 'resume'])
+            ->whereNumber('sesion')->middleware('throttle:20,1')->name('alumno.tests.amigos.resume');
+        Route::post('/tests/amigos/{sesion}/terminar', [FriendLiveTestController::class, 'finish'])
+            ->whereNumber('sesion')->middleware('throttle:20,1')->name('alumno.tests.amigos.finish');
+        Route::post('/tests/amigos/{sesion}/repetir', [FriendLiveTestController::class, 'repeat'])
+            ->whereNumber('sesion')->middleware('throttle:10,1')->name('alumno.tests.amigos.repeat');
+        Route::get('/tests/amigos/{sesion}/configurar', [FriendLiveTestController::class, 'configure'])
+            ->whereNumber('sesion')->name('alumno.tests.amigos.configure');
+        Route::put('/tests/amigos/{sesion}/configurar', [FriendLiveTestController::class, 'update'])
+            ->whereNumber('sesion')->middleware('throttle:10,1')->name('alumno.tests.amigos.update');
+
+        Route::post('/tests/mis-bancos/{banco}/preguntas', [StudentBankController::class, 'storeQuestion'])
+            ->whereNumber('banco')->middleware('throttle:60,1')->name('alumno.bancos.preguntas.store');
+        Route::put('/tests/mis-bancos/{banco}/preguntas/{pregunta}', [StudentBankController::class, 'updateQuestion'])
+            ->whereNumber(['banco', 'pregunta'])->middleware('throttle:60,1')->name('alumno.bancos.preguntas.update');
+        Route::delete('/tests/mis-bancos/{banco}/preguntas/{pregunta}', [StudentBankController::class, 'destroyQuestion'])
+            ->whereNumber(['banco', 'pregunta'])->middleware('throttle:60,1')->name('alumno.bancos.preguntas.destroy');
+        Route::post('/tests/mis-bancos/{banco}/preguntas/{pregunta}/mover', [StudentBankController::class, 'moveQuestion'])
+            ->whereNumber(['banco', 'pregunta'])->middleware('throttle:60,1')->name('alumno.bancos.preguntas.move');
         Route::get('/progreso', StudentProgressController::class)->name('alumno.progreso');
     });
 
@@ -181,6 +281,35 @@ Route::get('/inicio-profesor', fn () => view('inicio-administrador'))
 Route::get('/inicio-administrador', fn () => view('inicio-administrador'))
     ->middleware(['auth.custom', 'role:Profesor'])
     ->name('inicio.administrador');
+
+Route::prefix('profesor/tests')->middleware(['auth.custom', 'role:Profesor'])->name('profesor.tests.')->group(function () {
+    Route::get('/', [TeacherTestController::class, 'index'])->name('index');
+    Route::get('/bancos/crear', [TeacherTestController::class, 'create'])->name('banks.create');
+    Route::post('/bancos', [TeacherTestController::class, 'store'])->name('banks.store');
+    Route::get('/bancos/{banco}/editar', [TeacherTestController::class, 'edit'])->whereNumber('banco')->name('banks.edit');
+    Route::put('/bancos/{banco}', [TeacherTestController::class, 'update'])->whereNumber('banco')->name('banks.update');
+    Route::delete('/bancos/{banco}', [TeacherTestController::class, 'destroy'])->whereNumber('banco')->name('banks.destroy');
+    Route::post('/bancos/{banco}/publicar', [TeacherTestController::class, 'publish'])->whereNumber('banco')->name('banks.publish');
+    Route::post('/bancos/{banco}/asignar', [TeacherTestController::class, 'assign'])->whereNumber('banco')->name('banks.assign');
+    Route::post('/bancos/{banco}/preguntas', [TeacherTestController::class, 'storeQuestion'])->whereNumber('banco')->name('questions.store');
+    Route::post('/bancos/{banco}/preguntas/importar-sistema', [TeacherTestController::class, 'importSystemQuestions'])->whereNumber('banco')->name('questions.import-system');
+    Route::put('/bancos/{banco}/preguntas/{pregunta}', [TeacherTestController::class, 'updateQuestion'])->whereNumber(['banco', 'pregunta'])->name('questions.update');
+    Route::delete('/bancos/{banco}/preguntas/{pregunta}', [TeacherTestController::class, 'destroyQuestion'])->whereNumber(['banco', 'pregunta'])->name('questions.destroy');
+    Route::post('/sesiones', [TeacherTestController::class, 'createSession'])->name('sessions.store');
+    Route::get('/sesiones/{sesion}', [TeacherTestController::class, 'showSession'])->whereNumber('sesion')->name('sessions.show');
+    Route::post('/sesiones/{sesion}/{action}', [TeacherTestController::class, 'sessionAction'])
+        ->whereNumber('sesion')->whereIn('action', ['start', 'pause', 'resume', 'finish'])->name('sessions.action');
+});
+
+Route::prefix('profesor/calificaciones')->middleware(['auth.custom', 'role:Profesor'])->name('profesor.calificaciones.')->group(function () {
+    Route::get('/', [TeacherGradebookController::class, 'index'])->name('index');
+    Route::get('/exportar', [TeacherGradebookController::class, 'export'])->name('export');
+    Route::get('/imprimir-clase', [TeacherGradebookController::class, 'printClass'])->name('print-class');
+    Route::get('/resultado/{resultado}', [TeacherGradebookController::class, 'detail'])->whereNumber('resultado')->name('detail');
+    Route::post('/sesiones/{sesion}/archivar', [TeacherGradebookController::class, 'archive'])->whereNumber('sesion')->name('archive');
+    Route::post('/sesiones/{sesion}/restaurar', [TeacherGradebookController::class, 'restore'])->whereNumber('sesion')->name('restore');
+    Route::delete('/sesiones/{sesion}', [TeacherGradebookController::class, 'destroy'])->whereNumber('sesion')->name('destroy');
+});
 
 Route::get('/inicio-administrador-colegio', fn () => view('inicio-administrador-colegio'))
     ->middleware(['auth.custom', 'role:AdministradorColegio'])

@@ -29,6 +29,13 @@ class Clase extends Model
         return $this->belongsToMany(Usuario::class, 'clase_alumno')->withTimestamps();
     }
 
+    public function bancosTestAsignados(): BelongsToMany
+    {
+        return $this->belongsToMany(TestBanco::class, 'test_banco_clase', 'clase_id', 'banco_id')
+            ->withPivot(['asignado_por_usuario_id', 'disponible_desde', 'disponible_hasta', 'activo'])
+            ->withTimestamps();
+    }
+
     public function agregarProfesor(Usuario $usuario): void
     {
         if (!$usuario->esProfesor()) {

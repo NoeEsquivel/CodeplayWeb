@@ -1,0 +1,10 @@
+@extends('layouts.app')
+@section('title','Reporte de clase - CodePlay')
+@section('content')
+<div class="container-fluid py-4"><article class="class-report">
+<div class="no-print d-flex justify-content-between mb-4"><a class="btn btn-outline-dark" href="{{ route('profesor.calificaciones.index',request()->query()) }}">Volver</a><button class="btn btn-dark" onclick="window.print()">Imprimir reporte</button></div>
+<header><span>CodePlay · Reporte de clase</span><h1>{{ $class->nombre }}</h1><p>Profesor: {{ $teacher->nombre }} · Generado: {{ now()->format('d/m/Y H:i') }}</p></header>
+<table><thead><tr><th>Alumno</th><th>Actividad</th><th>Modalidad</th><th>Intento</th><th>Calificación</th><th>Correctas</th><th>Incorrectas</th><th>Puntos</th><th>Tiempo</th><th>Fecha</th></tr></thead><tbody>@forelse($results as $result)<tr><td>{{ $result->nombre_alumno }}</td><td>{{ $result->sesion->configuracion['titulo']??$result->sesion->codigo_sala }}</td><td>{{ ucfirst($result->modalidad) }}</td><td>{{ $result->intento }}</td><td>{{ number_format((float)$result->calificacion,2) }}</td><td>{{ $result->correctas }}</td><td>{{ $result->incorrectas }}</td><td>{{ $result->puntos_test }}</td><td>{{ $result->duracion_segundos===null?'—':gmdate('H:i:s',$result->duracion_segundos) }}</td><td>{{ optional($result->entregada_at)->format('d/m/Y H:i') }}</td></tr>@empty<tr><td colspan="10">No hay resultados para los filtros seleccionados.</td></tr>@endforelse</tbody></table>
+</article></div>
+<style>.class-report{background:#fff;color:#14252b;padding:2rem;border-radius:12px}.class-report header span{color:#217862;text-transform:uppercase;letter-spacing:.12em}.class-report table{width:100%;border-collapse:collapse;font-size:.88rem}.class-report th,.class-report td{border:1px solid #aab9b5;padding:.5rem;text-align:left}.class-report th{background:#e9f5f1}@media print{@page{size:landscape;margin:10mm}body{background:#fff!important}.no-print,nav,footer{display:none!important}.container-fluid{padding:0!important}.class-report{padding:0}.class-report tr{break-inside:avoid}}</style>
+@endsection

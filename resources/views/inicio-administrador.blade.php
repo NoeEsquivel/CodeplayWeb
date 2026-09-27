@@ -33,13 +33,25 @@
                     <span>Filtrar y exportar avances por alumno, clase y módulo</span>
                 </button>
             </div>
+            <div class="col-md-6">
+                <a class="teacher-option w-100 h-100" href="{{ route('profesor.tests.index') }}">
+                    <i class="fas fa-clipboard-question"></i><strong>Tests y evaluaciones</strong>
+                    <span>Crea bancos, asígnalos a tus clases y abre sesiones de trivia o examen</span>
+                </a>
+            </div>
+            <div class="col-md-6">
+                <a class="teacher-option w-100 h-100" href="{{ route('profesor.calificaciones.index') }}">
+                    <i class="fas fa-file-signature"></i><strong>Calificaciones e historial</strong>
+                    <span>Consulta, filtra, imprime y exporta resultados de tests y exámenes</span>
+                </a>
+            </div>
         </div>
         <section id="contenido-profesor" class="mt-4" style="display:none"></section>
     </div>
 </div>
 
 <style>
-.teacher-option{display:flex;flex-direction:column;align-items:flex-start;gap:.6rem;padding:1.5rem;text-align:left;color:#fff;background:rgba(10,31,38,.88);border:1px solid rgba(109,231,195,.45);border-radius:14px;transition:.2s}
+.teacher-option{display:flex;flex-direction:column;align-items:flex-start;gap:.6rem;padding:1.5rem;text-align:left;text-decoration:none;color:#fff;background:rgba(10,31,38,.88);border:1px solid rgba(109,231,195,.45);border-radius:14px;transition:.2s}
 .teacher-option:hover{transform:translateY(-3px);border-color:#6de7c3;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 .teacher-option i{font-size:2rem;color:#6de7c3}.teacher-option strong{font-size:1.2rem}.teacher-option span{color:#b8c9cd}
 .teacher-card{background:rgba(7,28,34,.8);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:1.2rem}

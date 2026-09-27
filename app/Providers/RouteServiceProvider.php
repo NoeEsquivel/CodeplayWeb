@@ -47,6 +47,22 @@ class RouteServiceProvider extends ServiceProvider
             ];
         });
 
+        RateLimiter::for('live-tests', function (Request $request) {
+            $usuario = $request->attributes->get('usuario_actual');
+            $usuarioId = $usuario?->id ?: $request->session()->get('usuario_id') ?: $request->ip();
+            $routeSession = $request->route('sesion');
+            $sesionId = is_object($routeSession) ? ($routeSession->id ?? 'general') : ($routeSession ?: 'general');
+            $routeName = (string) optional($request->route())->getName();
+            $isPolling = $routeName === 'tests.live.state';
+
+            return Limit::perMinute($isPolling ? 240 : 90)
+                ->by("live-tests:{$routeName}:{$usuarioId}:{$sesionId}")
+                ->response(fn (Request $request, array $headers) => response()->json([
+                    'success' => false,
+                    'message' => 'La sala recibió demasiadas solicitudes seguidas. Intenta nuevamente en unos segundos.',
+                ], 429, $headers));
+        });
+
         $this->routes(function () {
             Route::middleware('api')->prefix('api')->group(base_path('routes/api.php'));
             Route::middleware('web')->group(base_path('routes/web.php'));
