@@ -42,6 +42,7 @@ class Usuario extends Model
         'ultimo_acceso' => 'datetime',
         'puntos_totales' => 'integer',
         'puntos_usados' => 'integer',
+        'lux_bienvenida_vista_at' => 'datetime',
     ];
 
     protected $attributes = [

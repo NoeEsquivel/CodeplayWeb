@@ -1,0 +1,91 @@
+.lux-root,
+.lux-root * { box-sizing: border-box; }
+.lux-root {
+    position: fixed;
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    z-index: 2147483000;
+    width: 0;
+    height: 0;
+    color: #f6fff9;
+    font: 15px/1.48 system-ui, -apple-system, "Segoe UI", sans-serif;
+    text-align: left;
+}
+.lux-root [hidden] { display: none !important; }
+.lux-root button { font: inherit; cursor: pointer; }
+.lux-launcher {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    place-items: center;
+    width: 76px;
+    height: 76px;
+    padding: 3px !important;
+    border: 2px solid #f5c45e !important;
+    border-radius: 50% !important;
+    background: #102228 !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,.4), 0 0 0 5px rgba(255,205,86,.12);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+.lux-launcher:hover, .lux-launcher:focus-visible { transform: translateY(-5px) scale(1.06); box-shadow: 0 10px 28px rgba(0,0,0,.55), 0 0 0 7px rgba(255,205,86,.2); }
+.lux-launcher img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.lux-launcher-label {
+    position: absolute;
+    right: 82px;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    padding: 7px 10px;
+    border: 1px solid rgba(245,196,94,.5);
+    border-radius: 8px;
+    color: #ffe3a3;
+    background: #0a1d22;
+    box-shadow: 0 6px 16px rgba(0,0,0,.25);
+    font-size: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+}
+.lux-launcher:hover .lux-launcher-label, .lux-launcher:focus-visible .lux-launcher-label { opacity: 1; }
+.lux-panel {
+    position: absolute;
+    right: 0;
+    bottom: 92px;
+    width: min(410px, calc(100vw - 28px));
+    max-height: min(620px, calc(100dvh - 116px));
+    overflow-y: auto;
+    border: 1px solid #efc874;
+    border-radius: 18px;
+    background: linear-gradient(145deg, #112d31 0%, #07171d 100%);
+    box-shadow: 0 18px 48px rgba(0,0,0,.55), 0 0 25px rgba(241,184,61,.13);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(16px) scale(.94);
+    transform-origin: bottom right;
+    pointer-events: none;
+    transition: opacity .26s ease, visibility .26s ease, transform .26s ease;
+}
+.lux-root.is-open .lux-panel { opacity: 1; visibility: visible; transform: translateY(0) scale(1); pointer-events: auto; }
+.lux-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 17px; border-bottom: 1px solid rgba(239,200,116,.28); }
+.lux-name { display: flex; align-items: center; gap: 8px; color: #ffdc86; font-size: 14px; font-weight: 800; letter-spacing: .12em; }
+.lux-name small { margin-left: 4px; color: #b8d0cb; font-size: 11px; font-weight: 500; letter-spacing: 0; }
+.lux-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #f9c75b; box-shadow: 0 0 10px #f9c75b; }
+.lux-close { display: grid; place-items: center; width: 32px; height: 32px; margin: 0 !important; padding: 0 !important; border: 1px solid rgba(239,200,116,.35) !important; border-radius: 8px !important; color: #ffdda0 !important; background: transparent !important; font-size: 25px !important; line-height: 1 !important; }
+.lux-close:hover { background: rgba(239,200,116,.13) !important; }
+.lux-panel-main { display: grid; grid-template-columns: 112px 1fr; align-items: center; gap: 5px; padding: 16px 17px 12px 8px; }
+.lux-portrait { align-self: end; width: 112px; height: 132px; display: grid; place-items: end center; }
+.lux-portrait img { display: block; max-width: 110px; max-height: 130px; object-fit: contain; filter: drop-shadow(0 7px 8px rgba(0,0,0,.3)); }
+.lux-dialogue h2 { margin: 0 0 7px !important; color: #ffda83 !important; font: 700 19px/1.2 system-ui, sans-serif !important; letter-spacing: 0 !important; text-transform: none !important; }
+.lux-dialogue p { margin: 0 !important; color: #e3f4ee !important; font: 14px/1.47 system-ui, sans-serif !important; }
+.lux-actions { display: grid; gap: 8px; padding: 4px 17px 18px; }
+.lux-actions button { width: 100%; min-height: 40px; margin: 0 !important; padding: 9px 12px !important; border: 1px solid rgba(126,225,193,.5) !important; border-radius: 10px !important; color: #ecfff7 !important; background: rgba(36,85,81,.55) !important; font: 600 13px/1.25 system-ui, sans-serif !important; text-align: left !important; box-shadow: none !important; transform: none !important; }
+.lux-actions button:hover, .lux-actions button:focus-visible { border-color: #88e8c1 !important; background: #20584f !important; }
+.lux-actions button.lux-primary { color: #132921 !important; background: #f0c777 !important; border-color: #f0c777 !important; }
+.lux-actions button.lux-primary:hover { background: #ffe0a0 !important; }
+.lux-tip { position: absolute; right: 0; bottom: 91px; width: min(290px, calc(100vw - 28px)); padding: 12px 14px; border: 1px solid rgba(239,200,116,.65); border-radius: 12px; color: #f6fff9; background: #102a2d; box-shadow: 0 10px 28px rgba(0,0,0,.4); font: 13px/1.4 system-ui, sans-serif; animation: lux-tip-enter .24s ease-out; pointer-events: none; }
+.lux-tip-title { display: block; margin-bottom: 5px; color: #ffda83; font-weight: 800; }
+@keyframes lux-tip-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.lux-root :focus-visible { outline: 2px solid #fff2c5 !important; outline-offset: 2px; }
+@media (max-width: 560px) { .lux-root { right: 12px; bottom: 12px; } .lux-launcher { width: 64px; height: 64px; } .lux-panel { bottom: 76px; max-height: calc(100dvh - 96px); } .lux-tip { bottom: 76px; } .lux-panel-main { grid-template-columns: 91px 1fr; } .lux-portrait { width: 91px; height: 110px; } .lux-portrait img { max-width: 88px; max-height: 110px; } }
+@media (prefers-reduced-motion: reduce) { .lux-root *, .lux-root *::before, .lux-root *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }

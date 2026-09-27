@@ -16,6 +16,7 @@ use App\Http\Controllers\SecurityController;
 use App\Http\Controllers\StudentProgressController;
 use App\Http\Controllers\StudentBankController;
 use App\Http\Controllers\StudentTestsController;
+use App\Http\Controllers\StudentLuxController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\TeacherPanelController;
 use App\Http\Controllers\TeacherGradebookController;
@@ -77,7 +78,9 @@ Route::prefix('api/tests/en-vivo')
         Route::post('/salas/{sesion}/cerrar', [LiveTestEngineController::class, 'close'])->whereNumber('sesion')->name('tests.live.close');
     });
 
-Route::middleware(['auth.custom', 'role:Alumno'])->group(function () {
+Route::middleware(['auth.custom', 'role:Alumno', 'lux.student'])->group(function () {
+    Route::post('/alumno/lux/bienvenida-vista', [StudentLuxController::class, 'welcomeSeen'])
+        ->name('alumno.lux.bienvenida-vista');
     Route::get('/inicio-alumno', function () {
         $trofeoAventura = AventuraFinal::victoria((int) session('usuario_id'));
 

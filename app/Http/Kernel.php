@@ -66,5 +66,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'auth.custom' => \App\Http\Middleware\CustomAuthMiddleware::class,
         'role' => \App\Http\Middleware\RequireRole::class,
+        'lux.student' => \App\Http\Middleware\InjectStudentLux::class,
     ];
 }
