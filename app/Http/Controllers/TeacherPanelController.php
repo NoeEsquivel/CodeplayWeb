@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Clase;
 use App\Models\Usuario;
+use App\Services\ExcelExportService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Http\Response;
 
 class TeacherPanelController extends Controller
 {
@@ -24,7 +25,7 @@ class TeacherPanelController extends Controller
 
         return response()->json($teacher->clasesComoProfesor()
             ->with(['alumnos' => fn ($q) => $q
-                ->select('usuarios.id', 'usuarios.nombre', 'usuarios.puntos_totales')
+                ->select('usuarios.id', 'usuarios.nombre', 'usuarios.nombre_completo', 'usuarios.puntos_totales')
                 ->orderBy('usuarios.nombre')])
             ->withCount('alumnos')
             ->orderBy('clases.nombre')
@@ -43,34 +44,32 @@ class TeacherPanelController extends Controller
         ]);
     }
 
-    public function export(Request $request): StreamedResponse
+    public function export(Request $request, ExcelExportService $excel): Response
     {
         [$teacher, $filters] = $this->validatedContext($request);
-        $rows = $this->reportRows($teacher, $filters);
-        $filename = 'progreso-clases-'.now()->format('Y-m-d-His').'.csv';
+        $reportRows = $this->reportRows($teacher, $filters);
+        $rows = [];
 
-        return response()->streamDownload(function () use ($rows) {
-            $output = fopen('php://output', 'wb');
-            fwrite($output, "\xEF\xBB\xBF");
-            fputcsv($output, ['Alumno', 'Clases', 'Módulo', 'Completados/avance', 'Total', 'Porcentaje', 'Detalle']);
-
-            foreach ($rows as $row) {
-                foreach ($row['modulos'] as $module => $progress) {
-                    fputcsv($output, [
-                        $this->csvSafe($row['nombre']),
-                        $this->csvSafe(implode(', ', $row['clases'])),
-                        ucfirst($module),
-                        $progress['completados'],
-                        $progress['total'],
-                        $progress['porcentaje'].'%',
-                        $this->csvSafe($progress['detalle']),
-                    ]);
-                }
+        foreach ($reportRows as $row) {
+            foreach ($row['modulos'] as $module => $progress) {
+                $rows[] = [
+                    $row['nombre'], implode(', ', $row['clases']), ucfirst($module),
+                    (int) $progress['completados'], (int) $progress['total'],
+                    (float) $progress['porcentaje'], $progress['detalle'],
+                ];
             }
-            fclose($output);
-        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
-    }
+        }
 
+        $contents = $excel->build([
+            'Alumno', 'Clases', 'Módulo', 'Completados / avance', 'Total', 'Porcentaje', 'Detalle',
+        ], $rows, 'Progreso de clases');
+
+        return response($contents, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="progreso-clases-'.now()->format('Y-m-d-His').'.xlsx"',
+            'Cache-Control' => 'no-store, no-cache, must-revalidate',
+        ]);
+    }
     public function assignStudent(Request $request, Clase $clase, Usuario $usuario): JsonResponse
     {
         $teacher = $this->teacher($request);
@@ -101,11 +100,13 @@ class TeacherPanelController extends Controller
             'clase_id' => ['nullable', 'integer', 'exists:clases,id'],
             'alumno_id' => ['nullable', 'integer', 'exists:usuarios,id'],
             'modulo' => ['nullable', Rule::in(self::MODULES)],
+            'buscar' => ['nullable', 'string', 'max:160'],
         ]);
         $filters = [
             'clase_id' => isset($data['clase_id']) ? (int) $data['clase_id'] : null,
             'alumno_id' => isset($data['alumno_id']) ? (int) $data['alumno_id'] : null,
             'modulo' => $data['modulo'] ?? 'todos',
+            'buscar' => trim((string) ($data['buscar'] ?? '')),
         ];
 
         if ($filters['clase_id']) {
@@ -125,9 +126,16 @@ class TeacherPanelController extends Controller
     {
         $students = $this->studentsQuery($teacher, $filters['clase_id']);
         if ($filters['alumno_id']) $students->whereKey($filters['alumno_id']);
+        if ($filters['buscar'] !== '') {
+            $search = $filters['buscar'];
+            $students->where(function (Builder $query) use ($search) {
+                $query->where('nombre_completo', 'like', '%'.$search.'%')
+                    ->orWhere('nombre', 'like', '%'.$search.'%');
+            });
+        }
 
         return $students->orderBy('nombre')->get([
-            'id', 'nombre', 'puntos_totales', 'puntos_usados', 'ultimo_acceso',
+            'id', 'nombre', 'nombre_completo', 'puntos_totales', 'puntos_usados', 'ultimo_acceso',
         ])->map(function (Usuario $student) use ($teacher, $filters) {
             $modules = $this->studentProgress($student);
             if ($filters['modulo'] !== 'todos') {
@@ -136,7 +144,8 @@ class TeacherPanelController extends Controller
 
             return [
                 'id' => $student->id,
-                'nombre' => $student->nombre,
+                'nombre' => $student->nombreParaReportes(),
+                'usuario' => $student->nombre,
                 'puntos_totales' => (int) $student->puntos_totales,
                 'ultimo_acceso' => $student->ultimo_acceso?->toIso8601String(),
                 'clases' => $student->clasesComoAlumno()
@@ -229,8 +238,5 @@ class TeacherPanelController extends Controller
             && (int) $class->colegio_id === (int) $teacher->colegio_id, 404);
     }
 
-    private function csvSafe(string $value): string
-    {
-        return preg_match('/^[=+\-@]/', $value) ? "'".$value : $value;
-    }
+
 }

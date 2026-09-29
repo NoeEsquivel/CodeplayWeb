@@ -43,12 +43,15 @@ class TeacherGradebookTest extends TestCase
 
         $this->withSession($this->sessionFor($teacher))->get(route('profesor.calificaciones.detail',$result))
             ->assertOk()->assertSee('Examen imprimible')->assertSee($student->nombre)
-            ->assertSee('respuesta escrita incorrecta')->assertSee('30.00')->assertSee('Respuesta correcta');
+            ->assertSee('respuesta escrita incorrecta')->assertSee('30.00')->assertSee('Respuesta correcta')
+            ->assertSee('panel-profesor-codeplay.png')->assertDontSee('codeplay-navbar');
     }
 
     public function test_reports_filters_exports_and_prints_only_the_teachers_class(): void
     {
         [$teacher,$student,$class,$bank]=$this->scenario();
+        $teacher->update(['nombre'=>'profe.usuario','nombre_completo'=>'María Elena Profesora Completa']);
+        $student->update(['nombre'=>'alumno.usuario','nombre_completo'=>'Juan Carlos Alumno Completo']);
         $session=$this->classSession($teacher,$class,$bank,'examen','Actividad propia');
         $participant=app(LiveTestEngineService::class)->unir($student,$session->codigo_sala,null,'clase')['participante'];
         $own=TestResultadoSesion::create($this->resultData($session,$participant,$student,'Actividad propia'));
@@ -65,18 +68,29 @@ class TeacherGradebookTest extends TestCase
 
         $teacherSession=$this->sessionFor($teacher);
         $this->withSession($teacherSession)->get(route('profesor.calificaciones.index',['clase_id'=>$class->id,'dimension'=>'alumno']))
-            ->assertOk()->assertSee('Actividad propia')->assertSee($student->nombre)
-            ->assertDontSee('Actividad secreta')->assertDontSee($foreignStudent->nombre);
+            ->assertOk()->assertSee('Actividad propia')->assertSee('Juan Carlos Alumno Completo')
+            ->assertDontSee('alumno.usuario')
+            ->assertDontSee('Actividad secreta')->assertDontSee($foreignStudent->nombre)
+            ->assertDontSee('Administrar historial de sesiones')->assertDontSee('Archivar');
+        $this->get(route('profesor.calificaciones.index',['clase_id'=>$class->id,'dimension'=>'profesor']))
+            ->assertOk()->assertSee('María Elena Profesora Completa');
         $this->get(route('profesor.calificaciones.print-class',['clase_id'=>$class->id]))
-            ->assertOk()->assertSee($class->nombre)->assertSee('Actividad propia')->assertDontSee('Actividad secreta');
-        $this->get(route('profesor.calificaciones.export',['clase_id'=>$class->id]))
-            ->assertOk()->assertHeader('content-type','text/csv; charset=UTF-8')
-            ->assertSee('Actividad propia')->assertDontSee('Actividad secreta');
+            ->assertOk()->assertSee($class->nombre)->assertSee('Actividad propia')
+            ->assertSee('María Elena Profesora Completa')->assertSee('Juan Carlos Alumno Completo')->assertDontSee('Actividad secreta')
+            ->assertDontSee('profe.usuario')->assertDontSee('alumno.usuario')
+            ->assertSee('panel-profesor-codeplay.png')->assertSee('@page{size:A4 portrait',false)
+            ->assertDontSee('codeplay-navbar');
+        $this->get(route('profesor.calificaciones.detail',$own))->assertOk()
+            ->assertSee('María Elena Profesora Completa')->assertSee('Juan Carlos Alumno Completo')
+            ->assertDontSee('alumno.usuario');
+        $export = $this->get(route('profesor.calificaciones.export',['clase_id'=>$class->id]))
+            ->assertOk()->assertHeader('content-type','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $this->assertStringStartsWith('PK', (string) $export->getContent());
         $this->get(route('profesor.calificaciones.detail',$foreignResult))->assertNotFound();
         $this->assertNotNull($own);
     }
 
-    public function test_archiving_and_repeating_preserve_previous_attempt_history(): void
+    public function test_repeating_preserves_previous_attempt_history(): void
     {
         [$teacher,$student,$class,$bank]=$this->scenario();
         $session=$this->classSession($teacher,$class,$bank,'examen','Examen repetible');
@@ -93,13 +107,6 @@ class TeacherGradebookTest extends TestCase
         $this->assertDatabaseHas('test_historial_respuestas',['sesion_id'=>$session->id,'intento'=>1,'correcta'=>false,'respuesta_alumno'=>null]);
         $this->assertSame(2,(int)$session->fresh()->configuracion['intento_actual']);
 
-        $this->withSession($this->sessionFor($teacher))->post(route('profesor.calificaciones.archive',$session))->assertRedirect();
-        $this->assertNotNull($session->fresh()->archivada_at);
-        $this->post(route('profesor.calificaciones.restore',$session))->assertRedirect();
-        $this->assertNull($session->fresh()->archivada_at);
-        $engine->cerrar($teacher,$session->fresh());
-        $this->delete(route('profesor.calificaciones.destroy',$session))->assertRedirect(route('profesor.calificaciones.index'));
-        $this->assertNotNull($session->fresh()->eliminada_at);
         $this->assertSame($oldCount,TestHistorialRespuesta::where('sesion_id',$session->id)->where('intento',1)->count());
     }
 

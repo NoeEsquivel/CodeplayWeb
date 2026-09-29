@@ -64,7 +64,7 @@ class AventuraService
             if ($expedicion->isDirty()) $expedicion->save();
         }
         return [
-            'personaje' => ['nivel' => $personaje->nivel, 'experiencia' => $personaje->experiencia, 'siguiente' => $personaje->experienciaSiguiente(), 'limite_hechizos' => AventuraCatalogo::limiteHechizos($personaje->nivel), 'base' => $stats, 'bonus' => $bonus, 'total' => $total, 'vida' => $vidaMaxima, 'mana' => $manaMaximo, 'ultimo_aumento' => $personaje->ultimo_aumento],
+            'personaje' => ['nombre' => $personaje->nombre_aventurero ?: $usuario->nombre, 'nivel' => $personaje->nivel, 'experiencia' => $personaje->experiencia, 'siguiente' => $personaje->experienciaSiguiente(), 'limite_hechizos' => AventuraCatalogo::limiteHechizos($personaje->nivel), 'base' => $stats, 'bonus' => $bonus, 'total' => $total, 'vida' => $vidaMaxima, 'mana' => $manaMaximo, 'ultimo_aumento' => $personaje->ultimo_aumento],
             'expedicion' => $expedicion->only(['id', 'estado', 'version', 'equipo', 'inversion', 'escenario', 'vida_actual', 'mana_actual', 'oro', 'efectos', 'mejoras', 'iniciada_at']),
             'inventario' => $this->integrada() ? $expedicion->inventario()->with('item')->where('cantidad', '>', 0)->orderBy('id')->get()->map(fn ($fila) => [
                 'id' => $fila->item->clave_catalogo, 'nombre' => $fila->item->nombre, 'cantidad' => $fila->cantidad,
@@ -73,6 +73,18 @@ class AventuraService
             'puntos' => ['ganados' => (int) $usuario->puntos_totales, 'disponibles' => (int) $usuario->puntos_totales - (int) $usuario->puntos_usados, 'invertidos' => $expedicion->inversion, 'presupuesto' => (int) $usuario->puntos_totales - (int) $usuario->puntos_usados + $expedicion->inversion],
             'catalogo' => array_values(array_map(fn ($item) => $item + ['desbloqueado' => !$item['desafio'] || in_array($item['desafio'], $completados, true)], $catalogo->items())),
         ];
+    }
+
+
+    public function renombrar(int $id, string $nombre): array
+    {
+        return DB::transaction(function () use ($id, $nombre) {
+            $usuario = $this->usuario($id);
+            $personaje = $this->personaje($id);
+            $personaje->nombre_aventurero = preg_replace('/\s+/u', ' ', trim($nombre)) ?: $usuario->nombre;
+            $personaje->save();
+            return $this->resumen($usuario, $personaje->refresh(), $this->expedicion($id));
+        }, 3);
     }
 
     public function guardar(int $id, int $expedicionId, int $version, array $equipo): array

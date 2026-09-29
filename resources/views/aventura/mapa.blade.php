@@ -46,7 +46,7 @@
     $musicaHielo = (int)$region['id'] === 4 && !$combateEscena;
     $musicaDragon = (int)$region['id'] === 5 && !$combateEscena;
 @endphp
-<header class="topbar"><a class="back" href="{{ route('alumno.aventura') }}">← Campamento</a><a class="brand" href="{{ route('inicio.alumno') }}">CODE<span>PLAY</span><small>EL ATLAS</small></a><span class="player-name">{{ session('usuario_nombre', 'Explorador') }}</span></header>
+<header class="topbar"><a class="back" href="{{ route('alumno.aventura') }}">← Campamento</a><a class="brand" href="{{ route('inicio.alumno') }}">CODE<span>PLAY</span><small>EL ATLAS</small></a><span class="player-name">{{ $personaje['nombre'] }}</span></header>
 <main class="world-shell {{ $combateEscena ? 'combat-stage' : ($eventoEscena ? 'event-stage' : '') }}" id="world" data-forest-music="{{ (int)$region['id'] === 1 && !$combateEscena ? 'true' : 'false' }}" data-ruins-music="{{ $musicaRuinas ? 'true' : 'false' }}" data-swamp-music="{{ $musicaPantano ? 'true' : 'false' }}" data-ice-music="{{ $musicaHielo ? 'true' : 'false' }}" data-dragon-music="{{ $musicaDragon ? 'true' : 'false' }}" data-forest-battle-music="{{ $musicaBatallaBosque ? 'true' : 'false' }}" data-ruins-battle-music="{{ $musicaBatallaRuinas ? 'true' : 'false' }}" data-swamp-battle-music="{{ $musicaBatallaPantano ? 'true' : 'false' }}" data-ice-battle-music="{{ $musicaBatallaHielo ? 'true' : 'false' }}" data-dragon-battle-music="{{ $musicaBatallaDragon ? 'true' : 'false' }}" data-id="{{ $run['id'] }}" data-version="{{ $run['version'] }}" data-start="{{ route('alumno.aventura.iniciar') }}" data-path="{{ route('alumno.aventura.camino') }}" data-combat="{{ route('alumno.aventura.combate') }}" data-event="{{ route('alumno.aventura.evento') }}" data-guild="{{ route('alumno.aventura.gremio') }}">
     @if(!$combateEscena)
     <div @if($eventoEscena) inert aria-hidden="true" @endif>
@@ -69,7 +69,7 @@
         </section>
         @endif
         <aside class="traveler" aria-label="Estado del personaje" @if($eventoEscena || $combateEscena) inert aria-hidden="true" @endif>
-            <div class="traveler-title"><img src="{{ asset('Imagenes/aventura/explorador.svg') }}" alt=""><div><p class="eyebrow">TU EXPLORADOR</p><h2>{{ session('usuario_nombre', 'Explorador') }}</h2><span>Nivel {{ $personaje['nivel'] }} · permanente</span></div></div>
+            <div class="traveler-title"><img src="{{ asset('Imagenes/aventura/explorador.svg') }}" alt=""><div><p class="eyebrow">TU EXPLORADOR</p><h2>{{ $personaje['nombre'] }}</h2><span>Nivel {{ $personaje['nivel'] }} · permanente</span></div></div>
             <div class="meter"><label for="world-health">Vida <b>{{ $run['vida_actual'] }} / {{ $personaje['vida'] }}</b></label><progress id="world-health" max="{{ $personaje['vida'] }}" value="{{ $run['vida_actual'] }}"></progress></div>
             <div class="meter mana-meter"><label for="world-mana">Maná <b>{{ $run['mana_actual'] }} / {{ $personaje['mana'] }}</b></label><progress id="world-mana" max="{{ $personaje['mana'] }}" value="{{ $run['mana_actual'] }}"></progress></div>
             <div class="meter xp-meter"><label for="world-xp">Experiencia <b>{{ $personaje['experiencia'] }} / {{ $personaje['siguiente'] }}</b></label><progress id="world-xp" max="{{ $personaje['siguiente'] }}" value="{{ $personaje['experiencia'] }}"></progress></div>

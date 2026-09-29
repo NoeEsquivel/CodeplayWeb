@@ -46,6 +46,9 @@ Route::get('/verificar-correo/{token}', [SecurityController::class, 'verifyEmail
 Route::middleware('auth.custom')->group(function () {
     Route::get('/cambio-clave-obligatorio', [AuthController::class, 'mostrarCambioClaveObligatorio'])
         ->name('cambio.clave.obligatorio');
+    Route::get('/mi-cuenta/actualizar-clave', [AuthController::class, 'mostrarActualizacionClave'])
+        ->middleware('role:Profesor,AdministradorColegio,Master')
+        ->name('cuenta.clave.editar');
     Route::post('/cambio-clave-procesar', [AuthController::class, 'procesarCambioClaveObligatorio'])
         ->middleware('throttle:10,1')
         ->name('cambio.clave.procesar');
@@ -126,6 +129,8 @@ Route::middleware(['auth.custom', 'role:Alumno', 'lux.student'])->group(function
             ->middleware('throttle:30,1')->name('alumno.aventura.iniciar');
         Route::post('/aventura/camino', [AventuraController::class, 'camino'])
             ->middleware('throttle:30,1')->name('alumno.aventura.camino');
+        Route::patch('/aventura/personaje/nombre', [AventuraController::class, 'renombrar'])
+            ->name('alumno.aventura.personaje.nombre')->middleware('throttle:20,1');
         Route::post('/aventura/equipamiento', [AventuraController::class, 'guardar'])
             ->middleware('throttle:30,1')->name('alumno.aventura.equipamiento');
 
@@ -134,6 +139,7 @@ Route::middleware(['auth.custom', 'role:Alumno', 'lux.student'])->group(function
         Route::post('/tests/clase/{sesion}/entrar', [ClassroomTestController::class, 'enter'])->whereNumber('sesion')->name('alumno.tests.clase.enter');
         Route::get('/tests/clase/{sesion}/trivia', [ClassroomTestController::class, 'trivia'])->whereNumber('sesion')->name('alumno.tests.clase.trivia');
         Route::get('/tests/clase/{sesion}/examen', [ClassroomTestController::class, 'exam'])->whereNumber('sesion')->name('alumno.tests.clase.examen');
+        Route::get('/tests/clase/{sesion}/examen/resumen', [ClassroomTestController::class, 'summary'])->whereNumber('sesion')->name('alumno.tests.clase.examen.summary');
         Route::post('/tests/clase/{sesion}/examen/{emision}/guardar', [ClassroomTestController::class, 'saveExam'])->whereNumber(['sesion','emision'])->name('alumno.tests.clase.examen.save');
         Route::post('/tests/clase/{sesion}/examen/entregar', [ClassroomTestController::class, 'submitExam'])->whereNumber('sesion')->name('alumno.tests.clase.examen.submit');
         Route::get('/tests/codeplay', [StudentTestsController::class, 'codeplay'])->name('alumno.tests.codeplay');
@@ -249,9 +255,16 @@ Route::prefix('api/colegio')
         Route::get('/resumen', [SchoolAdminController::class, 'summary']);
         Route::get('/usuarios-por-rol/{rol}', [UserManagementController::class, 'indexApi'])
             ->whereIn('rol', ['Alumno', 'Profesor']);
+        Route::post('/usuarios/sugerir-nombre', [UserManagementController::class, 'suggestUsernameApi']);
         Route::post('/usuarios', [UserManagementController::class, 'storeApi']);
+        Route::put('/usuarios/{id}', [UserManagementController::class, 'updateApi'])
+            ->whereNumber('id');
         Route::post('/usuarios/{id}/reset-password', [UserManagementController::class, 'resetPasswordApi'])
             ->whereNumber('id');
+        Route::delete('/usuarios/{id}', [UserManagementController::class, 'destroyApi'])
+            ->whereNumber('id');
+        Route::get('/alumnos-graduandos', [SchoolAdminController::class, 'graduatingStudents']);
+        Route::delete('/alumnos-graduandos', [SchoolAdminController::class, 'destroyGraduatingStudents']);
         Route::get('/clases', [SchoolAdminController::class, 'classes']);
         Route::post('/clases', [SchoolAdminController::class, 'storeClass']);
         Route::put('/clases/{clase}', [SchoolAdminController::class, 'updateClass'])->whereNumber('clase');
@@ -300,6 +313,8 @@ Route::prefix('profesor/tests')->middleware(['auth.custom', 'role:Profesor'])->n
     Route::delete('/bancos/{banco}/preguntas/{pregunta}', [TeacherTestController::class, 'destroyQuestion'])->whereNumber(['banco', 'pregunta'])->name('questions.destroy');
     Route::post('/sesiones', [TeacherTestController::class, 'createSession'])->name('sessions.store');
     Route::get('/sesiones/{sesion}', [TeacherTestController::class, 'showSession'])->whereNumber('sesion')->name('sessions.show');
+    Route::delete('/sesiones/{sesion}/historial', [TeacherTestController::class, 'destroySessionHistory'])
+        ->whereNumber('sesion')->name('sessions.destroy-history');
     Route::post('/sesiones/{sesion}/{action}', [TeacherTestController::class, 'sessionAction'])
         ->whereNumber('sesion')->whereIn('action', ['start', 'pause', 'resume', 'finish'])->name('sessions.action');
 });
@@ -309,24 +324,27 @@ Route::prefix('profesor/calificaciones')->middleware(['auth.custom', 'role:Profe
     Route::get('/exportar', [TeacherGradebookController::class, 'export'])->name('export');
     Route::get('/imprimir-clase', [TeacherGradebookController::class, 'printClass'])->name('print-class');
     Route::get('/resultado/{resultado}', [TeacherGradebookController::class, 'detail'])->whereNumber('resultado')->name('detail');
-    Route::post('/sesiones/{sesion}/archivar', [TeacherGradebookController::class, 'archive'])->whereNumber('sesion')->name('archive');
-    Route::post('/sesiones/{sesion}/restaurar', [TeacherGradebookController::class, 'restore'])->whereNumber('sesion')->name('restore');
-    Route::delete('/sesiones/{sesion}', [TeacherGradebookController::class, 'destroy'])->whereNumber('sesion')->name('destroy');
 });
 
 Route::get('/inicio-administrador-colegio', fn () => view('inicio-administrador-colegio'))
     ->middleware(['auth.custom', 'role:AdministradorColegio'])
     ->name('inicio.administrador-colegio');
 
-Route::get('/inicio-master', fn () => view('inicio-master'))
+Route::get('/inicio-master', fn () => view('master.console'))
     ->middleware(['auth.custom', 'role:Master'])
     ->name('inicio.master');
+
+Route::get('/master/colegios/{colegio}/jerarquia/imprimir', [ColegioController::class, 'printHierarchy'])
+    ->middleware(['auth.custom', 'role:Master'])
+    ->whereNumber('colegio')
+    ->name('master.jerarquia.imprimir');
 
 Route::prefix('api')
     ->middleware(['auth.custom', 'role:Profesor,Master', 'throttle:60,1'])
     ->group(function () {
         Route::get('/usuarios-por-rol/{rol}', [UserManagementController::class, 'indexApi'])
             ->whereIn('rol', ['Alumno', 'Profesor', 'AdministradorColegio']);
+        Route::post('/usuarios/sugerir-nombre', [UserManagementController::class, 'suggestUsernameApi']);
         Route::post('/usuarios', [UserManagementController::class, 'storeApi']);
         Route::post('/usuarios/{id}/reset-password', [UserManagementController::class, 'resetPasswordApi'])
             ->whereNumber('id');
@@ -334,6 +352,8 @@ Route::prefix('api')
             ->whereNumber('id');
 
         Route::middleware('role:Master')->group(function () {
+            Route::put('/usuarios/{id}', [UserManagementController::class, 'updateApi'])
+                ->whereNumber('id');
             Route::get('/colegios', [ColegioController::class, 'index']);
             Route::post('/colegios', [ColegioController::class, 'store']);
             Route::get('/colegios/{colegio}/resumen', [ColegioController::class, 'show'])
@@ -346,6 +366,8 @@ Route::prefix('api')
                 ->whereNumber('id');
             Route::patch('/usuarios/{id}/colegio', [UserManagementController::class, 'moveCollegeApi'])
                 ->whereNumber('id');
+            Route::get('/master/alumnos-graduandos', [SchoolAdminController::class, 'masterGraduatingStudents']);
+            Route::delete('/master/alumnos-graduandos', [SchoolAdminController::class, 'masterDestroyGraduatingStudents']);
             Route::get('/auditoria', [AdminAuditController::class, 'index']);
         });
     });

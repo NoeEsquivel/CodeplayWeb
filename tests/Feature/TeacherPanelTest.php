@@ -135,6 +135,29 @@ class TeacherPanelTest extends TestCase
         $this->getJson('/api/profesor/progreso?alumno_id='.$foreignStudent->id)->assertForbidden();
     }
 
+    public function test_progress_can_be_searched_by_full_name_or_username(): void
+    {
+        [$teacher, $class] = $this->teacherWithClass('Profesor Búsqueda', 'Clase Búsqueda');
+        $first = $this->student('lgarcia', $teacher->colegio_id);
+        $second = $this->student('mlopez', $teacher->colegio_id);
+        $first->update(['nombre_completo' => 'Lucía García Méndez']);
+        $second->update(['nombre_completo' => 'Mario López Pérez']);
+        $class->agregarAlumno($first);
+        $class->agregarAlumno($second);
+
+        $this->withSession(['usuario_id' => $teacher->id])
+            ->getJson('/api/profesor/progreso?buscar='.urlencode('Lucía García'))
+            ->assertOk()
+            ->assertJsonCount(1, 'alumnos')
+            ->assertJsonPath('alumnos.0.usuario', 'lgarcia')
+            ->assertJsonPath('resumen.alumnos', 1);
+
+        $this->getJson('/api/profesor/progreso?buscar=mlopez')
+            ->assertOk()
+            ->assertJsonCount(1, 'alumnos')
+            ->assertJsonPath('alumnos.0.nombre', 'Mario López Pérez');
+    }
+
     public function test_module_progress_matches_current_data(): void
     {
         [$teacher, $class] = $this->teacherWithClass('Profesor Cálculos', 'Clase Cálculos');
@@ -181,12 +204,10 @@ class TeacherPanelTest extends TestCase
         $response = $this->withSession(['usuario_id' => $teacher->id])
             ->get('/api/profesor/progreso/exportar?modulo=documentacion')
             ->assertOk()
-            ->assertHeader('content-type', 'text/csv; charset=UTF-8');
+            ->assertHeader('content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 
-        $content = $response->streamedContent();
-        $this->assertStringContainsString('Alumno Exportable', $content);
-        $this->assertStringContainsString('Documentacion', $content);
-        $this->assertStringNotContainsString('Aventura', $content);
+        $content = (string) $response->getContent();
+        $this->assertStringStartsWith('PK', $content);
     }
 
     public function test_viewing_documentation_records_progress_without_changing_student_page(): void

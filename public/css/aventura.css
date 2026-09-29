@@ -51,3 +51,7 @@
 .camp-page .checkout p,.camp-page .checkout small,.camp-page .save-message,.camp-page .rules,.camp-page .camp-footer,.camp-page .shop-notice{font-size:14px}
 .camp-page .rules summary{font-size:15px}
 @media(max-width:760px){.camp-page{font-size:17px}.camp-page .category-tabs-hint{font-size:13px}.camp-page .category-tabs strong{font-size:14px}.camp-page .category-tabs small{font-size:11px}}
+
+
+/* El alias del aventurero se edita sin cambiar el usuario de CodePlay. */
+.character-name-row{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap}.character-name-row h2{margin:0}.rename-character-button{border:1px solid #6d9187;border-radius:999px;background:#102b2f;color:#b9f4da;padding:5px 10px;font-size:12px}.rename-character-button:hover{border-color:#91e8c8;background:#1a4140}.rename-character-form{margin:10px 0 12px;padding:11px;border:1px solid #44635f;border-radius:9px;background:#0a2026}.rename-character-form label,.rename-character-form small{display:block}.rename-character-form label{margin-bottom:6px;color:#d4eee5;font-size:13px;font-weight:700}.rename-character-form>div{display:flex;gap:5px}.rename-character-form input{min-width:0;flex:1;border:1px solid #54756d;border-radius:6px;background:#071a20;color:#fff;padding:7px 8px}.rename-character-form button{border:1px solid #63857d;border-radius:6px;background:#1c453d;color:#e8fff6;padding:7px 9px}.rename-character-form small{margin-top:7px;color:#9eb6b0;font-size:11px}.rename-character-form p{min-height:17px;margin:5px 0 0;color:#8de9c5;font-size:12px}

@@ -21,7 +21,7 @@ class AventuraEquipamientoTest extends TestCase
         if (!in_array('sqlite', \PDO::getAvailableDrivers())) $this->markTestSkipped('Ejecutar PHP con pdo_sqlite para las pruebas aisladas de Aventura.');
         config(['database.default' => 'sqlite', 'database.connections.sqlite.database' => ':memory:']);
         DB::purge('sqlite');
-        foreach (['2025_09_30_064434_create_usuarios_table.php', '2025_09_30_064537_create_items_table.php', '2025_09_30_064544_create_inventario_table.php', '2025_10_21_082507_create_desafio_recompensas_table.php', '2026_09_08_120000_create_aventura_preparacion_tables.php', '2026_09_08_140000_integrate_aventura_inventory.php'] as $migration) (require database_path('migrations/' . $migration))->up();
+        foreach (['2025_09_30_064434_create_usuarios_table.php', '2025_09_30_064537_create_items_table.php', '2025_09_30_064544_create_inventario_table.php', '2025_10_21_082507_create_desafio_recompensas_table.php', '2026_09_08_120000_create_aventura_preparacion_tables.php', '2026_09_27_130000_add_full_names_and_adventure_alias.php', '2026_09_08_140000_integrate_aventura_inventory.php'] as $migration) (require database_path('migrations/' . $migration))->up();
         $this->player = Usuario::create(['nombre' => 'Explorador de prueba', 'clave' => 'not-a-real-account', 'rol' => 'Alumno', 'puntos_totales' => 1200, 'puntos_usados' => 100]);
         (require database_path('migrations/2026_09_09_090000_add_aventura_exploracion.php'))->up();
         $this->service = new AventuraService();
@@ -37,6 +37,18 @@ class AventuraEquipamientoTest extends TestCase
     {
         $state = $this->service->estado($this->player->id);
         return ['expedicion_id' => $state['expedicion']['id'], 'version' => $state['expedicion']['version'], 'equipo' => $equipment];
+    }
+
+    public function test_adventure_alias_changes_only_the_character_name(): void
+    {
+        $this->withSession(['usuario_id' => $this->player->id, 'usuario_nombre' => $this->player->nombre]);
+        $this->patchJson('/alumno/aventura/personaje/nombre', ['nombre' => 'Lyra del Alba'])
+            ->assertOk()->assertJsonPath('nombre', 'Lyra del Alba');
+
+        self::assertSame('Explorador de prueba', $this->player->fresh()->nombre);
+        self::assertSame('Lyra del Alba', AventuraPersonaje::where('usuario_id', $this->player->id)->value('nombre_aventurero'));
+        self::assertSame('Lyra del Alba', $this->service->estado($this->player->id)['personaje']['nombre']);
+        $this->get('/alumno/aventura')->assertOk()->assertSee('Lyra del Alba');
     }
 
     public function test_restart_refunds_once_and_preserves_permanent_progress(): void

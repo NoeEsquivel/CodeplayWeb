@@ -5,7 +5,10 @@ namespace Tests\Feature;
 use App\Models\Clase;
 use App\Models\Colegio;
 use App\Models\TestBanco;
+use App\Models\TestHistorialRespuesta;
+use App\Models\TestResultadoSesion;
 use App\Models\TestSesion;
+use App\Models\TestSesionParticipante;
 use App\Models\Usuario;
 use App\Services\LiveTestEngineService;
 use App\Services\TestBankService;
@@ -76,6 +79,50 @@ class TeacherTestCreatorTest extends TestCase
         ])->assertNotFound();
     }
 
+    public function test_selected_bank_is_automatically_assigned_when_creating_a_session(): void
+    {
+        [$teacher, , $ownClass] = $this->scenario();
+        $service = app(TestBankService::class);
+        $bank = $service->crear($teacher, ['nombre'=>'Examen sin paso extra','materia'=>'HTML']);
+        $service->agregarPregunta($teacher,$bank,['tipo'=>'verdadero_falso','enunciado'=>'HTML estructura contenido','respuestas_correctas'=>['1']]);
+        $service->publicar($teacher,$bank);
+
+        $this->assertDatabaseMissing('test_banco_clase', ['banco_id'=>$bank->id,'clase_id'=>$ownClass->id]);
+
+        $this->withSession($this->sessionFor($teacher))->post(route('profesor.tests.sessions.store'), [
+            'titulo'=>'Examen automático','clase_id'=>$ownClass->id,'banco_ids'=>[$bank->id],'modalidad'=>'examen',
+            'puntos_pregunta'=>[$bank->preguntas()->firstOrFail()->id=>10],
+        ])->assertRedirect();
+
+        $this->assertDatabaseHas('test_banco_clase', [
+            'banco_id'=>$bank->id,'clase_id'=>$ownClass->id,'asignado_por_usuario_id'=>$teacher->id,'activo'=>true,
+        ]);
+        $this->assertDatabaseHas('test_sesiones', [
+            'anfitrion_usuario_id'=>$teacher->id,'clase_id'=>$ownClass->id,'modalidad'=>'examen',
+        ]);
+        $session=TestSesion::where('anfitrion_usuario_id',$teacher->id)->where('modalidad','examen')->latest('id')->firstOrFail();
+        $this->get(route('profesor.tests.sessions.show',$session))->assertOk()
+            ->assertSee('Las respuestas correctas permanecerán ocultas para los alumnos')
+            ->assertSee('Las entregas pendientes se cerrarán')
+            ->assertDontSee('@else');
+    }
+
+    public function test_session_dates_use_the_teachers_browser_timezone(): void
+    {
+        [$teacher,,$ownClass]=$this->scenario();$service=app(TestBankService::class);
+        $bank=$service->crear($teacher,['nombre'=>'Horario local','materia'=>'HTML']);
+        $service->agregarPregunta($teacher,$bank,['tipo'=>'verdadero_falso','enunciado'=>'HTML usa etiquetas','respuestas_correctas'=>['1']]);$service->publicar($teacher,$bank);
+
+        $this->withSession($this->sessionFor($teacher))->post(route('profesor.tests.sessions.store'),[
+            'titulo'=>'Examen en Guatemala','clase_id'=>$ownClass->id,'banco_ids'=>[$bank->id],'modalidad'=>'examen',
+            'zona_horaria_profesor'=>'America/Guatemala','disponible_desde'=>'2026-09-27T22:33','disponible_hasta'=>'2026-09-27T23:33',
+        ])->assertRedirect();
+
+        $session=TestSesion::where('anfitrion_usuario_id',$teacher->id)->latest('id')->firstOrFail();
+        $this->assertSame('2026-09-28 04:33',$session->disponible_desde->format('Y-m-d H:i'));
+        $this->assertSame('2026-09-28 05:33',$session->disponible_hasta->format('Y-m-d H:i'));
+        $this->assertSame('America/Guatemala',$session->configuracion['zona_horaria_profesor']);
+    }
     public function test_only_students_from_selected_class_can_join_and_teacher_cannot_monitor_foreign_session(): void
     {
         [$teacher, $other, $ownClass, $foreignClass, $student, $outsider] = $this->scenario();
@@ -92,12 +139,53 @@ class TeacherTestCreatorTest extends TestCase
         $engine->unir($student,$session->codigo_sala,null,'clase');
         $this->withSession($this->sessionFor($teacher))->get(route('profesor.tests.sessions.show',$session))
             ->assertOk()->assertSee($student->nombre)->assertSee('Participantes y progreso');
+        do{$foreignCode='Z'.strtoupper(substr(md5(uniqid('',true)),0,5));}while(TestSesion::where('codigo_sala',$foreignCode)->exists());
         $foreignSession=TestSesion::create(['colegio_id'=>$other->colegio_id,'clase_id'=>$foreignClass->id,
-            'anfitrion_usuario_id'=>$other->id,'codigo_sala'=>'Z'.substr($session->codigo_sala,1),'tipo'=>'clase',
+            'anfitrion_usuario_id'=>$other->id,'codigo_sala'=>$foreignCode,'tipo'=>'clase',
             'modalidad'=>'trivia','estado'=>'espera','tiempo_pregunta'=>20,'max_participantes'=>30]);
         $this->get(route('profesor.tests.sessions.show',$foreignSession))->assertNotFound();
         $this->expectException(\DomainException::class);
         $engine->unir($outsider,$session->codigo_sala,null,'clase');
+    }
+
+    public function test_teacher_can_permanently_delete_only_finished_history_from_own_class(): void
+    {
+        [$teacher,$other,$ownClass,$foreignClass,$student]=$this->scenario();
+        $finished=$this->classSession($teacher,$ownClass,'cerrada');
+        $participant=TestSesionParticipante::create([
+            'sesion_id'=>$finished->id,'usuario_id'=>$student->id,'nombre_visible'=>$student->nombre,
+            'reconexion_token_hash'=>hash('sha256','finished-'.$finished->id),'estado'=>'finalizado',
+            'es_anfitrion'=>false,'puntos_test'=>80,'unido_at'=>now(),'finalizado_at'=>now(),
+        ]);
+        $result=TestResultadoSesion::create([
+            'sesion_id'=>$finished->id,'participante_id'=>$participant->id,'intento'=>1,'usuario_id'=>$student->id,
+            'colegio_id'=>$teacher->colegio_id,'clase_id'=>$ownClass->id,'nombre_alumno'=>$student->nombre,
+            'modalidad'=>'examen','total_preguntas'=>1,'correctas'=>1,'incorrectas'=>0,'calificacion'=>100,
+            'puntos_test'=>0,'estado'=>'entregado','iniciada_at'=>now()->subMinute(),'entregada_at'=>now(),
+        ]);
+        $history=TestHistorialRespuesta::create([
+            'sesion_id'=>$finished->id,'participante_id'=>$participant->id,'usuario_id'=>$student->id,
+            'colegio_id'=>$teacher->colegio_id,'clase_id'=>$ownClass->id,'profesor_id'=>$teacher->id,
+            'intento'=>1,'ronda'=>1,'orden'=>1,'pregunta'=>'¿Pregunta?','tipo_pregunta'=>'verdadero_falso',
+            'respuestas_correctas'=>['1'],'respuesta_alumno'=>['1'],'correcta'=>true,'puntos_otorgados'=>10,
+            'puntos_maximos'=>10,'respondida_at'=>now(),
+        ]);
+
+        $this->withSession($this->sessionFor($teacher))->get(route('profesor.tests.index').'#sesiones-recientes')
+            ->assertOk()->assertSee('Eliminar historial')->assertSee('ya no podrás consultar ni imprimir un resumen');
+        $this->delete(route('profesor.tests.sessions.destroy-history',$finished))->assertRedirect();
+        $this->assertDatabaseMissing('test_sesiones',['id'=>$finished->id]);
+        $this->assertDatabaseMissing('test_sesion_participantes',['id'=>$participant->id]);
+        $this->assertDatabaseMissing('test_resultados_sesion',['id'=>$result->id]);
+        $this->assertDatabaseMissing('test_historial_respuestas',['id'=>$history->id]);
+
+        $active=$this->classSession($teacher,$ownClass,'activa');
+        $this->delete(route('profesor.tests.sessions.destroy-history',$active))->assertUnprocessable();
+        $this->assertDatabaseHas('test_sesiones',['id'=>$active->id]);
+
+        $foreign=$this->classSession($other,$foreignClass,'cerrada');
+        $this->delete(route('profesor.tests.sessions.destroy-history',$foreign))->assertNotFound();
+        $this->assertDatabaseHas('test_sesiones',['id'=>$foreign->id]);
     }
 
     private function scenario(): array
@@ -120,6 +208,16 @@ class TeacherTestCreatorTest extends TestCase
     {
         return Usuario::create(['colegio_id'=>$collegeId,'nombre'=>$name,'email'=>$email,'email_verified_at'=>$email?now():null,
             'clave'=>Hash::make('Clave1234'),'rol'=>$role,'activo'=>true,'cambio_clave_requerido'=>false,'puntos_totales'=>0,'puntos_usados'=>0]);
+    }
+
+    private function classSession(Usuario $teacher,Clase $class,string $state): TestSesion
+    {
+        do{$code=strtoupper(substr(md5(uniqid('',true)),0,6));}while(TestSesion::where('codigo_sala',$code)->exists());
+        return TestSesion::create([
+            'colegio_id'=>$teacher->colegio_id,'clase_id'=>$class->id,'anfitrion_usuario_id'=>$teacher->id,
+            'codigo_sala'=>$code,'tipo'=>'clase','modalidad'=>'examen','estado'=>$state,
+            'tiempo_pregunta'=>null,'max_participantes'=>30,'cerrada_at'=>$state==='cerrada'?now():null,
+        ]);
     }
 
     private function sessionFor(Usuario $user): array

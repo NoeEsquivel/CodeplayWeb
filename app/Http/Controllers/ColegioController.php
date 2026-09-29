@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\View\View;
 
 class ColegioController extends Controller
 {
@@ -31,14 +32,14 @@ class ColegioController extends Controller
 
     public function show(Colegio $colegio): JsonResponse
     {
-        $columnas = ['id', 'colegio_id', 'nombre', 'email', 'rol', 'ultimo_acceso'];
+        $columnas = ['id', 'colegio_id', 'nombre', 'nombre_completo', 'email', 'rol', 'ultimo_acceso'];
         if (Schema::hasColumn('usuarios', 'activo')) $columnas[] = 'activo';
 
         $colegio->load([
             'usuarios' => fn ($q) => $q->select($columnas)->orderBy('nombre'),
             'clases' => fn ($q) => $q->with([
-                'profesores' => fn ($p) => $p->select('usuarios.id', 'usuarios.nombre', 'usuarios.email'),
-                'alumnos' => fn ($a) => $a->select('usuarios.id', 'usuarios.nombre'),
+                'profesores' => fn ($p) => $p->select('usuarios.id', 'usuarios.nombre', 'usuarios.nombre_completo', 'usuarios.email'),
+                'alumnos' => fn ($a) => $a->select('usuarios.id', 'usuarios.nombre', 'usuarios.nombre_completo'),
             ])->withCount(['profesores', 'alumnos'])->orderBy('nombre'),
         ]);
 
@@ -48,6 +49,28 @@ class ColegioController extends Controller
             'profesores' => $colegio->usuarios->where('rol', Usuario::ROL_PROFESOR)->values(),
             'alumnos' => $colegio->usuarios->where('rol', Usuario::ROL_ALUMNO)->values(),
             'clases' => $colegio->clases,
+        ]);
+    }
+
+    public function printHierarchy(Request $request, Colegio $colegio): View
+    {
+        $this->actor($request);
+        $columnas = ['id', 'colegio_id', 'nombre', 'nombre_completo', 'email', 'rol', 'ultimo_acceso'];
+        if (Schema::hasColumn('usuarios', 'activo')) $columnas[] = 'activo';
+
+        $colegio->load([
+            'usuarios' => fn ($q) => $q->select($columnas)->orderByRaw('COALESCE(nombre_completo, nombre), nombre'),
+            'clases' => fn ($q) => $q->with([
+                'profesores' => fn ($p) => $p->select('usuarios.id', 'usuarios.nombre', 'usuarios.nombre_completo', 'usuarios.email'),
+                'alumnos' => fn ($a) => $a->select('usuarios.id', 'usuarios.nombre', 'usuarios.nombre_completo'),
+            ])->withCount(['profesores', 'alumnos'])->orderBy('nombre'),
+        ]);
+
+        return view('master.jerarquia-print', [
+            'colegio' => $colegio,
+            'administradores' => $colegio->usuarios->where('rol', Usuario::ROL_ADMINISTRADOR_COLEGIO)->values(),
+            'profesores' => $colegio->usuarios->where('rol', Usuario::ROL_PROFESOR)->values(),
+            'alumnos' => $colegio->usuarios->where('rol', Usuario::ROL_ALUMNO)->values(),
         ]);
     }
 

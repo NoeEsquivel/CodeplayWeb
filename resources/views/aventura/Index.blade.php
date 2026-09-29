@@ -29,9 +29,9 @@
 <header class="topbar">
     <a href="{{ route('inicio.alumno') }}" class="back">← Inicio</a>
     <a class="brand" href="{{ route('inicio.alumno') }}">CODE<span>PLAY</span><small>AVENTURA</small></a>
-    <span class="player-name">{{ session('usuario_nombre', 'Explorador') }}</span>
+    <span class="player-name">{{ $estado['personaje']['nombre'] }}</span>
 </header>
-<main id="campamento" data-save-url="{{ route('alumno.aventura.equipamiento') }}">
+<main id="campamento" data-save-url="{{ route('alumno.aventura.equipamiento') }}" data-rename-url="{{ route('alumno.aventura.personaje.nombre') }}">
     <div class="page-heading"><div><p class="eyebrow">TU CONOCIMIENTO ABRE CAMINOS</p><h1>Antes del primer paso.</h1><p>Prepara tu equipo. Elige tu estilo. Lleva contigo todo lo que has aprendido.</p></div><span class="chapter">01 <span>EL CAMPAMENTO</span></span></div>
     <div class="journey-tabs" aria-label="Opciones de aventura">
         <a class="selected" href="#armeria">⚔ Equiparme <small>Prepara tu próxima expedición</small></a>
@@ -41,7 +41,7 @@
         <aside class="character-panel" aria-labelledby="characterTitle">
             <div class="panel-heading"><span class="eyebrow">TU PERSONAJE</span><span class="level-pill">NV. <b id="characterLevel">{{ $estado['personaje']['nivel'] }}</b></span></div>
             <div class="portrait"><div class="portrait-orbit"></div><img src="{{ asset('Imagenes/aventura/explorador.svg') }}" alt="Explorador con capa, espada y escudo ante un portal luminoso"><span class="portrait-caption">EL CONOCIMIENTO ES TU PODER</span></div>
-            <h2 id="characterTitle">{{ session('usuario_nombre', 'Explorador') }}</h2><p class="character-subtitle">Aprendiz de los caminos</p>
+            <div class="character-name-row"><h2 id="characterTitle">{{ $estado['personaje']['nombre'] }}</h2><button type="button" id="renameCharacterButton" class="rename-character-button">✎ Cambiar nombre</button></div><form id="renameCharacterForm" class="rename-character-form" hidden><label for="adventurerName">Nombre de tu aventurero</label><div><input id="adventurerName" name="nombre" maxlength="60" value="{{ $estado['personaje']['nombre'] }}" required><button type="submit">Guardar</button><button type="button" id="cancelRenameCharacter">Cancelar</button></div><small>Este nombre solo se usa dentro de Aventura. Tu usuario de CodePlay no cambiará.</small><p id="renameCharacterMessage" role="status"></p></form><p class="character-subtitle">Aprendiz de los caminos</p>
             <div class="xp-label"><span>Experiencia permanente</span><b>{{ $estado['personaje']['experiencia'] }} / {{ $estado['personaje']['siguiente'] }} XP</b></div>
             <progress class="xp" max="{{ $estado['personaje']['siguiente'] }}" value="{{ $estado['personaje']['experiencia'] }}" aria-label="Experiencia para subir de nivel"></progress>
             <p class="xp-note">Faltan {{ $estado['personaje']['siguiente'] - $estado['personaje']['experiencia'] }} XP para el nivel {{ $estado['personaje']['nivel'] + 1 }}.</p>

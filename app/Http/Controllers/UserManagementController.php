@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
@@ -31,6 +32,11 @@ class UserManagementController extends Controller
         if (!$this->puedeAdministrarRol($actor, $rol)) return $this->forbidden();
 
         $query = Usuario::query()->with('colegio:id,nombre,codigo,activo')->where('rol', $rol);
+        if ($rol === Usuario::ROL_PROFESOR) {
+            $query->with('clasesComoProfesor:id,nombre,ciclo_escolar,activa');
+        } elseif ($rol === Usuario::ROL_ALUMNO) {
+            $query->with('clasesComoAlumno:id,nombre,ciclo_escolar,activa');
+        }
         if ($actor->esProfesor()) {
             if (!$actor->colegio_id) return response()->json([]);
             $clases = $actor->clasesComoProfesor()->pluck('clases.id');
@@ -45,7 +51,7 @@ class UserManagementController extends Controller
         }
 
         $columnas = [
-            'id', 'colegio_id', 'nombre', 'email', 'rol', 'cambio_clave_requerido',
+            'id', 'colegio_id', 'nombre', 'nombre_completo', 'email', 'rol', 'cambio_clave_requerido',
             'puntos_totales', 'puntos_usados', 'ultimo_acceso', 'created_at', 'updated_at',
         ];
         if (Schema::hasColumn('usuarios', 'activo')) $columnas[] = 'activo';
@@ -64,6 +70,7 @@ class UserManagementController extends Controller
         }
 
         $datos = $request->validate([
+            'nombre_completo' => ['nullable', 'string', 'min:3', 'max:160'],
             'nombre' => ['required', 'string', 'max:100'],
             'email' => [
                 Rule::requiredIf(fn () => in_array((string) $request->input('rol'), [
@@ -80,6 +87,7 @@ class UserManagementController extends Controller
                 Rule::requiredIf(fn () => $actor->esProfesor()),
                 'nullable', 'integer', 'exists:clases,id',
             ],
+            'profesor_id' => ['nullable', 'integer', 'exists:usuarios,id'],
             'clave' => ['required', 'string', Password::min(8)->letters()->mixedCase()->numbers()],
         ], $this->mensajesValidacion());
 
@@ -115,38 +123,139 @@ class UserManagementController extends Controller
                     'message' => 'Solo puedes asignar alumnos a una de tus clases activas.',
                 ], 422);
             }
+        } elseif (!empty($datos['clase_id'])) {
+            $claseAsignada = Clase::query()
+                ->whereKey($datos['clase_id'])
+                ->where('colegio_id', $colegioId)
+                ->where('activa', true)
+                ->first();
+            if (!$claseAsignada) {
+                return response()->json([
+                    'success' => false,
+                    'code' => 'CLASS_NOT_ALLOWED',
+                    'message' => 'La clase seleccionada no está activa o no pertenece a tu colegio.',
+                ], 422);
+            }
         }
 
+        $profesorAsignado = null;
+        if (!empty($datos['profesor_id'])) {
+            if ($datos['rol'] !== Usuario::ROL_ALUMNO || !$claseAsignada) {
+                return response()->json([
+                    'success' => false,
+                    'code' => 'TEACHER_CLASS_REQUIRED',
+                    'message' => 'Para asignar un profesor debes seleccionar también una clase para el alumno.',
+                ], 422);
+            }
+            $profesorAsignado = Usuario::query()
+                ->whereKey($datos['profesor_id'])
+                ->where('colegio_id', $colegioId)
+                ->where('rol', Usuario::ROL_PROFESOR)
+                ->when(Schema::hasColumn('usuarios', 'activo'), fn ($query) => $query->where('activo', true))
+                ->first();
+            if (!$profesorAsignado) {
+                return response()->json([
+                    'success' => false,
+                    'code' => 'TEACHER_NOT_ALLOWED',
+                    'message' => 'El profesor seleccionado no está activo o no pertenece a tu colegio.',
+                ], 422);
+            }
+        }
+
+        $nombreCompleto = $this->normalizarNombre((string) ($datos['nombre_completo'] ?? $datos['nombre']));
         $nombre = $this->normalizarNombre((string) $datos['nombre']);
-        if ($this->nombreExiste($nombre)) return $this->respuestaNombreOcupado($nombre);
+        if ($this->nombreExiste($nombre)) return $this->respuestaNombreOcupado($nombre, $nombreCompleto);
+        $asignarClaseGeneral = !($actor->esAdministradorColegio()
+            && $datos['rol'] === Usuario::ROL_PROFESOR
+            && !$claseAsignada);
 
         try {
-            $usuario = DB::transaction(function () use ($datos, $nombre, $colegioId, $claseAsignada) {
+            $usuario = DB::transaction(function () use ($datos, $nombre, $nombreCompleto, $colegioId, $claseAsignada, $profesorAsignado, $asignarClaseGeneral) {
                 $atributos = [
-                    'colegio_id' => $colegioId, 'nombre' => $nombre, 'email' => $datos['email'] ?? null,
+                    'colegio_id' => $colegioId, 'nombre' => $nombre, 'nombre_completo' => $nombreCompleto, 'email' => $datos['email'] ?? null,
                     'clave' => Hash::make($datos['clave']), 'rol' => $datos['rol'],
                     'cambio_clave_requerido' => true, 'puntos_totales' => 0, 'puntos_usados' => 0,
                 ];
                 if (Schema::hasColumn('usuarios', 'activo')) $atributos['activo'] = true;
                 $usuario = Usuario::create($atributos);
-                if ($claseAsignada) $claseAsignada->agregarAlumno($usuario);
-                else $this->asignarClaseGeneral($usuario, $colegioId);
+                if ($claseAsignada && $usuario->esProfesor()) $claseAsignada->agregarProfesor($usuario);
+                elseif ($claseAsignada && $usuario->esAlumno()) $claseAsignada->agregarAlumno($usuario);
+                elseif ($asignarClaseGeneral) $this->asignarClaseGeneral($usuario, $colegioId);
+                if ($claseAsignada && $profesorAsignado) $claseAsignada->agregarProfesor($profesorAsignado);
                 return $usuario;
             });
         } catch (QueryException $exception) {
-            if ($this->esConflictoUnico($exception)) return $this->respuestaNombreOcupado($nombre);
+            if ($this->esConflictoUnico($exception)) return $this->respuestaNombreOcupado($nombre, $nombreCompleto);
             throw $exception;
         }
 
         $this->audit->record($request, $actor, 'usuario.creado', $usuario, [
-            'nombre' => $usuario->nombre, 'rol' => $usuario->rol, 'colegio' => $colegio->nombre,
+            'nombre' => $usuario->nombre, 'nombre_completo' => $usuario->nombre_completo, 'rol' => $usuario->rol, 'colegio' => $colegio->nombre,
             'clase_id' => $claseAsignada?->id, 'clase' => $claseAsignada?->nombre,
+            'profesor_id' => $profesorAsignado?->id, 'profesor' => $profesorAsignado?->nombreParaReportes(),
         ]);
 
         return response()->json([
-            'success' => true, 'message' => 'Usuario creado exitosamente',
+            'success' => true,
+            'message' => $usuario->esProfesor() ? 'Profesor creado exitosamente.' : 'Alumno creado exitosamente.',
             'usuario' => $usuario->load('colegio:id,nombre,codigo,activo'),
         ], 201);
+    }
+
+    public function updateApi(Request $request, int $id): JsonResponse
+    {
+        $actor = $this->actor($request);
+        $usuario = Usuario::findOrFail($id);
+        if (!$this->puedeAdministrarUsuario($actor, $usuario)) return $this->forbidden();
+
+        if ($request->filled('email')) {
+            $request->merge(['email' => mb_strtolower(trim((string) $request->input('email')), 'UTF-8')]);
+        }
+        $request->merge([
+            'nombre_completo' => $this->normalizarNombre((string) $request->input('nombre_completo')),
+            'nombre' => $this->normalizarNombre((string) $request->input('nombre')),
+        ]);
+
+        $datos = $request->validate([
+            'nombre_completo' => ['required', 'string', 'min:3', 'max:160'],
+            'nombre' => ['required', 'string', 'max:100'],
+            'email' => [
+                Rule::requiredIf(fn () => in_array($usuario->rol, [
+                    Usuario::ROL_PROFESOR, Usuario::ROL_ADMINISTRADOR_COLEGIO,
+                ], true)),
+                'nullable', 'string', 'email', 'max:150', Rule::unique('usuarios', 'email')->ignore($usuario->id),
+            ],
+        ], $this->mensajesValidacion());
+
+        if ($this->nombreExiste($datos['nombre'], $usuario->id)) {
+            return $this->respuestaNombreOcupado($datos['nombre'], $datos['nombre_completo']);
+        }
+
+        $antes = $usuario->only(['nombre', 'nombre_completo', 'email']);
+        try {
+            $usuario->forceFill([
+                'nombre' => $datos['nombre'],
+                'nombre_completo' => $datos['nombre_completo'],
+                'email' => $datos['email'] ?? null,
+            ])->save();
+        } catch (QueryException $exception) {
+            if ($this->esConflictoUnico($exception)) {
+                return $this->respuestaNombreOcupado($datos['nombre'], $datos['nombre_completo']);
+            }
+            throw $exception;
+        }
+
+        $this->audit->record($request, $actor, 'usuario.actualizado', $usuario, [
+            'antes' => $antes,
+            'despues' => $usuario->only(['nombre', 'nombre_completo', 'email']),
+            'rol' => $usuario->rol,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => $usuario->esProfesor() ? 'Perfil del profesor actualizado exitosamente.' : 'Perfil actualizado exitosamente.',
+            'usuario' => $usuario->fresh()->load('colegio:id,nombre,codigo,activo'),
+        ]);
     }
 
     public function resetPasswordApi(Request $request, int $id): JsonResponse
@@ -169,7 +278,7 @@ class UserManagementController extends Controller
             'nombre' => $usuario->nombre, 'rol' => $usuario->rol,
         ]);
 
-        return response()->json(['success' => true, 'message' => 'Contraseña reseteada exitosamente']);
+        return response()->json(['success' => true, 'message' => 'Contraseña restablecida exitosamente.']);
     }
 
     public function updateStatusApi(Request $request, int $id): JsonResponse
@@ -264,7 +373,10 @@ class UserManagementController extends Controller
             ], 409);
         }
 
-        return response()->json(['success' => true, 'message' => 'Usuario eliminado exitosamente']);
+        return response()->json([
+            'success' => true,
+            'message' => $usuario->esProfesor() ? 'Profesor eliminado exitosamente.' : 'Usuario eliminado exitosamente.',
+        ]);
     }
 
     private function asignarClaseGeneral(Usuario $usuario, int $colegioId): void
@@ -309,25 +421,42 @@ class UserManagementController extends Controller
         return preg_replace('/\s+/u', ' ', trim($nombre)) ?? trim($nombre);
     }
 
-    private function nombreExiste(string $nombre): bool
+    private function nombreExiste(string $nombre, ?int $exceptoId = null): bool
     {
-        return Usuario::query()->whereRaw('LOWER(nombre) = ?', [mb_strtolower($nombre, 'UTF-8')])->exists();
+        return Usuario::query()
+            ->whereRaw('LOWER(nombre) = ?', [mb_strtolower($nombre, 'UTF-8')])
+            ->when($exceptoId, fn ($query) => $query->where('id', '<>', $exceptoId))
+            ->exists();
     }
 
-    private function sugerirNombre(string $nombre): string
+    public function suggestUsernameApi(Request $request): JsonResponse
     {
+        $this->actor($request);
+        $datos = $request->validate(['nombre_completo' => ['required', 'string', 'min:3', 'max:160']]);
+        return response()->json(['suggested_username' => $this->sugerirNombreDesdeNombreCompleto($datos['nombre_completo'])]);
+    }
+
+    private function sugerirNombreDesdeNombreCompleto(string $nombreCompleto): string
+    {
+        $partes = preg_split('/\s+/u', $this->normalizarNombre($nombreCompleto), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        if ($partes === []) return 'Usuario';
+        $indiceApellido = count($partes) >= 3 ? count($partes) - 2 : min(1, count($partes) - 1);
+        $inicial = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', Str::ascii($partes[0])) ?: 'U', 0, 1));
+        $apellidoLimpio = preg_replace('/[^A-Za-z0-9]/', '', Str::ascii($partes[$indiceApellido])) ?: 'Usuario';
+        $base = $inicial.ucfirst(strtolower($apellidoLimpio));
+        $base = mb_substr($base, 0, 100, 'UTF-8');
+        if (!$this->nombreExiste($base)) return $base;
         for ($numero = 2; $numero <= 9999; $numero++) {
-            $sufijo = ' '.$numero;
-            $base = mb_substr($nombre, 0, 100 - mb_strlen($sufijo, 'UTF-8'), 'UTF-8');
-            $sugerencia = rtrim($base).$sufijo;
+            $sufijo = (string) $numero;
+            $sugerencia = mb_substr($base, 0, 100 - strlen($sufijo), 'UTF-8').$sufijo;
             if (!$this->nombreExiste($sugerencia)) return $sugerencia;
         }
-        return mb_substr($nombre, 0, 91, 'UTF-8').' '.substr((string) hrtime(true), -8);
+        return mb_substr($base, 0, 92, 'UTF-8').substr((string) hrtime(true), -8);
     }
 
-    private function respuestaNombreOcupado(string $nombre): JsonResponse
+    private function respuestaNombreOcupado(string $nombre, string $nombreCompleto): JsonResponse
     {
-        $sugerencia = $this->sugerirNombre($nombre);
+        $sugerencia = $this->sugerirNombreDesdeNombreCompleto($nombreCompleto);
         return response()->json([
             'success' => false, 'code' => 'USERNAME_TAKEN',
             'message' => "Ya existe un nombre de usuario con el nombre «{$nombre}». Te recomendamos usar «{$sugerencia}».",
@@ -350,7 +479,10 @@ class UserManagementController extends Controller
     private function mensajesValidacion(): array
     {
         return [
-            'nombre.max' => 'El nombre no puede superar los 100 caracteres.',
+            'nombre_completo.required' => 'El nombre completo es obligatorio.',
+            'nombre_completo.min' => 'Ingresa el nombre completo de la persona.',
+            'nombre_completo.max' => 'El nombre completo no puede superar los 160 caracteres.',
+            'nombre.max' => 'El nombre de usuario no puede superar los 100 caracteres.',
             'email.required' => 'El correo electrónico es obligatorio para profesores y administradores de colegio.',
             'email.email' => 'Ingresa un correo electrónico válido.',
             'email.unique' => 'Ya existe una cuenta registrada con este correo electrónico.',
@@ -360,6 +492,7 @@ class UserManagementController extends Controller
             'colegio_id.exists' => 'El colegio seleccionado no existe.',
             'clase_id.required' => 'Debes seleccionar una de tus clases.',
             'clase_id.exists' => 'La clase seleccionada no existe.',
+            'profesor_id.exists' => 'El profesor seleccionado no existe.',
             'clave.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'nueva_clave.min' => 'La contraseña debe tener al menos 8 caracteres.',
         ];

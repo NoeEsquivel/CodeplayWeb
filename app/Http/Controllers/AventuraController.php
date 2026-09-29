@@ -117,6 +117,15 @@ class AventuraController extends Controller
         return view('aventura.Index', compact('estado'));
     }
 
+    public function renombrar(Request $request, AventuraService $aventura)
+    {
+        $datos = $request->validate([
+            'nombre' => ['required', 'string', 'min:2', 'max:60', 'regex:/^[\pL\pM0-9 .\'\-]+$/u'],
+        ], ['nombre.regex' => 'Usa letras, números, espacios, puntos, guiones o apóstrofes.']);
+        $estado = $aventura->renombrar((int) session('usuario_id'), $datos['nombre']);
+        return response()->json(['success' => true, 'nombre' => $estado['personaje']['nombre']]);
+    }
+
     public function guardar(Request $request, AventuraService $aventura)
     {
         $nivel = $aventura->estado((int) session('usuario_id'))['personaje']['nivel'];

@@ -42,7 +42,7 @@ class SchoolAdminController extends Controller
             'progreso' => $this->progressStats($colegioId),
             'alumnos_destacados' => (clone $alumnos)
                 ->orderByDesc('puntos_totales')->orderBy('nombre')
-                ->limit(5)->get(['id', 'nombre', 'puntos_totales', 'puntos_usados']),
+                ->limit(5)->get(['id', 'nombre', 'nombre_completo', 'puntos_totales', 'puntos_usados'])->each(fn ($alumno) => $alumno->nombre = $alumno->nombreParaReportes()),
         ];
 
         return response()->json($resumen);
@@ -56,8 +56,8 @@ class SchoolAdminController extends Controller
         return response()->json(Clase::query()
             ->where('colegio_id', $colegioId)
             ->with([
-                'profesores' => fn ($q) => $q->select('usuarios.id', 'usuarios.nombre', 'usuarios.email')->orderBy('usuarios.nombre'),
-                'alumnos' => fn ($q) => $q->select('usuarios.id', 'usuarios.nombre')->orderBy('usuarios.nombre'),
+                'profesores' => fn ($q) => $q->select('usuarios.id', 'usuarios.nombre', 'usuarios.nombre_completo', 'usuarios.email')->orderBy('usuarios.nombre'),
+                'alumnos' => fn ($q) => $q->select('usuarios.id', 'usuarios.nombre', 'usuarios.nombre_completo')->orderBy('usuarios.nombre'),
             ])
             ->withCount(['profesores', 'alumnos'])
             ->orderBy('nombre')
@@ -152,6 +152,134 @@ class SchoolAdminController extends Controller
         return $this->assign($request, $clase, $usuario, Usuario::ROL_ALUMNO, false);
     }
 
+    public function graduatingStudents(Request $request): JsonResponse
+    {
+        $actor = $this->actor($request);
+        $datos = $request->validate([
+            'ciclo_escolar' => ['required', 'string', 'max:20'],
+            'clase_id' => ['nullable', 'integer'],
+        ], $this->messages());
+
+        $clase = $this->graduatingClass($actor, $datos);
+        $alumnos = $this->graduatingStudentsQuery($actor, $datos['ciclo_escolar'], $clase?->id)
+            ->orderByRaw('COALESCE(nombre_completo, nombre)')
+            ->get(['id', 'nombre', 'nombre_completo']);
+
+        return response()->json([
+            'ciclo_escolar' => $datos['ciclo_escolar'],
+            'clase' => $clase?->only(['id', 'nombre', 'ciclo_escolar']),
+            'total' => $alumnos->count(),
+            'alumnos' => $alumnos,
+        ]);
+    }
+
+    public function destroyGraduatingStudents(Request $request): JsonResponse
+    {
+        $actor = $this->actor($request);
+        $datos = $request->validate([
+            'ciclo_escolar' => ['required', 'string', 'max:20'],
+            'clase_id' => ['nullable', 'integer'],
+            'conservar_alumnos' => ['nullable', 'array', 'max:5000'],
+            'conservar_alumnos.*' => ['integer'],
+        ], $this->messages());
+
+        $clase = $this->graduatingClass($actor, $datos);
+        $solicitadosParaConservar = array_values(array_unique(array_map('intval', $datos['conservar_alumnos'] ?? [])));
+        $base = $this->graduatingStudentsQuery($actor, $datos['ciclo_escolar'], $clase?->id);
+        $conservar = $solicitadosParaConservar === [] ? [] : (clone $base)
+            ->whereIn('id', $solicitadosParaConservar)->pluck('id')->map(fn ($id) => (int) $id)->all();
+        $consulta = (clone $base)
+            ->when($conservar !== [], fn ($query) => $query->whereNotIn('id', $conservar));
+        $eliminados = 0;
+
+        try {
+            DB::transaction(function () use ($consulta, &$eliminados) {
+                $eliminados = $consulta->delete();
+            });
+        } catch (QueryException) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No fue posible eliminar el grupo porque algunos alumnos conservan información protegida.',
+            ], 409);
+        }
+
+        $this->audit->record($request, $actor, 'alumnos.graduandos_eliminados', null, [
+            'ciclo_escolar' => $datos['ciclo_escolar'],
+            'clase_id' => $clase?->id,
+            'clase' => $clase?->nombre,
+            'eliminados' => $eliminados,
+            'repitentes_conservados' => count($conservar),
+        ], (int) $actor->colegio_id);
+
+        return response()->json([
+            'success' => true,
+            'message' => $eliminados === 1
+                ? 'Se eliminó 1 alumno graduando y se conservaron los repitentes seleccionados.'
+                : "Se eliminaron {$eliminados} alumnos graduandos y se conservaron los repitentes seleccionados.",
+            'eliminados' => $eliminados,
+            'conservados' => count($conservar),
+        ]);
+    }
+
+    public function masterGraduatingStudents(Request $request): JsonResponse
+    {
+        $actor = $this->actor($request);
+        abort_unless($actor->esMaster(), 403);
+        $datos = $request->validate([
+            'colegio_id' => ['required', 'integer', 'exists:colegios,id'],
+            'ciclo_escolar' => ['required', 'string', 'max:20'],
+            'clase_id' => ['nullable', 'integer'],
+        ], $this->messages());
+        $clase = $this->masterGraduatingClass($datos);
+        $alumnos = $this->graduatingStudentsQueryForCollege((int) $datos['colegio_id'], $datos['ciclo_escolar'], $clase?->id)
+            ->orderByRaw('COALESCE(nombre_completo, nombre)')
+            ->get(['id', 'nombre', 'nombre_completo']);
+
+        return response()->json([
+            'ciclo_escolar' => $datos['ciclo_escolar'],
+            'clase' => $clase?->only(['id', 'nombre', 'ciclo_escolar']),
+            'total' => $alumnos->count(),
+            'alumnos' => $alumnos,
+        ]);
+    }
+
+    public function masterDestroyGraduatingStudents(Request $request): JsonResponse
+    {
+        $actor = $this->actor($request);
+        abort_unless($actor->esMaster(), 403);
+        $datos = $request->validate([
+            'colegio_id' => ['required', 'integer', 'exists:colegios,id'],
+            'ciclo_escolar' => ['required', 'string', 'max:20'],
+            'clase_id' => ['nullable', 'integer'],
+            'conservar_alumnos' => ['nullable', 'array', 'max:5000'],
+            'conservar_alumnos.*' => ['integer'],
+        ], $this->messages());
+        $clase = $this->masterGraduatingClass($datos);
+        $base = $this->graduatingStudentsQueryForCollege((int) $datos['colegio_id'], $datos['ciclo_escolar'], $clase?->id);
+        $solicitados = array_values(array_unique(array_map('intval', $datos['conservar_alumnos'] ?? [])));
+        $conservar = $solicitados === [] ? [] : (clone $base)->whereIn('id', $solicitados)
+            ->pluck('id')->map(fn ($id) => (int) $id)->all();
+        $consulta = (clone $base)->when($conservar !== [], fn ($query) => $query->whereNotIn('id', $conservar));
+
+        try {
+            $eliminados = DB::transaction(fn () => $consulta->delete());
+        } catch (QueryException) {
+            return response()->json(['success' => false, 'message' => 'No fue posible eliminar el grupo porque algunos alumnos conservan información protegida.'], 409);
+        }
+
+        $this->audit->record($request, $actor, 'alumnos.graduandos_eliminados', null, [
+            'ciclo_escolar' => $datos['ciclo_escolar'], 'clase_id' => $clase?->id,
+            'clase' => $clase?->nombre, 'eliminados' => $eliminados,
+            'repitentes_conservados' => count($conservar),
+        ], (int) $datos['colegio_id']);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Se eliminaron {$eliminados} alumnos graduandos y se conservaron ".count($conservar).' repitentes seleccionados.',
+            'eliminados' => $eliminados, 'conservados' => count($conservar),
+        ]);
+    }
+
     private function assign(Request $request, Clase $clase, Usuario $usuario, string $role, bool $attach): JsonResponse
     {
         $actor = $this->actor($request);
@@ -173,6 +301,42 @@ class SchoolAdminController extends Controller
             'success' => true,
             'message' => $attach ? 'Usuario asignado a la clase.' : 'Usuario retirado de la clase.',
         ]);
+    }
+
+    private function graduatingClass(Usuario $actor, array $datos): ?Clase
+    {
+        if (empty($datos['clase_id'])) return null;
+
+        $clase = Clase::query()
+            ->whereKey($datos['clase_id'])
+            ->where('colegio_id', $this->collegeId($actor))
+            ->firstOrFail();
+        abort_unless((string) $clase->ciclo_escolar === (string) $datos['ciclo_escolar'], 422, 'La clase no pertenece al ciclo escolar seleccionado.');
+        return $clase;
+    }
+
+    private function graduatingStudentsQuery(Usuario $actor, string $cicloEscolar, ?int $claseId = null)
+    {
+        return $this->graduatingStudentsQueryForCollege($this->collegeId($actor), $cicloEscolar, $claseId);
+    }
+
+    private function graduatingStudentsQueryForCollege(int $colegioId, string $cicloEscolar, ?int $claseId = null)
+    {
+        return Usuario::query()
+            ->where('colegio_id', $colegioId)
+            ->where('rol', Usuario::ROL_ALUMNO)
+            ->whereHas('clasesComoAlumno', function ($query) use ($cicloEscolar, $claseId) {
+                $query->where('clases.ciclo_escolar', $cicloEscolar);
+                if ($claseId) $query->where('clases.id', $claseId);
+            });
+    }
+
+    private function masterGraduatingClass(array $datos): ?Clase
+    {
+        if (empty($datos['clase_id'])) return null;
+        $clase = Clase::query()->whereKey($datos['clase_id'])->where('colegio_id', $datos['colegio_id'])->firstOrFail();
+        abort_unless((string) $clase->ciclo_escolar === (string) $datos['ciclo_escolar'], 422, 'La clase no pertenece al ciclo escolar seleccionado.');
+        return $clase;
     }
 
     private function progressStats(int $colegioId): array

@@ -26,12 +26,14 @@ class SchoolAdminPanelTest extends TestCase
             '2025_09_30_064434_create_usuarios_table.php',
             '2025_10_01_063305_add_cambio_clave_requerido_to_usuarios_table.php',
             '2025_10_02_083703_add_ultimo_acceso_to_usuarios_table.php',
+            '2026_09_08_120000_create_aventura_preparacion_tables.php',
             '2026_09_24_120000_create_colegios_and_expand_user_roles.php',
             '2026_09_24_121000_add_email_to_usuarios_table.php',
             '2026_09_24_122000_assign_existing_users_to_ined_maria_luisa.php',
             '2026_09_24_123000_create_clases_and_memberships.php',
             '2026_09_25_091000_add_ciclo_escolar_to_clases.php',
             '2026_09_25_100000_add_user_status_and_admin_audit.php',
+            '2026_09_27_130000_add_full_names_and_adventure_alias.php',
         ] as $migration) {
             (require database_path('migrations/'.$migration))->up();
         }
@@ -56,7 +58,7 @@ class SchoolAdminPanelTest extends TestCase
             ->assertJsonFragment(['nombre' => 'Profesor Propio'])
             ->assertJsonMissing(['nombre' => 'Profesor Externo']);
 
-        $this->postJson('/api/colegio/usuarios', [
+        $created = $this->postJson('/api/colegio/usuarios', [
             'nombre' => 'Profesor Creado',
             'email' => 'creado@colegio.edu',
             'rol' => Usuario::ROL_PROFESOR,
@@ -68,6 +70,7 @@ class SchoolAdminPanelTest extends TestCase
         $this->assertDatabaseHas('usuarios', [
             'nombre' => 'Profesor Creado', 'colegio_id' => $propio->id, 'rol' => Usuario::ROL_PROFESOR,
         ]);
+        $this->assertDatabaseMissing('clase_profesor', ['usuario_id' => $created->json('usuario.id')]);
     }
 
     public function test_school_administrator_cannot_create_master_or_professor_without_email(): void
@@ -109,6 +112,122 @@ class SchoolAdminPanelTest extends TestCase
         $this->assertDatabaseHas('registros_administrativos', ['accion' => 'clase.creada', 'colegio_id' => $colegio->id]);
     }
 
+    public function test_school_administrator_creates_edits_and_deletes_a_professor_with_optional_class(): void
+    {
+        [$colegio] = $this->colleges();
+        $admin = $this->user(Usuario::ROL_ADMINISTRADOR_COLEGIO, 'Admin Profesores', $colegio->id);
+        $clase = Clase::create([
+            'colegio_id' => $colegio->id,
+            'nombre' => 'Programación Aplicada',
+            'codigo' => 'PROGRAMACION-APLICADA',
+            'ciclo_escolar' => '2026',
+            'activa' => true,
+        ]);
+
+        $response = $this->withSession(['usuario_id' => $admin->id])
+            ->postJson('/api/colegio/usuarios', [
+                'nombre_completo' => 'María Elena López Pérez',
+                'nombre' => 'MLopez',
+                'email' => 'maria.lopez@colegio.edu',
+                'rol' => Usuario::ROL_PROFESOR,
+                'clase_id' => $clase->id,
+                'clave' => 'Temporal123',
+            ])->assertCreated();
+
+        $profesorId = $response->json('usuario.id');
+        $this->assertDatabaseHas('clase_profesor', ['clase_id' => $clase->id, 'usuario_id' => $profesorId]);
+
+        $this->putJson("/api/colegio/usuarios/{$profesorId}", [
+            'nombre_completo' => 'María Elena López Cabrera',
+            'nombre' => 'MLopezC',
+            'email' => 'maria.cabrera@colegio.edu',
+        ])->assertOk()->assertJsonPath('usuario.nombre', 'MLopezC');
+
+        $this->assertDatabaseHas('usuarios', [
+            'id' => $profesorId,
+            'nombre_completo' => 'María Elena López Cabrera',
+            'email' => 'maria.cabrera@colegio.edu',
+        ]);
+
+        $this->deleteJson("/api/colegio/usuarios/{$profesorId}")->assertOk();
+        $this->assertDatabaseMissing('usuarios', ['id' => $profesorId]);
+    }
+
+    public function test_school_administrator_can_assign_class_and_teacher_when_creating_student(): void
+    {
+        [$colegio] = $this->colleges();
+        $admin = $this->user(Usuario::ROL_ADMINISTRADOR_COLEGIO, 'Admin Alumnos', $colegio->id);
+        $profesor = $this->user(Usuario::ROL_PROFESOR, 'Profesor Responsable', $colegio->id);
+        $clase = Clase::create([
+            'colegio_id' => $colegio->id, 'nombre' => 'Primero Básico A', 'codigo' => 'PRIMERO-A',
+            'ciclo_escolar' => '2026', 'activa' => true,
+        ]);
+
+        $response = $this->withSession(['usuario_id' => $admin->id])
+            ->postJson('/api/colegio/usuarios', [
+                'nombre_completo' => 'Alumno Nuevo Ejemplo',
+                'nombre' => 'ANuevo',
+                'rol' => Usuario::ROL_ALUMNO,
+                'clase_id' => $clase->id,
+                'profesor_id' => $profesor->id,
+                'clave' => 'Temporal123',
+            ])->assertCreated();
+
+        $alumnoId = $response->json('usuario.id');
+        $this->assertDatabaseHas('clase_alumno', ['clase_id' => $clase->id, 'usuario_id' => $alumnoId]);
+        $this->assertDatabaseHas('clase_profesor', ['clase_id' => $clase->id, 'usuario_id' => $profesor->id]);
+    }
+
+    public function test_school_administrator_previews_and_deletes_graduates_while_preserving_repeaters(): void
+    {
+        [$colegio] = $this->colleges();
+        $admin = $this->user(Usuario::ROL_ADMINISTRADOR_COLEGIO, 'Admin Graduandos', $colegio->id);
+        $clase2025 = Clase::create([
+            'colegio_id' => $colegio->id, 'nombre' => 'Graduandos 2025', 'codigo' => 'GRAD-2025',
+            'ciclo_escolar' => '2025', 'activa' => false,
+        ]);
+        $clase2026 = Clase::create([
+            'colegio_id' => $colegio->id, 'nombre' => 'Alumnos 2026', 'codigo' => 'ALUM-2026',
+            'ciclo_escolar' => '2026', 'activa' => true,
+        ]);
+        $graduandoA = $this->user(Usuario::ROL_ALUMNO, 'Graduando A', $colegio->id);
+        $repitente = $this->user(Usuario::ROL_ALUMNO, 'Repitente B', $colegio->id);
+        $graduandoC = $this->user(Usuario::ROL_ALUMNO, 'Graduando C', $colegio->id);
+        $actual = $this->user(Usuario::ROL_ALUMNO, 'Alumno Actual', $colegio->id);
+        $eliminableIndividual = $this->user(Usuario::ROL_ALUMNO, 'Alumno Individual', $colegio->id);
+        foreach ([$graduandoA, $repitente, $graduandoC] as $alumno) $clase2025->agregarAlumno($alumno);
+        $clase2026->agregarAlumno($actual);
+
+        $this->withSession(['usuario_id' => $admin->id])
+            ->putJson("/api/colegio/usuarios/{$repitente->id}", [
+                'nombre_completo' => 'Repitente Conservado',
+                'nombre' => 'RepitenteB',
+            ])->assertOk()->assertJsonPath('usuario.nombre', 'RepitenteB');
+        $this->deleteJson("/api/colegio/usuarios/{$eliminableIndividual->id}")->assertOk();
+        $this->assertDatabaseMissing('usuarios', ['id' => $eliminableIndividual->id]);
+
+        $this
+            ->getJson('/api/colegio/alumnos-graduandos?ciclo_escolar=2025&clase_id='.$clase2025->id)
+            ->assertOk()
+            ->assertJsonPath('total', 3)
+            ->assertJsonFragment(['nombre' => 'RepitenteB'])
+            ->assertJsonMissing(['nombre' => 'Alumno Actual']);
+
+        $this->deleteJson('/api/colegio/alumnos-graduandos', [
+            'ciclo_escolar' => '2025',
+            'clase_id' => $clase2025->id,
+            'conservar_alumnos' => [$repitente->id],
+        ])->assertOk()->assertJsonPath('eliminados', 2)->assertJsonPath('conservados', 1);
+
+        $this->assertDatabaseMissing('usuarios', ['id' => $graduandoA->id]);
+        $this->assertDatabaseMissing('usuarios', ['id' => $graduandoC->id]);
+        $this->assertDatabaseHas('usuarios', ['id' => $repitente->id]);
+        $this->assertDatabaseHas('usuarios', ['id' => $actual->id]);
+        $this->assertDatabaseHas('registros_administrativos', [
+            'accion' => 'alumnos.graduandos_eliminados', 'colegio_id' => $colegio->id,
+        ]);
+    }
+
     public function test_school_administrator_cannot_read_or_modify_another_college(): void
     {
         [$propio, $externo] = $this->colleges();
@@ -132,6 +251,14 @@ class SchoolAdminPanelTest extends TestCase
         $this->postJson("/api/colegio/usuarios/{$profesorExterno->id}/reset-password", [
             'nueva_clave' => 'Nueva1234',
         ])->assertForbidden();
+        $this->putJson("/api/colegio/usuarios/{$profesorExterno->id}", [
+            'nombre_completo' => 'Profesor Ajeno Editado',
+            'nombre' => 'Profesor Ajeno Editado',
+            'email' => 'ajeno.editado@example.test',
+        ])->assertForbidden();
+        $this->deleteJson("/api/colegio/usuarios/{$profesorExterno->id}")->assertForbidden();
+        $this->getJson('/api/colegio/alumnos-graduandos?ciclo_escolar=2026&clase_id='.$claseExterna->id)
+            ->assertNotFound();
     }
 
     public function test_school_administrator_cannot_change_own_college_or_use_master_endpoints(): void

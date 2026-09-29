@@ -261,4 +261,40 @@
     });
     window.addEventListener('beforeunload', event => { if (changed()) { event.preventDefault(); event.returnValue = ''; } });
     render();
+
+
+    const renameButton = document.getElementById('renameCharacterButton');
+    const renameForm = document.getElementById('renameCharacterForm');
+    const renameCancel = document.getElementById('cancelRenameCharacter');
+    if (renameButton && renameForm) {
+        renameButton.addEventListener('click', () => {
+            renameForm.hidden = false;
+            renameButton.hidden = true;
+            renameForm.querySelector('input')?.focus();
+        });
+        renameCancel?.addEventListener('click', () => {
+            renameForm.hidden = true;
+            renameButton.hidden = false;
+        });
+        renameForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const input = renameForm.querySelector('input[name="nombre"]');
+            const message = document.getElementById('renameCharacterMessage');
+            try {
+                const response = await fetch(root.dataset.renameUrl, {
+                    method: 'PATCH',
+                    headers: {'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content},
+                    body: JSON.stringify({nombre: input.value})
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || Object.values(data.errors || {})[0]?.[0] || 'No fue posible cambiar el nombre.');
+                document.getElementById('characterTitle').textContent = data.nombre;
+                document.querySelector('.topbar .player-name').textContent = data.nombre;
+                input.value = data.nombre;
+                message.textContent = 'Nombre guardado.';
+                setTimeout(() => { renameForm.hidden = true; renameButton.hidden = false; message.textContent = ''; }, 900);
+            } catch (error) { message.textContent = error.message; }
+        });
+    }
+
 })();

@@ -8,6 +8,7 @@ use App\Models\TestResultadoSesion;
 use App\Models\Usuario;
 use App\Services\LiveTestEngineService;
 use App\Services\LiveTestSessionService;
+use App\Services\ClassroomExamLifecycleService;
 use App\Services\TestBankService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
@@ -37,9 +38,10 @@ class ClassroomCodePlayTest extends TestCase
     public function test_exam_saves_individual_progress_hides_grade_until_submit_and_uses_teacher_points(): void
     {
         [$teacher,$student,$class,,, $bank]=$this->scenario();
+        $second=$this->user('Alumno pendiente '.uniqid(),Usuario::ROL_ALUMNO,$teacher->colegio_id,null);$class->agregarAlumno($second);
         $questions=$bank->preguntas()->orderBy('orden')->get();
         $session=$this->classSession($teacher,$class,$bank,'examen','Examen con puntaje',[
-            'duracion_examen_minutos'=>60,'puntos_pregunta'=>[(string)$questions[0]->id=>3,(string)$questions[1]->id=>7],
+            'duracion_examen_minutos'=>60,'resumen_disponible_minutos'=>60,'puntos_pregunta'=>[(string)$questions[0]->id=>3,(string)$questions[1]->id=>7],
         ]);
         $engine=app(LiveTestEngineService::class);
         $engine->unir($student,$session->codigo_sala,null,'clase');
@@ -52,14 +54,66 @@ class ClassroomCodePlayTest extends TestCase
         $emissions=$session->preguntas()->orderBy('orden')->get();
         $this->post(route('alumno.tests.clase.examen.save',[$session,$emissions[0]]),['respuesta'=>'correcta'])->assertRedirect();
         $this->post(route('alumno.tests.clase.examen.save',[$session,$emissions[1]]),['respuesta'=>'incorrecta'])->assertRedirect();
-        $this->get(route('alumno.tests.clase.examen',$session))->assertOk()->assertSee('La calificación permanecerá oculta');
+        $this->get(route('alumno.tests.clase.examen',['sesion'=>$session,'pregunta'=>$emissions[0]->id]))
+            ->assertOk()->assertSee('Actualizar respuesta')->assertSee('Siguiente')->assertSee('value="correcta"',false);
+        $this->post(route('alumno.tests.clase.examen.save',[$session,$emissions[0]]),['respuesta'=>'incorrecta'])->assertRedirect();
+        $this->assertDatabaseHas('test_sesion_respuestas',['sesion_pregunta_id'=>$emissions[0]->id,'correcta'=>false]);
+        $this->post(route('alumno.tests.clase.examen.save',[$session,$emissions[0]]),['respuesta'=>'correcta'])->assertRedirect();
+        $this->get(route('alumno.tests.clase.examen',$session))->assertOk()->assertSee('calificación permanecerá oculta');
         $this->post(route('alumno.tests.clase.examen.submit',$session))->assertRedirect();
 
         $result=TestResultadoSesion::where('sesion_id',$session->id)->where('usuario_id',$student->id)->firstOrFail();
         $this->assertSame('entregado',$result->estado);
         $this->assertSame('30.00',$result->calificacion);
         $this->assertSame(3,$result->puntos_test);
-        $this->get(route('alumno.tests.clase.examen',$session))->assertOk()->assertSee('30.00')->assertSee('Examen entregado');
+        $this->get(route('alumno.tests.clase.examen',$session))->assertOk()->assertDontSee('30.00')->assertSee('Resultados protegidos hasta el cierre')->assertSee('¡Entrega completada!');
+        $this->get(route('alumno.tests.clase.examen.summary',$session))->assertNotFound();
+
+        $this->withSession($this->sessionFor($teacher))->post(route('profesor.tests.sessions.action',[$session,'finish']))->assertRedirect();
+        $this->withSession($this->sessionFor($student))->get(route('alumno.tests.clase.examen',$session))->assertOk()->assertSee('30.00')->assertSee('Ver resumen de mis respuestas');
+        $this->get(route('alumno.tests.clase.examen.summary',$session))->assertOk()->assertSee('Pregunta uno')->assertSee('Correcta')->assertSee('Pregunta dos')->assertSee('Incorrecta');
+
+        Carbon::setTestNow($session->fresh()->cerrada_at->copy()->addMinutes(61));
+        $this->get(route('alumno.tests.clase.examen.summary',$session))->assertNotFound();
+    }
+
+    public function test_scheduled_exam_starts_and_closes_automatically(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-09-27 08:00:00'));
+        [$teacher,,$class,,, $bank]=$this->scenario();
+        $bank->clasesAsignadas()->syncWithoutDetaching([$class->id=>['asignado_por_usuario_id'=>$teacher->id,'activo'=>true]]);
+        $session=app(LiveTestSessionService::class)->crear($teacher,[
+            'tipo'=>'clase','modalidad'=>'examen','clase_id'=>$class->id,'max_participantes'=>30,
+            'disponible_desde'=>now()->addMinutes(10),'disponible_hasta'=>now()->addMinutes(40),
+            'configuracion'=>['titulo'=>'Examen programado','orden_aleatorio'=>false,'resumen_disponible_minutos'=>60],
+        ],[$bank]);
+        app(LiveTestEngineService::class)->abrirSala($teacher,$session);
+        $lifecycle=app(ClassroomExamLifecycleService::class);
+
+        $this->assertSame('espera',$lifecycle->synchronize($session)->estado);
+        Carbon::setTestNow(now()->addMinutes(10));
+        $this->assertSame('activa',$lifecycle->synchronize($session)->estado);
+        Carbon::setTestNow(now()->addMinutes(30));
+        $this->assertSame('cerrada',$lifecycle->synchronize($session)->estado);
+    }
+
+    public function test_exam_closes_when_every_student_in_the_class_has_submitted(): void
+    {
+        [$teacher,$student,$class,,, $bank]=$this->scenario();
+        $second=$this->user('Último alumno '.uniqid(),Usuario::ROL_ALUMNO,$teacher->colegio_id,null);$class->agregarAlumno($second);
+        $session=$this->classSession($teacher,$class,$bank,'examen','Cierre por entrega total',['resumen_disponible_minutos'=>60]);
+        $engine=app(LiveTestEngineService::class);$engine->iniciar($teacher,$session);
+        $engine->unir($student,$session->codigo_sala,null,'clase');$engine->unir($second,$session->codigo_sala,null,'clase');
+
+        app(\App\Services\ClassroomExamService::class)->submit($student,$session->fresh());
+        app(ClassroomExamLifecycleService::class)->synchronize($session->fresh());
+        $this->assertSame('activa',$session->fresh()->estado);
+        app(\App\Services\ClassroomExamService::class)->submit($second,$session->fresh());
+        app(ClassroomExamLifecycleService::class)->synchronize($session->fresh());
+        $this->assertSame(2,$session->participantes()->where('estado','finalizado')->count());
+        $this->assertSame(2,$class->alumnos()->where('usuarios.activo',true)->count());
+        $this->assertSame('cerrada',$session->fresh()->estado);
+        $this->assertNotNull($session->fresh()->cerrada_at);
     }
 
     public function test_active_exam_allows_late_enrolled_join_and_keeps_each_students_answers_separate(): void
@@ -81,10 +135,41 @@ class ClassroomCodePlayTest extends TestCase
         [$teacher,$student,$class,,, $bank]=$this->scenario();
         $session=$this->classSession($teacher,$class,$bank,'examen','Examen cronometrado',['duracion_examen_minutos'=>1]);
         $engine=app(LiveTestEngineService::class);$engine->iniciar($teacher,$session);$engine->unir($student,$session->codigo_sala,null,'clase');
-        $this->withSession($this->sessionFor($student))->get(route('alumno.tests.clase.examen',$session))->assertOk();
+        $this->withSession($this->sessionFor($student))->get(route('alumno.tests.clase.examen',$session))->assertOk()->assertSee('Tiempo restante');
         Carbon::setTestNow(now()->addMinutes(2));
+        $this->artisan('tests:sincronizar-examenes')->assertSuccessful();
         $this->get(route('alumno.tests.clase.examen',$session))->assertOk()->assertSee('Examen entregado');
-        $this->assertDatabaseHas('test_resultados_sesion',['sesion_id'=>$session->id,'usuario_id'=>$student->id,'estado'=>'entregado']);
+        $this->assertDatabaseHas('test_resultados_sesion',['sesion_id'=>$session->id,'usuario_id'=>$student->id,'estado'=>'entregado','correctas'=>0,'incorrectas'=>2]);
+        $this->get(route('alumno.tests.clase.examen.summary',$session))->assertOk()->assertSee('Sin respuesta')->assertSee('Incorrecta');
+    }
+
+    public function test_exam_countdown_uses_the_earliest_of_individual_duration_and_scheduled_close(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-09-27 13:30:00'));
+        [$teacher,$student,$class,,, $bank]=$this->scenario();
+        $bank->clasesAsignadas()->syncWithoutDetaching([$class->id=>['asignado_por_usuario_id'=>$teacher->id,'activo'=>true]]);
+
+        $withoutIndividualLimit=app(LiveTestSessionService::class)->crear($teacher,[
+            'tipo'=>'clase','modalidad'=>'examen','clase_id'=>$class->id,'max_participantes'=>30,
+            'disponible_hasta'=>now()->addMinutes(30),
+            'configuracion'=>['titulo'=>'Cierra a las dos','orden_aleatorio'=>false],
+        ],[$bank]);
+        $engine=app(LiveTestEngineService::class);$engine->abrirSala($teacher,$withoutIndividualLimit);$engine->iniciar($teacher,$withoutIndividualLimit);
+        $engine->unir($student,$withoutIndividualLimit->codigo_sala,null,'clase');
+        $this->withSession($this->sessionFor($student))->get(route('alumno.tests.clase.examen',$withoutIndividualLimit))
+            ->assertOk()->assertSee('Tiempo restante')->assertSee('2026-09-27T14:00:00',false);
+        $this->assertSame('2026-09-27 14:00:00',$withoutIndividualLimit->participantes()->where('usuario_id',$student->id)->firstOrFail()->examen_limite_at->format('Y-m-d H:i:s'));
+
+        $oneHourButClosesSooner=app(LiveTestSessionService::class)->crear($teacher,[
+            'tipo'=>'clase','modalidad'=>'examen','clase_id'=>$class->id,'max_participantes'=>30,
+            'disponible_hasta'=>now()->addMinutes(30),
+            'configuracion'=>['titulo'=>'Una hora con cierre cercano','orden_aleatorio'=>false,'duracion_examen_minutos'=>60],
+        ],[$bank]);
+        $engine->abrirSala($teacher,$oneHourButClosesSooner);$engine->iniciar($teacher,$oneHourButClosesSooner);
+        $engine->unir($student,$oneHourButClosesSooner->codigo_sala,null,'clase');
+        $this->get(route('alumno.tests.clase.examen',$oneHourButClosesSooner))
+            ->assertOk()->assertSee('Tiempo restante')->assertSee('2026-09-27T14:00:00',false);
+        $this->assertSame('2026-09-27 14:00:00',$oneHourButClosesSooner->participantes()->where('usuario_id',$student->id)->firstOrFail()->examen_limite_at->format('Y-m-d H:i:s'));
     }
 
     public function test_live_polling_is_limited_per_account_instead_of_shared_ip(): void

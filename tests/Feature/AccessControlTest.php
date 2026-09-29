@@ -29,10 +29,12 @@ class AccessControlTest extends TestCase
             '2025_09_30_064434_create_usuarios_table.php',
             '2025_10_01_063305_add_cambio_clave_requerido_to_usuarios_table.php',
             '2025_10_02_083703_add_ultimo_acceso_to_usuarios_table.php',
+            '2026_09_08_120000_create_aventura_preparacion_tables.php',
             '2026_09_24_120000_create_colegios_and_expand_user_roles.php',
             '2026_09_24_121000_add_email_to_usuarios_table.php',
             '2026_09_24_122000_assign_existing_users_to_ined_maria_luisa.php',
             '2026_09_24_123000_create_clases_and_memberships.php',
+            '2026_09_27_130000_add_full_names_and_adventure_alias.php',
         ] as $migration) {
             (require database_path('migrations/' . $migration))->up();
         }
@@ -64,17 +66,30 @@ class AccessControlTest extends TestCase
         $this->withSession(['usuario_id' => $alumno->id])
             ->getJson('/usuario/puntos')->assertOk();
         $this->get('/inicio-administrador')->assertForbidden();
+        $this->get('/mi-cuenta/actualizar-clave')->assertForbidden();
 
         $this->flushSession();
         $this->withSession(['usuario_id' => $profesor->id])
-            ->get('/inicio-profesor')->assertOk();
+            ->get('/inicio-profesor')->assertOk()
+            ->assertSee('Actualizar contraseña');
+        $this->get('/mi-cuenta/actualizar-clave')
+            ->assertOk()
+            ->assertSee('Actualiza tu contraseña');
         $this->get('/inicio-administrador')->assertOk();
         $this->get('/alumno/documentacion')->assertForbidden();
         $this->get('/inicio-administrador-colegio')->assertForbidden();
 
         $this->flushSession();
         $this->withSession(['usuario_id' => $administradorColegio->id])
-            ->get('/inicio-administrador-colegio')->assertOk();
+            ->get('/inicio-administrador-colegio')
+            ->assertOk()
+            ->assertSee('Panel del Colegio')
+            ->assertDontSee('Resumen del colegio')
+            ->assertSee('Estado general del colegio')
+            ->assertSee('Menú del Colegio')
+            ->assertSee('Actualizar contraseña')
+            ->assertSee('Cerrar sesión')
+            ->assertSee('panel-profesor-codeplay.png');
         $this->get('/inicio-administrador')->assertForbidden();
         $this->get('/inicio-master')->assertForbidden();
 
@@ -195,19 +210,20 @@ class AccessControlTest extends TestCase
         $profesor = $this->usuario(Usuario::ROL_PROFESOR, 'Profesor Cinco');
         $clase = Clase::where('codigo', 'GENERAL')->firstOrFail();
         $clase->agregarProfesor($profesor);
-        $this->usuario(Usuario::ROL_ALUMNO, 'Juan Luis');
-        $this->usuario(Usuario::ROL_ALUMNO, 'Juan Luis 2');
+        $this->usuario(Usuario::ROL_ALUMNO, 'EEsquivel');
+        $this->usuario(Usuario::ROL_ALUMNO, 'EEsquivel2');
 
         $this->withSession(['usuario_id' => $profesor->id])
             ->postJson('/api/usuarios', [
-                'nombre' => '  juan   luis  ',
+                'nombre_completo' => 'Elvin Noe Esquivel Cabrera',
+                'nombre' => 'EEsquivel',
                 'rol' => Usuario::ROL_ALUMNO,
                 'clase_id' => $clase->id,
                 'clave' => 'Temporal123',
             ])->assertUnprocessable()
             ->assertJsonPath('code', 'USERNAME_TAKEN')
-            ->assertJsonPath('suggested_username', 'juan luis 3')
-            ->assertJsonPath('errors.nombre.0', 'El nombre de usuario ya existe. Puedes usar «juan luis 3».');
+            ->assertJsonPath('suggested_username', 'EEsquivel3')
+            ->assertJsonPath('errors.nombre.0', 'El nombre de usuario ya existe. Puedes usar «EEsquivel3».');
 
         $this->assertDatabaseCount('usuarios', 3);
     }

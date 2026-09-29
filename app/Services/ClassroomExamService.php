@@ -14,7 +14,7 @@ class ClassroomExamService
 {
     public function __construct(private readonly TestAnswerEvaluator $evaluator, private readonly TestHistoryService $history) {}
 
-    public function estado(Usuario $student, TestSesion $session): array
+    public function estado(Usuario $student, TestSesion $session, ?int $selectedEmissionId=null): array
     {
         $participant=$this->authorize($student,$session);
         if($session->estado==='espera') return $this->payload($session,$participant,null,null);
@@ -25,7 +25,12 @@ class ClassroomExamService
         $result=$session->resultados()->where('participante_id',$participant->id)->first();
         $question=null;
         if($participant->estado!=='finalizado' && $session->estado==='activa') {
-            $question=$session->preguntas()->with('pregunta')->whereDoesntHave('respuestas',fn($q)=>$q->where('participante_id',$participant->id))->orderBy('orden')->first();
+            if($selectedEmissionId){
+                $question=$session->preguntas()->with('pregunta')->whereKey($selectedEmissionId)->first();
+                if(!$question)throw new \DomainException('La pregunta seleccionada no pertenece a este examen.');
+            }else{
+                $question=$session->preguntas()->with('pregunta')->whereDoesntHave('respuestas',fn($q)=>$q->where('participante_id',$participant->id))->orderBy('ronda')->orderBy('orden')->first();
+            }
         }
         return $this->payload($session->fresh(),$participant,$question,$result);
     }
@@ -68,13 +73,15 @@ class ClassroomExamService
             if($existing?->estado==='entregado') return $existing;
             $this->initialize($session,$participant);
             $result=$this->updateProgress($session,$participant);
+            $total=(int)$session->preguntas()->count();
+            $correct=(int)$participant->respuestas()->whereHas('sesionPregunta',fn($q)=>$q->where('sesion_id',$session->id))->where('correcta',true)->count();
             $max=(int)$session->preguntas()->sum('puntos_maximos');
             $earned=(int)$session->preguntas()->join('test_sesion_respuestas as r','r.sesion_pregunta_id','=','test_sesion_preguntas.id')
                 ->where('r.participante_id',$participant->id)->sum('r.puntos_otorgados');
-            $result->forceFill(['calificacion'=>$max>0?round($earned*100/$max,2):0,'puntos_test'=>$earned,
+            $result->forceFill(['total_preguntas'=>$total,'correctas'=>$correct,'incorrectas'=>max(0,$total-$correct),
+                'calificacion'=>$max>0?round($earned*100/$max,2):0,'puntos_test'=>$earned,
                 'estado'=>'entregado','entregada_at'=>now()])->save();
             $participant->forceFill(['puntos_test'=>$earned,'estado'=>'finalizado','finalizado_at'=>now(),'ultima_actividad_at'=>now()])->save();
-            $this->history->snapshot($session->fresh());
             return $result->fresh();
         });
     }
@@ -97,7 +104,7 @@ class ClassroomExamService
         }
         TestResultadoSesion::firstOrCreate(['sesion_id'=>$session->id,'participante_id'=>$participant->id],[
             'usuario_id'=>$participant->usuario_id,'colegio_id'=>$session->colegio_id,'clase_id'=>$session->clase_id,
-            'nombre_alumno'=>$participant->nombre_visible,'modalidad'=>'examen','total_preguntas'=>$session->preguntas()->count(),
+            'nombre_alumno'=>$participant->usuario()->first()?->nombreParaReportes() ?: $participant->nombre_visible,'modalidad'=>'examen','total_preguntas'=>$session->preguntas()->count(),
             'correctas'=>0,'incorrectas'=>0,'calificacion'=>0,'puntos_test'=>0,'estado'=>'en_progreso','iniciada_at'=>now(),
         ]);
     }
@@ -126,9 +133,19 @@ class ClassroomExamService
     private function payload(TestSesion $session, TestSesionParticipante $participant, ?TestSesionPregunta $emission, ?TestResultadoSesion $result): array
     {
         $submitted=$participant->estado==='finalizado'||$result?->estado==='entregado';
+        $deadline=$participant->examen_limite_at?->copy();
+        if($session->disponible_hasta&&(!$deadline||$session->disponible_hasta->lessThan($deadline)))$deadline=$session->disponible_hasta->copy();
+        $emissions=$session->preguntas()->with('pregunta')->orderBy('ronda')->orderBy('orden')->get();
+        $responses=$participant->respuestas()->whereIn('sesion_pregunta_id',$emissions->pluck('id'))->get()->keyBy('sesion_pregunta_id');
+        $currentIndex=$emission?$emissions->search(fn($item)=>(int)$item->id===(int)$emission->id):false;
         return ['sesion'=>$session,'participante'=>$participant,'pregunta'=>$emission?->pregunta,'emision'=>$emission,
-            'respondidas'=>$participant->respuestas()->whereHas('sesionPregunta',fn($q)=>$q->where('sesion_id',$session->id))->count(),
-            'total'=>$session->preguntas()->count(),'limite'=>$participant->examen_limite_at,'entregado'=>$submitted,
+            'emisiones'=>$emissions,'respondidas_ids'=>$responses->keys()->map(fn($id)=>(int)$id)->all(),
+            'respuesta_actual'=>$emission?($responses->get($emission->id)?->respuesta??[]):[],
+            'indice_actual'=>$currentIndex===false?null:$currentIndex,
+            'anterior'=>$currentIndex!==false&&$currentIndex>0?$emissions[$currentIndex-1]:null,
+            'siguiente'=>$currentIndex!==false&&$currentIndex<$emissions->count()-1?$emissions[$currentIndex+1]:null,
+            'respondidas'=>$responses->count(),
+            'total'=>$emissions->count(),'limite'=>$deadline,'entregado'=>$submitted,
             'resultado'=>$submitted?$result:null];
     }
 }

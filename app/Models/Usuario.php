@@ -27,7 +27,7 @@ class Usuario extends Model
     protected $table = 'usuarios';
 
     protected $fillable = [
-        'colegio_id', 'nombre', 'email', 'email_verified_at', 'clave', 'rol', 'activo',
+        'colegio_id', 'nombre', 'nombre_completo', 'email', 'email_verified_at', 'clave', 'rol', 'activo',
         'cambio_clave_requerido', 'session_version', 'puntos_totales', 'puntos_usados',
     ];
 
@@ -49,6 +49,8 @@ class Usuario extends Model
         'puntos_totales' => 0,
         'puntos_usados' => 0,
     ];
+
+    public function nombreParaReportes(): string { return trim((string) $this->nombre_completo) ?: (string) $this->nombre; }
 
     public function esProfesor(): bool { return $this->rol === self::ROL_PROFESOR; }
 

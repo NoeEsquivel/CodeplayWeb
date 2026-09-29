@@ -10,10 +10,13 @@ use App\Models\Usuario;
 use App\Services\LiveTestEngineService;
 use App\Services\LiveTestSessionService;
 use App\Services\ClassroomExamService;
+use App\Services\ClassroomExamLifecycleService;
 use App\Services\TestBankService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class TeacherTestController extends Controller
@@ -149,11 +152,17 @@ class TeacherTestController extends Controller
             'puntaje_objetivo'=>['nullable','integer','min:50','max:100000'],'disponible_desde'=>['nullable','date'],
             'disponible_hasta'=>['nullable','date','after:disponible_desde'],'orden_aleatorio'=>['nullable','boolean'],
             'titulo'=>['required','string','max:160'],'duracion_examen_minutos'=>['nullable','integer','min:1','max:1440'],
+            'resumen_disponible_minutos'=>['nullable','integer','min:5','max:43200'],
+            'zona_horaria_profesor'=>['nullable','timezone'],
             'puntos_pregunta'=>['nullable','array'],'puntos_pregunta.*'=>['integer','min:1','max:1000'],
         ]);
+        $teacherTimezone=$data['zona_horaria_profesor']??config('app.timezone');
+        foreach(['disponible_desde','disponible_hasta'] as $dateField){
+            if(!empty($data[$dateField]))$data[$dateField]=Carbon::parse($data[$dateField],$teacherTimezone)->setTimezone(config('app.timezone'));
+        }
         $class=Clase::findOrFail($data['clase_id']); $this->ownClass($teacher,$class);
-        $banks=$this->resolveSessionBanks($teacher,$class,$data['banco_ids']);
         try{
+            $banks=$this->resolveSessionBanks($teacher,$class,$data['banco_ids']);
             $session=$sessions->crear($teacher,[
                 'tipo'=>'clase','modalidad'=>$data['modalidad'],'clase_id'=>$class->id,
                 'tiempo_pregunta'=>$data['modalidad']==='trivia'?($data['tiempo_pregunta']??20):null,
@@ -161,6 +170,8 @@ class TeacherTestController extends Controller
                 'max_participantes'=>30,'disponible_desde'=>$data['disponible_desde']??null,'disponible_hasta'=>$data['disponible_hasta']??null,
                 'configuracion'=>['orden_aleatorio'=>$request->boolean('orden_aleatorio'),'segundos_resultado'=>5,
                     'titulo'=>$data['titulo'],'duracion_examen_minutos'=>$data['modalidad']==='examen'?($data['duracion_examen_minutos']??null):null,
+                    'resumen_disponible_minutos'=>$data['modalidad']==='examen'?($data['resumen_disponible_minutos']??60):null,
+                    'zona_horaria_profesor'=>$teacherTimezone,
                     'puntos_pregunta'=>collect($data['puntos_pregunta']??[])->mapWithKeys(fn($v,$k)=>[(string)(int)$k=>(int)$v])->all()],
             ],$banks->all());
             $engine->abrirSala($teacher,$session);
@@ -168,12 +179,14 @@ class TeacherTestController extends Controller
         }catch(\DomainException|\InvalidArgumentException $e){return back()->withInput()->with('error',$e->getMessage());}
     }
 
-    public function showSession(Request $request, TestSesion $sesion, LiveTestEngineService $engine): View
+    public function showSession(Request $request, TestSesion $sesion, LiveTestEngineService $engine, ClassroomExamLifecycleService $lifecycle): View
     {
         $teacher=$this->teacher($request); $this->ownSession($teacher,$sesion);
+        if($sesion->modalidad==='examen')$sesion=$lifecycle->synchronize($sesion);
         $state=$engine->estado($teacher,$sesion);
         $sesion->load(['clase:id,nombre','bancos:id,nombre','participantes.usuario:id,nombre','participantes.respuestas','resultados']);
-        return view('profesor.tests-session',compact('sesion','state'));
+        $resumenHasta=$sesion->modalidad==='examen'?$lifecycle->reviewUntil($sesion):null;
+        return view('profesor.tests-session',compact('sesion','state','resumenHasta'));
     }
 
     public function sessionAction(Request $request, TestSesion $sesion, LiveTestEngineService $engine, ClassroomExamService $exams, string $action): RedirectResponse
@@ -186,12 +199,33 @@ class TeacherTestController extends Controller
         }catch(\DomainException $e){return back()->with('error',$e->getMessage());}
     }
 
+    public function destroySessionHistory(Request $request, TestSesion $sesion): RedirectResponse
+    {
+        $teacher=$this->teacher($request);
+        $this->ownSession($teacher,$sesion);
+        abort_unless(in_array($sesion->estado,['finalizada','cerrada'],true),422,'Solo se puede eliminar el historial de una sesión terminada.');
+
+        DB::transaction(fn()=> $sesion->delete());
+
+        return redirect(route('profesor.tests.index').'#sesiones-recientes')
+            ->with('success','El historial de la actividad fue eliminado definitivamente.');
+    }
+
     private function resolveSessionBanks(Usuario $teacher, Clase $class, array $ids): Collection
     {
         $ids=array_values(array_unique(array_map('intval',$ids)));
         $banks=TestBanco::whereIn('id',$ids)->where('activo',true)->where('estado','publicado')->get();
         if($banks->count()!==count($ids))throw new \DomainException('Uno de los bancos no está disponible.');
-        foreach($banks as $bank){$this->accessibleBank($teacher,$bank,true);$assigned=$bank->clasesAsignadas()->whereKey($class->id)->wherePivot('asignado_por_usuario_id',$teacher->id)->wherePivot('activo',true)->exists();if(!$assigned)throw new \DomainException('Asigna cada banco a la clase antes de crear la sesión.');}
+        foreach($banks as $bank){
+            $this->accessibleBank($teacher,$bank,true);
+            $assigned=$bank->clasesAsignadas()->whereKey($class->id)->wherePivot('activo',true)->exists();
+            if(!$assigned){
+                $bank->clasesAsignadas()->syncWithoutDetaching([$class->id=>[
+                    'asignado_por_usuario_id'=>$teacher->id,
+                    'activo'=>true,
+                ]]);
+            }
+        }
         return $banks;
     }
 

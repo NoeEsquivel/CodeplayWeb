@@ -64,6 +64,11 @@ class AuthController extends Controller
 
     public function mostrarCambioClaveObligatorio() { return view('cambio-clave-obligatorio'); }
 
+    public function mostrarActualizacionClave()
+    {
+        return view('cambio-clave-obligatorio', ['modoVoluntario' => true]);
+    }
+
     public function procesarCambioClaveObligatorio(Request $request)
     {
         $request->validate([

@@ -18,6 +18,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('tests:limpiar-sesiones --inactividad=24 --retencion=365')
             ->hourly()
             ->withoutOverlapping();
+        $schedule->command('tests:sincronizar-examenes')
+            ->everyMinute()
+            ->withoutOverlapping();
         
     }
 

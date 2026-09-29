@@ -455,6 +455,20 @@ function escaparHtml(valor) {
     return String(valor ?? '').replace(/[&<>"]/g, caracter => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[caracter]);
 }
 
+
+function activarSugerenciaUsuario(formulario, endpoint){
+    var completo=formulario.querySelector('[name="nombre_completo"]'), usuario=formulario.querySelector('[name="nombre"]'), ayuda=formulario.querySelector('[data-sugerencia-usuario]');
+    if(!completo||!usuario)return;
+    var editado=false,temporizador;
+    usuario.addEventListener('input',function(evento){if(evento.isTrusted)editado=true;});
+    completo.addEventListener('input',function(){
+        clearTimeout(temporizador);var valor=completo.value.trim();if(valor.length<3){if(ayuda)ayuda.textContent='Escribe el nombre completo para recibir una recomendación.';return;}
+        temporizador=setTimeout(async function(){
+            try{var respuesta=await fetch(endpoint,{method:'POST',headers:{'Accept':'application/json','Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}'},body:JSON.stringify({nombre_completo:valor})});var data=await respuesta.json();if(!respuesta.ok)throw new Error(data.message||'No se pudo generar la recomendación.');if(!editado||!usuario.value.trim())usuario.value=data.suggested_username;if(ayuda)ayuda.textContent='Recomendación disponible: '+data.suggested_username+'. Puedes modificarla.';}catch(error){if(ayuda)ayuda.textContent=error.message;}
+        },300);
+    });
+}
+
 function mostrarGestion(tipo) {
     const configuracion = configuracionesRol[tipo];
     if (!configuracion) return;
@@ -498,12 +512,12 @@ function cargarUsuarios(rol) {
                 return;
             }
 
-            let html = '<div class="table-responsive"><table class="table table-dark table-striped align-middle"><thead><tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Colegio</th><th>Estado</th><th>Puntos</th><th>Contraseña</th><th>Acciones</th></tr></thead><tbody>';
+            let html = '<div class="table-responsive"><table class="table table-dark table-striped align-middle"><thead><tr><th>ID</th><th>Nombre completo</th><th>Usuario</th><th>Correo</th><th>Colegio</th><th>Estado</th><th>Puntos</th><th>Contraseña</th><th>Acciones</th></tr></thead><tbody>';
             usuarios.forEach(usuario => {
                 const requiereCambio = usuario.cambio_clave_requerido ? '<span class="badge bg-warning text-dark">Requiere cambio</span>' : '<span class="badge bg-success">Actualizada</span>';
                 const activo = usuario.activo !== false;
                 const estado = activo ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-secondary">Desactivado</span>';
-                html += `<tr><td>${usuario.id}</td><td>${escaparHtml(usuario.nombre)}</td><td>${escaparHtml(usuario.email || '—')}</td><td>${usuario.colegio ? escaparHtml(usuario.colegio.nombre) : '<span class="text-danger">Sin colegio</span>'}</td><td>${estado}</td><td>${usuario.puntos_totales}</td><td>${requiereCambio}</td><td><button class="btn btn-sm btn-warning me-1 mb-1" onclick="resetearPassword(${usuario.id})"><i class="fas fa-key"></i> Resetear</button><button class="btn btn-sm btn-outline-info me-1 mb-1" onclick="mostrarTraslado(${usuario.id}, ${usuario.colegio_id || 'null'}, '${configuracion.rol}')"><i class="fas fa-exchange-alt"></i> Trasladar</button><button class="btn btn-sm ${activo ? 'btn-outline-danger' : 'btn-outline-success'} mb-1" onclick="cambiarEstadoUsuario(${usuario.id}, ${!activo})">${activo ? 'Desactivar' : 'Activar'}</button></td></tr>`;
+                html += `<tr><td>${usuario.id}</td><td>${escaparHtml(usuario.nombre_completo || usuario.nombre)}</td><td><code>${escaparHtml(usuario.nombre)}</code></td><td>${escaparHtml(usuario.email || '—')}</td><td>${usuario.colegio ? escaparHtml(usuario.colegio.nombre) : '<span class="text-danger">Sin colegio</span>'}</td><td>${estado}</td><td>${usuario.puntos_totales}</td><td>${requiereCambio}</td><td><button class="btn btn-sm btn-warning me-1 mb-1" onclick="resetearPassword(${usuario.id})"><i class="fas fa-key"></i> Resetear</button><button class="btn btn-sm btn-outline-info me-1 mb-1" onclick="mostrarTraslado(${usuario.id}, ${usuario.colegio_id || 'null'}, '${configuracion.rol}')"><i class="fas fa-exchange-alt"></i> Trasladar</button><button class="btn btn-sm ${activo ? 'btn-outline-danger' : 'btn-outline-success'} mb-1" onclick="cambiarEstadoUsuario(${usuario.id}, ${!activo})">${activo ? 'Desactivar' : 'Activar'}</button></td></tr>`;
             });
             listaDiv.innerHTML = html + '</tbody></table></div>';
         })
@@ -532,7 +546,8 @@ function mostrarFormularioCrear(rol) {
             </div>
             <form id="formCrearUsuario" onsubmit="crearUsuario(event, '${rol}')">
                 <div class="row">
-                    <div class="col-md-6"><div class="mb-3"><label class="form-label text-white">Nombre de Usuario</label><input type="text" class="form-control" name="nombre" required placeholder="Ingrese el nombre de usuario" autofocus></div></div>
+                    <div class="col-md-6"><div class="mb-3"><label class="form-label text-white">Nombre completo</label><input type="text" class="form-control" name="nombre_completo" maxlength="160" required placeholder="Ej. Elvin Noe Esquivel Cabrera" autofocus></div></div>
+                    <div class="col-md-6"><div class="mb-3"><label class="form-label text-white">Nombre de usuario</label><input type="text" class="form-control" name="nombre" maxlength="100" required placeholder="Ej. EEsquivel"><small class="text-info" data-sugerencia-usuario>Se recomendará uno a partir del nombre completo.</small></div></div>
                     ${requiereCorreo ? `<div class="col-md-6"><div class="mb-3"><label class="form-label text-white">Correo electrónico</label><input type="email" class="form-control" name="email" required placeholder="usuario@colegio.edu"><small class="text-info">Se utilizará para recuperar la cuenta.</small></div></div>` : ''}
                     <div class="col-md-6"><div class="mb-3"><label class="form-label text-white">Colegio</label><select class="form-select" name="colegio_id" required><option value="">Cargando colegios...</option></select></div></div>
                     <div class="col-md-6"><div class="mb-3"><label class="form-label text-white">Contraseña Temporal</label><input type="text" class="form-control" value="Ined1234" readonly style="background-color: #e9ecef;"></div></div>
@@ -543,7 +558,8 @@ function mostrarFormularioCrear(rol) {
         </div>`;
 
     cargarOpcionesColegios(formularioDiv.querySelector('select[name="colegio_id"]'));
-    formularioDiv.querySelector('input[name="nombre"]')?.focus();
+    activarSugerenciaUsuario(formularioDiv.querySelector('form'), '/api/usuarios/sugerir-nombre');
+    formularioDiv.querySelector('input[name="nombre_completo"]')?.focus();
 }
 
 function cargarOpcionesColegios(select, seleccionado = null) {
@@ -616,7 +632,7 @@ function cambiarEstadoUsuario(usuarioId, activo) {
 function crearUsuario(event, rol) {
     event.preventDefault();
     const formData = new FormData(event.target);
-    const datos = { nombre: formData.get('nombre'), email: formData.get('email') || null, colegio_id: formData.get('colegio_id'), rol, clave: 'Ined1234' };
+    const datos = { nombre_completo: formData.get('nombre_completo'), nombre: formData.get('nombre'), email: formData.get('email') || null, colegio_id: formData.get('colegio_id'), rol, clave: 'Ined1234' };
     const btn = event.target.querySelector('button[type="submit"]');
     const originalText = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Creando...';
@@ -805,8 +821,8 @@ function cargarJerarquia(colegioId) {
         if (!response.ok) throw new Error(data.message || 'No fue posible consultar el colegio.');
         return data;
     }).then(data => {
-        const personas = lista => lista.length ? lista.map(u => `<li>${escaparHtml(u.nombre)} <small class="text-muted">${escaparHtml(u.email || '')}</small> ${u.activo === false ? '<span class="badge bg-secondary">Desactivado</span>' : ''}</li>`).join('') : '<li class="text-muted">Sin registros</li>';
-        const clases = data.clases.length ? data.clases.map(clase => `<div class="border border-secondary rounded p-3 mb-2"><strong>${escaparHtml(clase.nombre)}</strong> <span class="badge bg-info text-dark">${clase.profesores_count} profesores</span> <span class="badge bg-success">${clase.alumnos_count} alumnos</span><div class="small mt-2">Profesores: ${clase.profesores.length ? clase.profesores.map(p => escaparHtml(p.nombre)).join(', ') : 'Sin asignar'}</div></div>`).join('') : '<p class="text-muted">Sin clases.</p>';
+        const personas = lista => lista.length ? lista.map(u => `<li>${escaparHtml(u.nombre_completo || u.nombre)} <small class="text-muted">(${escaparHtml(u.nombre)}) ${escaparHtml(u.email || '')}</small> ${u.activo === false ? '<span class="badge bg-secondary">Desactivado</span>' : ''}</li>`).join('') : '<li class="text-muted">Sin registros</li>';
+        const clases = data.clases.length ? data.clases.map(clase => `<div class="border border-secondary rounded p-3 mb-2"><strong>${escaparHtml(clase.nombre)}</strong> <span class="badge bg-info text-dark">${clase.profesores_count} profesores</span> <span class="badge bg-success">${clase.alumnos_count} alumnos</span><div class="small mt-2">Profesores: ${clase.profesores.length ? clase.profesores.map(p => escaparHtml(p.nombre_completo || p.nombre)).join(', ') : 'Sin asignar'}</div></div>`).join('') : '<p class="text-muted">Sin clases.</p>';
         contenedor.innerHTML = `<h4>${escaparHtml(data.colegio.nombre)} ${data.colegio.activo ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-secondary">Desactivado</span>'}</h4><div class="row mt-3"><div class="col-md-4"><h5>Administradores</h5><ul>${personas(data.administradores)}</ul></div><div class="col-md-4"><h5>Profesores</h5><ul>${personas(data.profesores)}</ul></div><div class="col-md-4"><h5>Alumnos</h5><ul>${personas(data.alumnos)}</ul></div></div><hr><h5>Clases</h5>${clases}`;
     }).catch(error => { contenedor.innerHTML = `<p class="text-danger">${escaparHtml(error.message)}</p>`; });
 }

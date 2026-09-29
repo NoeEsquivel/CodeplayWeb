@@ -12,7 +12,7 @@ class GradeReportService
         $classIds=$teacher->clasesComoProfesor()->pluck('clases.id');
         $q=TestResultadoSesion::query()->where('colegio_id',$teacher->colegio_id)->whereIn('clase_id',$classIds)
             ->whereHas('sesion',fn($s)=>$s->where('tipo','clase')->where('anfitrion_usuario_id',$teacher->id)->whereNull('eliminada_at'))
-            ->with(['usuario:id,nombre','clase:id,nombre','sesion'=>fn($s)=>$s->with(['anfitrion:id,nombre','colegio:id,nombre','bancos:id,nombre'])]);
+            ->with(['usuario:id,nombre,nombre_completo','clase:id,nombre','sesion'=>fn($s)=>$s->with(['anfitrion:id,nombre,nombre_completo','colegio:id,nombre','bancos:id,nombre'])]);
         if(filled($filters['alumno_id']??null))$q->where('usuario_id',(int)$filters['alumno_id']);
         if(filled($filters['clase_id']??null))$q->where('clase_id',(int)$filters['clase_id']);
         if(filled($filters['sesion_id']??null))$q->where('sesion_id',(int)$filters['sesion_id']);
@@ -27,10 +27,10 @@ class GradeReportService
     {
         $rows=$dimension==='banco'?$results->flatMap(fn($r)=>$r->sesion->bancos->map(fn($b)=>['key'=>$b->id,'name'=>$b->nombre,'r'=>$r]))
             :$results->map(function($r)use($dimension){return match($dimension){
-                'alumno'=>['key'=>$r->usuario_id,'name'=>$r->nombre_alumno,'r'=>$r],
+                'alumno'=>['key'=>$r->usuario_id,'name'=>$r->nombreAlumnoReporte(),'r'=>$r],
                 'clase'=>['key'=>$r->clase_id,'name'=>$r->clase?->nombre??'Sin clase','r'=>$r],
                 'sesion'=>['key'=>$r->sesion_id,'name'=>$r->sesion->configuracion['titulo']??$r->sesion->codigo_sala,'r'=>$r],
-                'profesor'=>['key'=>$r->sesion->anfitrion_usuario_id,'name'=>$r->sesion->anfitrion?->nombre??'Profesor','r'=>$r],
+                'profesor'=>['key'=>$r->sesion->anfitrion_usuario_id,'name'=>$r->sesion->anfitrion?->nombreParaReportes()??'Profesor','r'=>$r],
                 'colegio'=>['key'=>$r->colegio_id,'name'=>$r->sesion->colegio?->nombre??'Colegio','r'=>$r],
                 default=>['key'=>$r->clase_id,'name'=>$r->clase?->nombre??'Sin clase','r'=>$r]};});
         return $rows->groupBy('key')->map(function($items){$rs=$items->pluck('r');return['nombre'=>$items->first()['name'],'intentos'=>$rs->count(),
