@@ -17,6 +17,10 @@ class DocumentacionController extends Controller
     {
         // Lista de documentos disponibles - ACTUALIZADA con la nueva estructura
         $documentos = [
+            'intro1' => 'introduccion.que_es_programacion',
+            'intro2' => 'introduccion.que_hace_programador',
+            'intro3' => 'introduccion.grandes_programas_ideas',
+            'intro4' => 'introduccion.programar_importante_futuro',
             'html1' => 'fundamentos_html.introduccion_html',
             'html2' => 'fundamentos_html.etiquetas_fundamentales',
             'html3' => 'fundamentos_html.enlaces_imagenes',

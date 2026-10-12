@@ -24,6 +24,7 @@
     </style>
 </head>
 <body>
+@include('partials.alumno-sidebar')
     <div class="message-box">
         <h1>🚧 Tutorial en Desarrollo</h1>
         <p class="lead mt-3">El tutorial "{{ $slug }}" estará disponible pronto.</p>

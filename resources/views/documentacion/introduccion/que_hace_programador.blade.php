@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    @include('partials.favicon')
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CODEPLAY - ¿Qué hace un programador?</title>
+    <link href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}" rel="stylesheet"><link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/all.min.css') }}"><link href="{{ asset('vendor/fonts/pixel-roboto-400-700.css') }}" rel="stylesheet">
+    @include('documentacion.introduccion.estilos')
+</head>
+<body>
+@include('partials.alumno-sidebar')
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom"><div class="container-fluid"><a class="btn btn-home me-2" href="{{ route('inicio.alumno') }}"><i class="fas fa-home text-white"></i></a><img src="{{ asset('images/local/code-icon-48.png') }}" alt="Logo" width="40" height="40"><span class="game-title">CODEPLAY</span><div class="ms-auto"><div class="player-name-display"><i class="fas fa-user me-2"></i><span>{{ session('usuario_nombre') ?? 'Usuario' }}</span><span class="badge bg-success ms-2">Alumno</span></div></div></div></nav>
+    <main class="intro-shell">
+        <header class="intro-hero"><div class="intro-icon"><i class="fas fa-user-gear"></i></div><div><p class="eyebrow">Introducción</p><h1>¿Qué hace un programador?</h1><p class="hero-copy">Un programador analiza necesidades, diseña soluciones y construye programas que ayudan a las personas a realizar tareas, aprender, comunicarse o divertirse.</p></div></header>
+        <section class="intro-section"><h2>Su trabajo va más allá de escribir código</h2><p>Antes de programar, necesita comprender el problema. Después planifica una solución, la construye, comprueba que funcione y la mejora. Este ciclo se repite muchas veces durante la creación de un proyecto.</p><ul class="task-list"><li><i class="fas fa-magnifying-glass"></i><div><strong>Investiga y comprende</strong><span>Hace preguntas para saber qué necesita el usuario.</span></div></li><li><i class="fas fa-diagram-project"></i><div><strong>Planifica</strong><span>Divide un problema grande en pasos pequeños y manejables.</span></div></li><li><i class="fas fa-keyboard"></i><div><strong>Construye</strong><span>Escribe código y conecta las distintas partes del programa.</span></div></li><li><i class="fas fa-bug"></i><div><strong>Prueba y corrige</strong><span>Busca errores, descubre su causa y comprueba la solución.</span></div></li><li><i class="fas fa-people-group"></i><div><strong>Colabora</strong><span>Comparte ideas y coordina su trabajo con otras personas.</span></div></li><li><i class="fas fa-arrows-rotate"></i><div><strong>Mejora</strong><span>Actualiza el programa según nuevas necesidades y comentarios.</span></div></li></ul></section>
+        <section class="intro-section"><h2>Un día de trabajo puede incluir…</h2><div class="example-flow"><div class="flow-card"><div><strong>Detectar</strong><span>Un botón no responde</span></div></div><div class="flow-arrow"><i class="fas fa-arrow-right"></i></div><div class="flow-card"><div><strong>Investigar</strong><span>Revisar el código y encontrar la causa</span></div></div><div class="flow-arrow"><i class="fas fa-arrow-right"></i></div><div class="flow-card"><div><strong>Solucionar</strong><span>Corregirlo y volver a probar</span></div></div></div></section>
+        <section class="intro-section"><h2>Habilidades importantes</h2><div class="concept-grid"><article class="concept-card"><i class="fas fa-puzzle-piece"></i><h3>Pensamiento lógico</h3><p>Relacionar datos, reglas y pasos para llegar a una solución.</p></article><article class="concept-card"><i class="fas fa-wand-magic-sparkles"></i><h3>Creatividad</h3><p>Imaginar nuevas formas de resolver problemas y diseñar experiencias.</p></article><article class="concept-card"><i class="fas fa-heart"></i><h3>Paciencia</h3><p>Probar alternativas y aprender de los errores sin rendirse.</p></article></div></section>
+        <div class="closing"><strong>Cada programador comenzó aprendiendo lo básico.</strong><p>La curiosidad, la práctica y la constancia son más importantes que saberlo todo desde el primer día.</p></div>
+    </main>
+    <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
+</body></html>

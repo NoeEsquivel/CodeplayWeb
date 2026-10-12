@@ -13,7 +13,8 @@
         .review-title{margin:35px 0 15px}.answer{padding:19px;margin-bottom:12px;border-radius:15px;background:var(--panel);border:1px solid var(--line)}.answer.ok{border-left:5px solid #36d996}.answer.bad{border-left:5px solid #ff6673}.answer h3{font-size:17px;line-height:1.45;margin:0 0 12px}.answer p{margin:6px 0;color:#c0d4d0}.answer .expected{color:#84ecc8}
     </style>
 </head>
-<body><main class="page">
+<body>
+@include('partials.alumno-sidebar')<main class="page">
     <section class="summary"><span class="eyebrow">Práctica completada</span><h1>Resultado del Test</h1><div class="score">{{ number_format($resultado->calificacion,0) }}<span>/100</span></div>
     <div class="stats"><div class="stat correct"><strong>{{ $resultado->correctas }}</strong>Aciertos</div><div class="stat wrong"><strong>{{ $resultado->incorrectas }}</strong>Errores</div><div class="stat"><strong>{{ $resultado->total_preguntas }}</strong>Preguntas</div></div>
     <p class="note"><i class="fas fa-circle-info"></i> Este resultado es de práctica y no modificó tus puntos CodePlay.</p>

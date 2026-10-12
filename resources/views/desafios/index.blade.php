@@ -217,6 +217,7 @@
     </style>
 </head>
 <body>
+@include('partials.alumno-sidebar')
     <!-- Navbar Personalizado -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
         <div class="container-fluid d-flex justify-content-between align-items-center">

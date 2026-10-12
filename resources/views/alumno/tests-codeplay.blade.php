@@ -18,7 +18,8 @@
         @media(max-width:720px){.grid{grid-template-columns:1fr}.category:last-child{grid-column:auto}.page{width:min(100% - 20px,1120px)}}
     </style>
 </head>
-<body><main class="page">
+<body>
+@include('partials.alumno-sidebar')<main class="page">
     <a class="back" href="{{ route('alumno.tests') }}"><i class="fas fa-arrow-left"></i> Tests y Evaluaciones</a>
     <section class="hero"><span class="eyebrow">Práctica individual</span><h1>Test CodePlay</h1><p>Escoge un tema. Cada intento mezcla diez preguntas diferentes.</p></section>
     <div class="notice"><i class="fas fa-circle-info"></i> Esta práctica muestra tus aciertos y errores, pero no suma ni descuenta puntos CodePlay.</div>

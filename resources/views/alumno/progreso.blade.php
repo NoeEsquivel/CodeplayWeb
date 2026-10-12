@@ -69,6 +69,7 @@
     </style>
 </head>
 <body>
+@include('partials.alumno-sidebar')
 @php
     $moduleInfo = [
         'documentacion' => ['Documentación','fa-book',route('alumno.documentacion')],

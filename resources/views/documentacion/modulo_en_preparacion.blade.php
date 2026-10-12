@@ -86,6 +86,7 @@
     </style>
 </head>
 <body>
+@include('partials.alumno-sidebar')
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
         <div class="container-fluid">
             <a class="btn btn-home me-2" href="{{ route('inicio.alumno') }}">

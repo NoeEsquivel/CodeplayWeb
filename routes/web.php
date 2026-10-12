@@ -236,6 +236,9 @@ Route::middleware(['auth.custom', 'role:Alumno', 'lux.student'])->group(function
 
     Route::get('/tutoriales/progreso', [TutorialController::class, 'getProgreso'])
         ->name('tutoriales.progreso');
+    Route::get('/tutorial-video/{video}', [TutorialController::class, 'video'])
+        ->where('video', '[A-Za-z0-9_-]+\.mp4')
+        ->name('tutorial.video');
     Route::get('/tutorial/{slug}', [TutorialController::class, 'show'])->name('tutorial.show');
     Route::post('/tutorial/{slug}/completar', [TutorialController::class, 'completar'])
         ->middleware('throttle:30,1')

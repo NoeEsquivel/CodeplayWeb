@@ -163,6 +163,7 @@
     </style>
 </head>
 <body>
+@include('partials.alumno-sidebar')
     <!-- Navbar Personalizado -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
         <div class="container-fluid">
@@ -189,6 +190,46 @@
         <div class="row justify-content-center">
             <div class="col-lg-10">
                 <h2 class="text-center mb-4 doc-title"><i class="fas fa-book me-2"></i>DOCUMENTACIÓN</h2>
+
+                <!-- Sección: Introducción -->
+                <h3 class="section-title"><i class="fas fa-compass me-2"></i>Introducción</h3>
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <a href="{{ route('alumno.documentacion.show', 'intro1') }}" class="doc-btn w-100">
+                            <h4 class="text-white">¿Qué es la programación?
+                                <span class="badge concept-badge badge-language">INICIO</span>
+                            </h4>
+                            <p class="mb-0 text-white-50">Descubre cómo una idea se convierte en instrucciones para una computadora</p>
+                        </a>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <a href="{{ route('alumno.documentacion.show', 'intro2') }}" class="doc-btn w-100">
+                            <h4 class="text-white">¿Qué hace un programador?
+                                <span class="badge concept-badge badge-language">INICIO</span>
+                            </h4>
+                            <p class="mb-0 text-white-50">Conoce cómo piensa, crea, prueba y mejora soluciones digitales</p>
+                        </a>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <a href="{{ route('alumno.documentacion.show', 'intro3') }}" class="doc-btn w-100">
+                            <h4 class="text-white">Grandes programas que surgieron con una idea
+                                <span class="badge concept-badge badge-language">HISTORIAS</span>
+                            </h4>
+                            <p class="mb-0 text-white-50">Conoce tres ideas que transformaron la comunicación, la ciencia y la Web</p>
+                        </a>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <a href="{{ route('alumno.documentacion.show', 'intro4') }}" class="doc-btn w-100">
+                            <h4 class="text-white">¿Por qué programar es importante para el futuro?
+                                <span class="badge concept-badge badge-language">FUTURO</span>
+                            </h4>
+                            <p class="mb-0 text-white-50">Comprende la tecnología para participar mejor en un mundo que cambia</p>
+                        </a>
+                    </div>
+                </div>
                 
                 <!-- Sección: Fundamentos de HTML -->
                 <h3 class="section-title"><i class="fas fa-code me-2"></i>Fundamentos de HTML</h3>

@@ -22,7 +22,8 @@
         @media(max-width:760px){.grid{grid-template-columns:1fr}.card:last-child{grid-column:auto}.identity{display:none}.page{width:min(100% - 20px,1180px)}.card{padding:20px}}
     </style>
 </head>
-<body><main class="page">
+<body>
+@include('partials.alumno-sidebar')<main class="page">
     <header class="top"><a class="back" href="{{ route('inicio.alumno') }}"><i class="fas fa-arrow-left"></i> Menú principal</a><div class="identity"><i class="fas fa-user"></i> {{ session('usuario_nombre') }}</div></header>
     <section class="hero"><span class="eyebrow">Centro de aprendizaje</span><h1>Tests y Evaluaciones</h1><p>Practica a tu ritmo, crea material de estudio y participa en actividades con compañeros o con tu profesor.</p></section>
     @if(session('error'))<div style="padding:14px 18px;margin-bottom:18px;border-radius:12px;background:#5e252a;border:1px solid #ff7b86">{{ session('error') }}</div>@endif

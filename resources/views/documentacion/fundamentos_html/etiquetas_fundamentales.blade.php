@@ -256,6 +256,7 @@
     </style>
 </head>
 <body>
+@include('partials.alumno-sidebar')
     <!-- Animación inicial de libro -->
     <div class="book-animation" id="bookAnimation">
         <div class="book">

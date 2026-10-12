@@ -40,7 +40,7 @@
             box-shadow: 0 10px 24px rgba(0, 0, 0, .36);
             color: #fff;
             text-align: center;
-            transition: top .55s ease, left .55s ease, width .55s ease, padding .55s ease, border-radius .55s ease, transform .55s ease, box-shadow .3s ease;
+            transition: top .55s ease, left .55s ease, right .55s ease, width .55s ease, padding .55s ease, border-radius .55s ease, transform .55s ease, box-shadow .3s ease;
         }
 
         .adventure-trophy.is-floating {
@@ -72,8 +72,9 @@
         .trophy-message a { color: #a6efcf; }
 
         .adventure-trophy.is-floating.is-collapsed {
-            top: 82px;
-            left: 20px;
+            top: 14px;
+            right: 16px;
+            left: auto;
             width: 54px;
             padding: 7px;
             border-radius: 50%;
@@ -87,7 +88,7 @@
         .adventure-trophy.is-collapsed .trophy-message { max-height: 0; margin-top: 0; opacity: 0; }
 
         @media (max-width: 768px) {
-            .adventure-trophy.is-floating.is-collapsed { top: 70px; left: 14px; }
+            .adventure-trophy.is-floating.is-collapsed { top: 12px; right: 12px; left: auto; }
         }
         
         .game-header {
@@ -140,56 +141,6 @@
             flex-shrink: 0;
         }
         
-        .player-menu {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-
-        .player-name-display {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            list-style: none;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px 20px;
-            border-radius: 20px;
-            border: 2px solid var(--accent-color);
-            backdrop-filter: blur(5px);
-            cursor: pointer;
-            transition: background .2s ease, box-shadow .2s ease;
-        }
-
-        .player-name-display::-webkit-details-marker { display: none; }
-        .player-name-display::marker { content: ''; }
-        .player-name-display:hover, .player-menu[open] .player-name-display { background: rgba(0, 36, 31, .92); box-shadow: 0 0 16px rgba(0, 255, 157, .28); }
-        .player-menu-chevron { font-size: .72rem; color: var(--accent-color); transition: transform .2s ease; }
-        .player-menu[open] .player-menu-chevron { transform: rotate(180deg); }
-
-        .logout-menu {
-            position: absolute;
-            top: calc(100% + 8px);
-            right: 0;
-            margin: 0;
-            min-width: 100%;
-        }
-        
-        .points-display {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px 20px;
-            border-radius: 20px;
-            border: 2px solid var(--accent-color);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
         .points-animation {
             animation: pointsPop 0.6s ease-out;
         }
@@ -198,32 +149,6 @@
             0% { transform: scale(1); }
             50% { transform: scale(1.3); }
             100% { transform: scale(1); }
-        }
-        
-        .points-badge {
-            background: linear-gradient(45deg, #FFD700, #FFA500);
-            color: #000;
-            font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-        }
-        
-        .logout-btn {
-            width: 100%;
-            background: rgba(8, 27, 29, .96);
-            border: 1px solid rgba(166, 239, 207, .7);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 12px;
-            transition: all 0.3s;
-            backdrop-filter: blur(5px);
-        }
-        
-        .logout-btn:hover {
-            background: rgba(26, 69, 57, .98);
-            border-color: var(--accent-color);
-            transform: translateY(-1px);
         }
         
         .menu-title {
@@ -329,35 +254,11 @@
                 font-size: 0.9rem;
             }
             
-            .points-display {
-                font-size: 0.9rem;
-                padding: 8px 15px;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- Puntos del jugador - ACTUALIZADO -->
-    <div class="points-display" id="pointsDisplay">
-        <i class="fas fa-star text-warning"></i>
-        <span id="pointsValue">{{ session('puntos_disponibles') ?? 0 }}</span>
-        <span class="points-badge">PUNTOS</span>
-    </div>
-
-    <!-- Menú del jugador -->
-    <details class="player-menu">
-        <summary class="player-name-display" aria-label="Abrir menú de usuario">
-            <i class="fas fa-user"></i>
-            <span id="playerNameDisplay">{{ session('usuario_nombre') }}</span>
-            <span class="badge bg-success">Alumno</span>
-            <i class="fas fa-chevron-down player-menu-chevron" aria-hidden="true"></i>
-        </summary>
-        <form action="{{ route('logout') }}" method="POST" class="logout-menu">
-            @csrf
-            <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt me-1"></i> Cerrar sesión</button>
-        </form>
-    </details>
-
+@include('partials.alumno-sidebar')
     <div class="container">
         <!-- Título CODEPLAY arriba -->
         <div class="row text-center">
@@ -440,12 +341,12 @@
 
         // Función para actualizar los puntos con animación
         function actualizarPuntos(nuevosPuntos) {
-            const pointsElement = document.getElementById('pointsValue');
-            const pointsDisplay = document.getElementById('pointsDisplay');
+            const pointsElement = document.getElementById('studentNavPointsValue');
+            const pointsDisplay = pointsElement?.closest('.student-nav-points');
             
             if (pointsElement && nuevosPuntos !== puntosActuales) {
                 // Animación de cambio
-                pointsDisplay.classList.add('points-animation');
+                pointsDisplay?.classList.add('points-animation');
                 
                 // Actualizar el valor
                 pointsElement.textContent = nuevosPuntos;
@@ -453,7 +354,7 @@
                 
                 // Remover la clase de animación después de que termine
                 setTimeout(() => {
-                    pointsDisplay.classList.remove('points-animation');
+                    pointsDisplay?.classList.remove('points-animation');
                 }, 600);
             }
         }
@@ -472,11 +373,12 @@
                 console.log('Datos de puntos recibidos:', data); // Para debug
                 
                 if (data.success && data.puntos !== puntosActuales) {
+                    const puntosAnteriores = puntosActuales;
                     actualizarPuntos(data.puntos);
                     
                     // Mostrar notificación si ganó puntos
-                    if (data.puntos > puntosActuales) {
-                        const puntosGanados = data.puntos - puntosActuales;
+                    if (data.puntos > puntosAnteriores) {
+                        const puntosGanados = data.puntos - puntosAnteriores;
                         mostrarNotificacionPuntos(puntosGanados);
                     }
                 }
@@ -535,13 +437,13 @@
                 const collapseTrophy = () => {
                     const position = trophy.getBoundingClientRect();
                     trophy.style.top = `${position.top}px`;
-                    trophy.style.left = `${position.left}px`;
+                    trophy.style.right = `${window.innerWidth - position.right}px`;
                     trophy.style.width = `${position.width}px`;
                     trophy.classList.add('is-floating');
                     window.requestAnimationFrame(() => {
                         trophy.classList.add('is-collapsed');
                         trophy.style.removeProperty('top');
-                        trophy.style.removeProperty('left');
+                        trophy.style.removeProperty('right');
                         trophy.style.removeProperty('width');
                     });
                 };
@@ -550,6 +452,7 @@
                     trophy.classList.remove('is-floating');
                     trophy.style.removeProperty('top');
                     trophy.style.removeProperty('left');
+                    trophy.style.removeProperty('right');
                     trophy.style.removeProperty('width');
                     window.clearTimeout(trophyTimer);
                     trophyTimer = window.setTimeout(collapseTrophy, 5000);
@@ -706,6 +609,7 @@
             
             // Crear notificación bonita
             const notification = document.createElement('div');
+            notification.className = 'student-motivation';
             notification.style.cssText = `
                 position: fixed;
                 top: 20%;

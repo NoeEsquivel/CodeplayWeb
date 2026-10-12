@@ -40,7 +40,7 @@
         }
 
         .navbar-custom {
-            background: rgba(0, 0, 0, 0.85) !important;
+            background: rgba(0, 0, 0, 0.8) !important;
             border-bottom: 3px solid var(--accent-color);
         }
 
@@ -150,7 +150,7 @@
 
         .doc-container {
             display: none;
-            padding: 100px 0 50px;
+            padding: 2rem 0 50px;
         }
 
         .doc-card {
@@ -329,6 +329,7 @@
     </style>
 </head>
 <body>
+@include('partials.alumno-sidebar')
     <div class="book-animation" id="bookAnimation">
         <div class="book">
             <div class="book-pages">
@@ -341,15 +342,19 @@
         <div class="loading-text">Cargando proyecto...</div>
     </div>
 
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
-        <div class="container">
-            <button class="btn btn-home me-3" onclick="navigateWithAnimation('{{ route('inicio.alumno') }}')">
-                <i class="fas fa-home"></i>
-            </button>
-            <div class="navbar-brand game-title">CODEPLAY</div>
-            <div class="player-name-display ms-auto">
-                <i class="fas fa-user me-2"></i>
-                <span>{{ Auth::user()->name ?? 'Jugador' }}</span>
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container-fluid">
+            <a class="btn btn-home me-2" href="{{ route('inicio.alumno') }}">
+                <i class="fas fa-home text-white"></i>
+            </a>
+            <img src="{{ asset('images/local/code-icon-48.png') }}" alt="Logo" width="40" height="40">
+            <span class="game-title">CODEPLAY</span>
+            <div class="ms-auto">
+                <div class="player-name-display">
+                    <i class="fas fa-user me-2"></i>
+                    <span id="playerNameDisplay">{{ session('usuario_nombre') ?? 'Usuario' }}</span>
+                    <span class="badge bg-success ms-2">Alumno</span>
+                </div>
             </div>
         </div>
     </nav>

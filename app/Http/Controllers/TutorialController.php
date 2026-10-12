@@ -4,9 +4,23 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TutorialController extends Controller
 {
+    private const VIDEOS = [
+        'Botones_interactivos.mp4',
+        'Diseno_responsivo.mp4',
+        'Entorno_desarrollo.mp4',
+        'Estilos_css.mp4',
+        'Formularios_web.mp4',
+        'Introduccion_bootstrap.mp4',
+        'Javascript_basico.mp4',
+        'Navegacion_paginas.mp4',
+        'Primera_pagina.mp4',
+        'Proyecto_completo.mp4',
+    ];
+
     public function index()
     {
         return view('tutoriales.tutoriales');
@@ -36,6 +50,82 @@ class TutorialController extends Controller
         }
 
         return view($vista, compact('tutorial', 'progreso'));
+    }
+
+    public function video(Request $request, string $video): StreamedResponse
+    {
+        abort_unless(in_array($video, self::VIDEOS, true), 404);
+
+        $path = public_path('videos'.DIRECTORY_SEPARATOR.$video);
+        abort_unless(is_file($path) && is_readable($path), 404);
+
+        $size = filesize($path);
+        $start = 0;
+        $end = $size - 1;
+        $status = 200;
+        $range = $request->header('Range');
+
+        if ($range !== null) {
+            if (str_contains($range, ',') || !preg_match('/^bytes=(\d*)-(\d*)$/', trim($range), $matches)) {
+                abort(416, 'Rango de video no válido', ['Content-Range' => "bytes */{$size}"]);
+            }
+
+            if ($matches[1] === '' && $matches[2] === '') {
+                abort(416, 'Rango de video no válido', ['Content-Range' => "bytes */{$size}"]);
+            }
+
+            if ($matches[1] === '') {
+                $suffixLength = min((int) $matches[2], $size);
+                $start = $size - $suffixLength;
+            } else {
+                $start = (int) $matches[1];
+                if ($matches[2] !== '') {
+                    $end = min((int) $matches[2], $end);
+                }
+            }
+
+            if ($start < 0 || $start > $end || $start >= $size) {
+                abort(416, 'Rango de video no disponible', ['Content-Range' => "bytes */{$size}"]);
+            }
+
+            $status = 206;
+        }
+
+        $length = $end - $start + 1;
+        $headers = [
+            'Accept-Ranges' => 'bytes',
+            'Content-Type' => 'video/mp4',
+            'Content-Length' => (string) $length,
+            'Content-Disposition' => 'inline; filename="'.$video.'"',
+            'Cache-Control' => 'private, max-age=3600',
+        ];
+
+        if ($status === 206) {
+            $headers['Content-Range'] = "bytes {$start}-{$end}/{$size}";
+        }
+
+        return response()->stream(function () use ($path, $start, $length) {
+            $stream = fopen($path, 'rb');
+            if ($stream === false) {
+                return;
+            }
+
+            fseek($stream, $start);
+            $remaining = $length;
+
+            while ($remaining > 0 && !feof($stream) && connection_aborted() === 0) {
+                $chunk = fread($stream, min(1024 * 1024, $remaining));
+                if ($chunk === false || $chunk === '') {
+                    break;
+                }
+
+                echo $chunk;
+                $remaining -= strlen($chunk);
+                flush();
+            }
+
+            fclose($stream);
+        }, $status, $headers);
     }
 
     public function completar(Request $request, $slug)

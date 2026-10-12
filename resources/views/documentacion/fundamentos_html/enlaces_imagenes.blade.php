@@ -253,6 +253,7 @@
     </style>
 </head>
 <body>
+@include('partials.alumno-sidebar')
     <div class="book-animation" id="bookAnimation">
         <div class="book">
             <div class="book-cover">

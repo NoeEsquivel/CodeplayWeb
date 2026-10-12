@@ -224,6 +224,7 @@
     </style>
 </head>
 <body>
+@include('partials.alumno-sidebar')
 <!-- Navbar Personalizado -->
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
     <div class="container-fluid">
@@ -427,7 +428,7 @@
                                     </button>
                                     
                                     <video id="tutorialVideo" style="display: none; width: 100%; height: 100%; border-radius: 12px;" controls poster="{{ asset('imagenes/video-poster.jpg') }}">
-                                        <source src="{{ asset('videos/Primera_pagina.mp4') }}" type="video/mp4">
+                                        <source src="{{ route('tutorial.video', ['video' => 'Primera_pagina.mp4']) }}" type="video/mp4">
                                         Tu navegador no soporta el elemento video.
                                     </video>
                                 </div>
@@ -833,5 +834,6 @@ function cerrarModal() {
         window.location.reload();
     }
 </script>
+@include('partials.tutorial-video-controls')
 </body>
 </html>
