@@ -9,9 +9,9 @@
     @if($errors->any())<div class="alert alert-danger"><i class="fas fa-circle-exclamation me-2"></i>{{ $errors->first() }}</div>@endif
     <div class="help-note"><i class="fas fa-lightbulb"></i><span>Utiliza un título fácil de reconocer y una materia que ayude a encontrar el banco más adelante.</span></div>
     <form class="teacher-card" method="POST" action="{{ route('profesor.tests.banks.store') }}">@csrf
-        <div class="mb-3"><label class="form-label">Título del banco</label><input class="form-control" name="nombre" maxlength="160" value="{{ old('nombre') }}" placeholder="Ej. Repaso de Fundamentos HTML" required></div>
-        <div class="mb-3"><label class="form-label">Materia</label><input class="form-control" name="materia" maxlength="100" value="{{ old('materia') }}" placeholder="Ej. HTML" required></div>
-        <div class="mb-3"><label class="form-label">Descripción</label><textarea class="form-control" name="descripcion" rows="4" maxlength="2000" placeholder="Describe brevemente qué aprenderán o practicarán los alumnos">{{ old('descripcion') }}</textarea></div>
+        <div class="mb-3"><label class="form-label" for="bank-name">Título del banco</label><input class="form-control" id="bank-name" name="nombre" maxlength="160" value="{{ old('nombre') }}" placeholder="Ej. Repaso de Fundamentos HTML" required></div>
+        <div class="mb-3"><label class="form-label" for="bank-subject">Materia</label><input class="form-control" id="bank-subject" name="materia" maxlength="100" value="{{ old('materia') }}" placeholder="Ej. HTML" required></div>
+        <div class="mb-3"><label class="form-label" for="bank-description">Descripción</label><textarea class="form-control" id="bank-description" name="descripcion" rows="4" maxlength="2000" placeholder="Describe brevemente qué aprenderán o practicarán los alumnos">{{ old('descripcion') }}</textarea></div>
         <button type="submit" class="teacher-btn teacher-btn-primary" title="Guarda el borrador y abre el editor de preguntas"><i class="fas fa-arrow-right"></i>Crear banco y añadir preguntas</button>
     </form>
 </main></div></div>

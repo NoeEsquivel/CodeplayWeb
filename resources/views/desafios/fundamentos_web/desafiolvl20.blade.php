@@ -101,7 +101,7 @@
                 @foreach (['menu' => 'Menú', 'culebrita' => 'Culebrita', 'memoria' => 'Memoria'] as $clave => $titulo)
                     <div id="panel-{{ $clave }}" role="tabpanel" aria-labelledby="tab-{{ $clave }}" @if($clave !== 'menu') hidden @endif>
                         <label class="editor-label" for="editor-{{ $clave }}">{{ $titulo }} · HTML, CSS y JavaScript</label>
-                        <textarea id="editor-{{ $clave }}" spellcheck="false">{{ $plantillas[$clave] }}</textarea>
+                        <textarea id="editor-{{ $clave }}" spellcheck="false" aria-label="Editor de código">{{ $plantillas[$clave] }}</textarea>
                     </div>
                 @endforeach
                 <div class="editor-tools"><button type="button" id="nextTask" class="quiet">Buscar siguiente TODO ↓</button><button type="button" id="downloadProject" class="quiet">Descargar mi proyecto</button></div>

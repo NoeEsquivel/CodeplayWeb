@@ -159,7 +159,9 @@ return new class extends Migration
 
     private function importarBancoActual(): void
     {
-        if (!Schema::hasTable('tests') || !Schema::hasTable('preguntas_test')) return;
+        if (! Schema::hasTable('tests') || ! Schema::hasTable('preguntas_test')) {
+            return;
+        }
 
         $ahora = now();
         DB::table('tests')->orderBy('id')->get()->each(function ($test) use ($ahora) {
@@ -202,4 +204,3 @@ return new class extends Migration
         Schema::dropIfExists('test_bancos');
     }
 };
-

@@ -17,7 +17,7 @@
             --secondary-color: #2575fc;
             --accent-color: #00ff9d;
         }
-        
+
         body {
             font-family: 'Roboto', sans-serif;
             min-height: 100vh;
@@ -49,6 +49,8 @@
             margin: 0;
             transform: translateX(0);
         }
+
+        .trophy-toggle { display: block; width: 100%; padding: 0; border: 0; background: transparent; color: inherit; cursor: pointer; }
 
         .trophy-icon {
             display: block;
@@ -90,7 +92,7 @@
         @media (max-width: 768px) {
             .adventure-trophy.is-floating.is-collapsed { top: 12px; right: 12px; left: auto; }
         }
-        
+
         .game-header {
             font-family: 'Press Start 2P', cursive;
             text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
@@ -98,13 +100,13 @@
             margin-top: 2rem;
             animation: pulse 2s infinite;
         }
-        
+
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
-        
+
         .menu-container {
             min-height: 60vh;
             padding-top: 2rem;
@@ -115,7 +117,7 @@
         }
 
         .menu-gap { height: 24px; }
-        
+
         .menu-option {
             background: rgba(0, 0, 0, 0.7);
             border: 3px solid var(--accent-color);
@@ -126,38 +128,38 @@
             backdrop-filter: blur(5px);
             padding: 20px;
         }
-        
+
         .menu-option:hover {
             transform: scale(1.05);
             box-shadow: 0 0 20px rgba(0, 255, 157, 0.5);
             background: rgba(0, 0, 0, 0.9);
             border-color: #00ff9d;
         }
-        
+
         .menu-icon {
             font-size: 2.5rem;
             color: var(--accent-color);
             margin-right: 20px;
             flex-shrink: 0;
         }
-        
+
         .points-animation {
             animation: pointsPop 0.6s ease-out;
         }
-        
+
         @keyframes pointsPop {
             0% { transform: scale(1); }
             50% { transform: scale(1.3); }
             100% { transform: scale(1); }
         }
-        
+
         .menu-title {
             color: var(--accent-color);
             font-weight: bold;
             margin-bottom: 8px;
             font-size: 1.3rem;
         }
-        
+
         .menu-description {
             color: #ccc;
             font-size: 1rem;
@@ -223,7 +225,7 @@
                 grid-template-columns: 1fr;
                 max-width: 600px;
             }
-            
+
             .menu-item {
                 min-height: 120px;
                 padding: 20px;
@@ -235,25 +237,25 @@
                 grid-template-columns: 1fr;
                 max-width: 500px;
             }
-            
+
             .menu-item {
                 min-height: 110px;
                 padding: 15px;
             }
-            
+
             .menu-icon {
                 font-size: 2rem;
                 margin-right: 15px;
             }
-            
+
             .menu-title {
                 font-size: 1.1rem;
             }
-            
+
             .menu-description {
                 font-size: 0.9rem;
             }
-            
+
         }
     </style>
 </head>
@@ -269,8 +271,10 @@
         </div>
 
         @if(!empty($trofeoAventura))
-        <aside id="adventureTrophy" class="adventure-trophy" aria-live="polite" role="button" tabindex="0" aria-label="Mostrar el logro Conquistador de la Aventura">
-            <span class="trophy-icon" aria-hidden="true">🏆</span>
+        <aside id="adventureTrophy" class="adventure-trophy" aria-live="polite">
+            <button type="button" class="trophy-toggle" aria-label="Mostrar el logro Conquistador de la Aventura">
+                <span class="trophy-icon" aria-hidden="true">🏆</span>
+            </button>
             <div class="trophy-message">
                 <h2>Conquistador de la Aventura</h2>
                 <p>Derrotaste al Dragón y completaste Aprender Jugando.</p>
@@ -286,15 +290,15 @@
             <div class="col-12">
                 <div class="menu-grid">
                     <!-- Fila 1 -->
-                    <div class="menu-item" onclick="navegarA('documentacion')">
+                    <div class="menu-item" role="link" tabindex="0" onclick="navegarA('documentacion', this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navegarA('documentacion',this)}">
                         <i class="menu-icon fas fa-book"></i>
                         <div class="menu-content">
                             <h4 class="menu-title">Documentación</h4>
                             <p class="menu-description">Aprende los conceptos básicos de programación</p>
                         </div>
                     </div>
-                    
-                    <div class="menu-item" onclick="navegarA('tutoriales')">
+
+                    <div class="menu-item" role="link" tabindex="0" onclick="navegarA('tutoriales', this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navegarA('tutoriales',this)}">
                         <i class="menu-icon fas fa-graduation-cap"></i>
                         <div class="menu-content">
                             <h4 class="menu-title">Tutoriales Interactivos</h4>
@@ -303,7 +307,7 @@
                     </div>
 
                     <!-- Fila 2 -->
-                    <div class="menu-item" onclick="navegarA('desafios')">
+                    <div class="menu-item" role="link" tabindex="0" onclick="navegarA('desafios', this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navegarA('desafios',this)}">
                         <i class="menu-icon fas fa-gamepad"></i>
                         <div class="menu-content">
                             <h4 class="menu-title">Desafíos de Programación y Aprender Jugando</h4>
@@ -311,7 +315,7 @@
                         </div>
                     </div>
 
-                    <div class="menu-item" onclick="navegarA('tests')">
+                    <div class="menu-item" role="link" tabindex="0" onclick="navegarA('tests', this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navegarA('tests',this)}">
                         <i class="menu-icon fas fa-clipboard-check"></i>
                         <div class="menu-content">
                             <h4 class="menu-title">Tests y Evaluaciones</h4>
@@ -320,7 +324,7 @@
                     </div>
 
                     <!-- Fila 3 - Centrado -->
-                    <div class="menu-item" onclick="navegarA('progreso')" style="grid-column: 1 / -1; max-width: 500px; margin: 0 auto;">
+                    <div class="menu-item" role="link" tabindex="0" onclick="navegarA('progreso', this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navegarA('progreso',this)}" style="grid-column: 1 / -1; max-width: 500px; margin: 0 auto;">
                         <i class="menu-icon fas fa-chart-line"></i>
                         <div class="menu-content">
                             <h4 class="menu-title">Mi Progreso</h4>
@@ -334,7 +338,7 @@
 
     <!-- Bootstrap JS Bundle + Popper -->
     <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
-    
+
     <script>
         // Variable para almacenar los puntos actuales
         let puntosActuales = {{ session('puntos_disponibles') ?? 0 }};
@@ -343,15 +347,15 @@
         function actualizarPuntos(nuevosPuntos) {
             const pointsElement = document.getElementById('studentNavPointsValue');
             const pointsDisplay = pointsElement?.closest('.student-nav-points');
-            
+
             if (pointsElement && nuevosPuntos !== puntosActuales) {
                 // Animación de cambio
                 pointsDisplay?.classList.add('points-animation');
-                
+
                 // Actualizar el valor
                 pointsElement.textContent = nuevosPuntos;
                 puntosActuales = nuevosPuntos;
-                
+
                 // Remover la clase de animación después de que termine
                 setTimeout(() => {
                     pointsDisplay?.classList.remove('points-animation');
@@ -371,11 +375,11 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Datos de puntos recibidos:', data); // Para debug
-                
+
                 if (data.success && data.puntos !== puntosActuales) {
                     const puntosAnteriores = puntosActuales;
                     actualizarPuntos(data.puntos);
-                    
+
                     // Mostrar notificación si ganó puntos
                     if (data.puntos > puntosAnteriores) {
                         const puntosGanados = data.puntos - puntosAnteriores;
@@ -403,7 +407,7 @@
                 box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
                 border: 2px solid rgba(255, 255, 255, 0.3);
             `;
-            
+
             notification.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-star" style="color: #000;"></i>
@@ -411,9 +415,9 @@
                     <i class="fas fa-arrow-up" style="color: #28a745;"></i>
                 </div>
             `;
-            
+
             document.body.appendChild(notification);
-            
+
             setTimeout(() => {
                 notification.style.animation = 'slideOutLeft 0.5s ease-in forwards';
                 setTimeout(() => {
@@ -433,6 +437,7 @@
 
             const trophy = document.getElementById('adventureTrophy');
             if (trophy) {
+                const trophyToggle = trophy.querySelector('.trophy-toggle');
                 let trophyTimer;
                 const collapseTrophy = () => {
                     const position = trophy.getBoundingClientRect();
@@ -458,31 +463,25 @@
                     trophyTimer = window.setTimeout(collapseTrophy, 5000);
                 };
 
-                trophy.addEventListener('click', event => {
-                    if (!trophy.classList.contains('is-collapsed') || event.target.closest('a')) return;
-                    showTrophy();
-                });
-                trophy.addEventListener('keydown', event => {
-                    if (!trophy.classList.contains('is-collapsed') || !['Enter', ' '].includes(event.key)) return;
-                    event.preventDefault();
-                    showTrophy();
+                trophyToggle?.addEventListener('click', () => {
+                    if (trophy.classList.contains('is-collapsed')) showTrophy();
                 });
 
                 showTrophy();
             }
-            
+
             // Mostrar puntos actuales en consola para debug
             console.log('Puntos disponibles actuales:', puntosActuales);
             console.log('Usuario:', '{{ session('usuario_nombre') ?? "No autenticado" }}');
         });
 
-        function navegarA(destino) {
+        function navegarA(destino, trigger) {
             // Agregar efecto de click
-            event.currentTarget.style.transform = 'scale(0.95)';
+            trigger.style.transform = 'scale(0.95)';
             setTimeout(() => {
-                event.currentTarget.style.transform = 'scale(1.05)';
+                trigger.style.transform = 'scale(1.05)';
             }, 150);
-            
+
             // Definir las rutas para cada destino (SOLO documentación existe)
             const rutas = {
                 'documentacion': "{{ route('alumno.documentacion') }}",
@@ -548,7 +547,7 @@
                         <div style="font-weight: bold; font-size: 1.1rem; margin-bottom: 5px;">${titulo}</div>
                         <div style="font-size: 0.9rem; opacity: 0.9;">${mensaje}</div>
                     </div>
-                    <button onclick="this.parentElement.parentElement.remove()" 
+                    <button onclick="this.parentElement.parentElement.remove()"
                             style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; padding: 0; margin: 0;">
                         ✕
                     </button>
@@ -583,12 +582,12 @@
         // Agregar event listeners para efectos
         document.addEventListener('DOMContentLoaded', function() {
             const menuItems = document.querySelectorAll('.menu-item');
-            
+
             menuItems.forEach(item => {
                 item.addEventListener('mouseenter', function() {
                     this.style.transform = 'scale(1.02)';
                 });
-                
+
                 item.addEventListener('mouseleave', function() {
                     this.style.transform = 'scale(1)';
                 });
@@ -606,7 +605,7 @@
                 "¡Aprende, practica y domina! 💪"
             ];
             const randomMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
-            
+
             // Crear notificación bonita
             const notification = document.createElement('div');
             notification.className = 'student-motivation';
@@ -625,7 +624,7 @@
             `;
             notification.textContent = randomMessage;
             document.body.appendChild(notification);
-            
+
             setTimeout(() => {
                 notification.remove();
             }, 3000);
@@ -643,7 +642,7 @@
                 opacity: 1;
             }
         }
-        
+
         @keyframes slideInLeft {
             from {
                 transform: translateX(-100px);
@@ -654,7 +653,7 @@
                 opacity: 1;
             }
         }
-        
+
         @keyframes slideOutLeft {
             from {
                 transform: translateX(0);

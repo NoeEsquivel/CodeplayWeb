@@ -19,7 +19,7 @@
             --secondary-color: #2575fc;
             --accent-color: #00ff9d;
         }
-        
+
         body {
             font-family: 'Roboto', sans-serif;
             background: url('{{ asset("Imagenes/Pantalla_Inicio.jpg") }}') no-repeat center center fixed;
@@ -29,7 +29,7 @@
             position: relative;
             overflow-x: hidden;
         }
-        
+
         body::after {
             content: '';
             position: absolute;
@@ -40,12 +40,12 @@
             background-color: rgba(0, 0, 0, 0.6);
             z-index: -1;
         }
-        
+
         .navbar-custom {
             background: rgba(0, 0, 0, 0.8) !important;
             border-bottom: 3px solid var(--accent-color);
         }
-        
+
         .player-name-display {
             background: rgba(255, 255, 255, 0.1);
             border: 2px solid white;
@@ -69,7 +69,7 @@
             font-size: 1.5rem;
             margin: 0 auto;
         }
-        
+
         .btn-home, .btn-user {
             background: transparent;
             border: 2px solid white;
@@ -77,12 +77,12 @@
             transition: all 0.3s;
             color: white !important;
         }
-        
+
         .btn-home:hover, .btn-user:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: scale(1.05);
         }
-        
+
         /* Animación de libro abriéndose */
         .book-animation {
             position: fixed;
@@ -97,7 +97,7 @@
             align-items: center;
             flex-direction: column;
         }
-        
+
         .book {
             width: 200px;
             height: 300px;
@@ -106,7 +106,7 @@
             transform: perspective(1000px) rotateY(0deg);
             animation: openBook 2s forwards;
         }
-        
+
         .book-cover {
             position: absolute;
             width: 100%;
@@ -119,7 +119,7 @@
             animation: openCover 2s forwards;
             animation-delay: 0.5s;
         }
-        
+
         .book-content {
             position: absolute;
             width: 95%;
@@ -133,22 +133,22 @@
             animation: fadeInContent 1s forwards;
             animation-delay: 2s;
         }
-        
+
         @keyframes openBook {
             0% { transform: perspective(1000px) rotateY(0deg); }
             100% { transform: perspective(1000px) rotateY(30deg); }
         }
-        
+
         @keyframes openCover {
             0% { transform: rotateY(0deg); }
             100% { transform: rotateY(-160deg); }
         }
-        
+
         @keyframes fadeInContent {
             0% { opacity: 0; }
             100% { opacity: 1; }
         }
-        
+
         /* Estilos del contenido */
         .doc-container {
             background: rgba(0, 0, 0, 0.8);
@@ -158,7 +158,7 @@
             margin-top: 2rem;
             animation: fadeIn 1s;
         }
-        
+
         .doc-image {
             border: 2px solid var(--accent-color);
             border-radius: 10px;
@@ -166,11 +166,11 @@
             box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
             transition: transform 0.3s;
         }
-        
+
         .doc-image:hover {
             transform: scale(1.02);
         }
-        
+
         .code-block {
             background: #1e1e1e;
             border-radius: 10px;
@@ -179,26 +179,26 @@
             border-left: 4px solid var(--accent-color);
             overflow-x: auto;
         }
-        
+
         .tag {
             color: #569cd6;
         }
-        
+
         .attribute {
             color: #9cdcfe;
         }
-        
+
         .value {
             color: #ce9178;
         }
-        
+
         .btn-success {
             background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
             border: none;
             padding: 10px 25px;
             margin: 0 10px;
         }
-        
+
         .btn-success:hover {
             background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
             transform: translateY(-2px);
@@ -267,15 +267,15 @@
     <div class="test-blocked-modal" id="testBlockedModal">
         <div class="test-blocked-content">
             <div class="emoticon">😴 ⏰ 🚫</div>
-            <h3 class="text-warning mb-3">¡Test No Disponible!</h3>
-            <p class="lead">Solo puedes realizar este Test cada 24 horas, regresa mañana e intentalo de nuevo 😊🎮</p>
-            
+            <h3 class="text-warning mb-3">¡Test no disponible!</h3>
+            <p class="lead">Solo puedes realizar este test cada {{ \App\Services\TestAvailabilityService::COOLDOWN_HOURS }} horas. Podrás intentarlo nuevamente cuando termine el contador. 😊🎮</p>
+
             <div class="countdown-timer" id="countdownTimer">
                 --:--:--
             </div>
-            
+
             <p class="text-muted">Tiempo restante para poder realizar el test nuevamente</p>
-            
+
             <button class="btn btn-success mt-3" onclick="closeTestBlockedModal()">
                 <i class="fas fa-check me-2"></i>Entendido
             </button>
@@ -290,10 +290,10 @@
                 <i class="fas fa-home text-white"></i>
             </a>
             <img src="{{ asset('images/local/code-icon-48.png') }}" alt="Logo" width="40" height="40">
-            
+
             <!-- Título Centrado -->
             <span class="game-title">CODEPLAY</span>
-            
+
             <!-- Nombre del jugador - ACTUALIZADO -->
             <div class="ms-auto">
                 <div class="player-name-display">
@@ -312,17 +312,17 @@
                 <h1><i class="fas fa-file-code me-2"></i>Introducción a HTML</h1>
                 <p class="lead">El lenguaje básico para crear páginas web</p>
             </div>
-            
+
             <div class="col-md-6">
                 <h2><i class="fas fa-question-circle me-2"></i>¿Qué es HTML?</h2>
                 <p>HTML (HyperText Markup Language) es el lenguaje estándar para crear páginas web. No es un lenguaje de programación, sino un lenguaje de marcado que define la estructura de tu contenido.</p>
-                
+
                 <img src="{{ asset('images/local/web-design.jpg') }}"
                      alt="Estructura HTML" class="img-fluid doc-image">
-                
+
                 <h3 class="mt-4"><i class="fas fa-cubes me-2"></i>Elementos Básicos</h3>
                 <p>HTML consiste en una serie de elementos que encierran diferentes partes del contenido para que aparezcan o actúen de cierta manera.</p>
-                
+
                 <h4><i class="fas fa-lightbulb me-2"></i>Partes de un elemento HTML:</h4>
                 <ul>
                     <li><strong>Etiqueta de apertura:</strong> &lt;nombre&gt;</li>
@@ -330,11 +330,11 @@
                     <li><strong>Etiqueta de cierre:</strong> &lt;/nombre&gt;</li>
                 </ul>
             </div>
-            
+
             <div class="col-md-6">
                 <h2><i class="fas fa-code me-2"></i>Estructura Básica</h2>
                 <p>Todos los documentos HTML siguen una estructura básica:</p>
-                
+
                 <div class="code-block">
                     <span class="tag">&lt;!DOCTYPE html&gt;</span><br>
                     <span class="tag">&lt;html&gt;</span><br>
@@ -347,11 +347,11 @@
                     &nbsp;&nbsp;<span class="tag">&lt;/body&gt;</span><br>
                     <span class="tag">&lt;/html&gt;</span>
                 </div>
-                
+
                 <img src="{{ asset('images/local/developer.jpg') }}"
                      alt="Código HTML" class="img-fluid doc-image">
             </div>
-            
+
             <div class="col-12 mt-4">
                 <h2><i class="fas fa-tags me-2"></i>Etiquetas Comunes</h2>
                 <div class="table-responsive">
@@ -393,7 +393,7 @@
                     </table>
                 </div>
             </div>
-            
+
             <div class="col-12 mt-4">
                 <h2><i class="fas fa-play-circle me-2"></i>Práctica Rápida</h2>
                 <p>Intenta crear tu primer documento HTML:</p>
@@ -410,7 +410,7 @@
                     <span class="tag">&lt;/html&gt;</span>
                 </div>
             </div>
-            
+
             <div class="col-12 text-center mt-4">
                 <!-- MODIFICADO: Usando route de Laravel -->
                 <button class="btn btn-lg btn-success" onclick="navigateWithAnimation('{{ route('alumno.documentacion') }}')">
@@ -425,19 +425,19 @@
 
     <!-- Bootstrap JS Bundle + Popper -->
     <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
-    
+
     <script>
         // Ocultar animación y mostrar contenido después de 3 segundos
         setTimeout(() => {
             document.getElementById('bookAnimation').style.display = 'none';
             document.getElementById('docContent').style.display = 'block';
         }, 3000);
-        
+
         // Función para navegar con animación
         function navigateWithAnimation(url) {
             document.getElementById('bookAnimation').style.display = 'flex';
             document.getElementById('docContent').style.display = 'none';
-            
+
             setTimeout(() => {
                 window.location.href = url;
             }, 1500);
@@ -471,7 +471,7 @@
         function showTestBlockedModal(nextAvailableTime) {
             const modal = document.getElementById('testBlockedModal');
             modal.style.display = 'flex';
-            
+
             // Iniciar el temporizador
             startCountdown(nextAvailableTime);
         }
@@ -480,7 +480,7 @@
         function closeTestBlockedModal() {
             const modal = document.getElementById('testBlockedModal');
             modal.style.display = 'none';
-            
+
             // Limpiar el intervalo del temporizador
             if (countdownInterval) {
                 clearInterval(countdownInterval);
@@ -490,16 +490,16 @@
         // Función para iniciar el temporizador
         function startCountdown(nextAvailableTime) {
             const countdownElement = document.getElementById('countdownTimer');
-            
+
             function updateCountdown() {
                 const now = new Date().getTime();
                 const targetTime = new Date(nextAvailableTime).getTime();
                 const timeLeft = targetTime - now;
-                
+
                 if (timeLeft <= 0) {
                     countdownElement.innerHTML = '00:00:00';
                     clearInterval(countdownInterval);
-                    
+
                     // Actualizar el botón para permitir hacer el test
                     setTimeout(() => {
                         closeTestBlockedModal();
@@ -507,21 +507,21 @@
                     }, 1000);
                     return;
                 }
-                
+
                 // Calcular horas, minutos y segundos
                 const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-                
+
                 // Formatear el tiempo
-                const formattedTime = 
+                const formattedTime =
                     String(hours).padStart(2, '0') + ':' +
                     String(minutes).padStart(2, '0') + ':' +
                     String(seconds).padStart(2, '0');
-                
+
                 countdownElement.innerHTML = formattedTime;
             }
-            
+
             // Actualizar inmediatamente y luego cada segundo
             updateCountdown();
             countdownInterval = setInterval(updateCountdown, 1000);

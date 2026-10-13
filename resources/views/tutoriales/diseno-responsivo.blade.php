@@ -17,7 +17,7 @@
             --secondary-color: #2575fc;
             --accent-color: #00ff9d;
         }
-        
+
         body {
             font-family: 'Roboto', sans-serif;
             background: url('{{ asset("Imagenes/Pantalla_Inicio.jpg") }}') no-repeat center center fixed;
@@ -26,7 +26,7 @@
             min-height: 100vh;
             position: relative;
         }
-        
+
         body::after {
             content: '';
             position: absolute;
@@ -37,12 +37,12 @@
             background-color: rgba(0, 0, 0, 0.6);
             z-index: -1;
         }
-        
+
         .navbar-custom {
             background: rgba(0, 0, 0, 0.8) !important;
             border-bottom: 3px solid var(--accent-color);
         }
-        
+
         .game-title {
             font-family: 'Press Start 2P', cursive;
             text-shadow: 3px 3px 0 #000;
@@ -50,7 +50,7 @@
             font-size: 1.5rem;
             margin: 0 auto;
         }
-        
+
         .player-name-display {
             background: rgba(255, 255, 255, 0.1);
             border: 2px solid white;
@@ -74,12 +74,12 @@
             transition: all 0.3s;
             color: white !important;
         }
-        
+
         .btn-home:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: scale(1.05);
         }
-        
+
         .tutorial-content {
             background: rgba(0, 0, 0, 0.8);
             border: 3px solid var(--accent-color);
@@ -87,7 +87,7 @@
             padding: 2rem;
             margin-top: 2rem;
         }
-        
+
         .step-card {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
@@ -95,7 +95,7 @@
             margin-bottom: 2rem;
             border-left: 4px solid var(--accent-color);
         }
-        
+
         .step-number {
             background: var(--accent-color);
             color: #000;
@@ -108,7 +108,7 @@
             font-weight: bold;
             margin-right: 1rem;
         }
-        
+
         .tutorial-image {
             border: 2px solid var(--accent-color);
             border-radius: 10px;
@@ -116,7 +116,7 @@
             max-width: 100%;
             box-shadow: 0 5px 15px rgba(0, 255, 157, 0.3);
         }
-        
+
         .code-block {
             background: #1e1e1e;
             border-radius: 10px;
@@ -126,19 +126,19 @@
             overflow-x: auto;
             margin: 1rem 0;
         }
-        
+
         .tag {
             color: #569cd6;
         }
-        
+
         .attribute {
             color: #9cdcfe;
         }
-        
+
         .value {
             color: #ce9178;
         }
-        
+
         .btn-complete {
             background: var(--accent-color);
             color: #000;
@@ -150,12 +150,12 @@
             transition: all 0.3s;
             margin-top: 2rem;
         }
-        
+
         .btn-complete:hover {
             background: #00e68a;
             transform: scale(1.05);
         }
-        
+
         .video-container {
             position: relative;
             width: 100%;
@@ -165,7 +165,7 @@
             margin: 2rem 0;
             border: 3px solid var(--accent-color);
         }
-        
+
         .video-thumbnail {
             width: 100%;
             height: 100%;
@@ -173,11 +173,11 @@
             cursor: pointer;
             transition: transform 0.3s;
         }
-        
+
         .video-thumbnail:hover {
             transform: scale(1.02);
         }
-        
+
         .play-button {
             position: absolute;
             top: 50%;
@@ -193,12 +193,12 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        
+
         .play-button:hover {
             background: rgba(255, 0, 0, 1);
             transform: translate(-50%, -50%) scale(1.1);
         }
-        
+
         .completed-badge {
             background: var(--accent-color);
             color: #000;
@@ -220,7 +220,7 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
-        
+
     </style>
 </head>
 <body>
@@ -236,12 +236,12 @@
             </a>
             <img src="{{ asset('images/local/code-icon-48.png') }}" alt="Logo" width="40" height="40">
         </div>
-        
+
         <!-- Título Centrado -->
         <div class="d-flex justify-content-center flex-grow-1 position-absolute start-50 translate-middle-x">
             <span class="game-title">CODEPLAY</span>
         </div>
-        
+
         <!-- Usuario a la derecha -->
         <div class="ms-auto">
             <div class="player-name-display">
@@ -279,7 +279,7 @@
                             <div class="flex-grow-1">
                                 <h4>Video Tutorial</h4>
                                 <p class="mb-3">Mira este video para ver el proceso completo:</p>
-                                
+
                                 <div class="video-container" id="videoContainer">
                                     <!-- Miniatura con diseño atractivo -->
                                     <div id="videoThumbnail" style="width: 100%; height: 100%; background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative;">
@@ -292,17 +292,17 @@
                                             <i class="fas fa-play me-1"></i>Reproducir
                                         </div>
                                     </div>
-                                    
+
                                     <button class="play-button" onclick="playVideo()">
                                         <i class="fas fa-play"></i>
                                     </button>
-                                    
+
                                     <video id="tutorialVideo" style="display: none; width: 100%; height: 100%; border-radius: 12px;" controls poster="{{ asset('imagenes/video-poster.jpg') }}">
                                         <source src="{{ route('tutorial.video', ['video' => 'Diseno_responsivo.mp4']) }}" type="video/mp4">
                                         Tu navegador no soporta el elemento video.
                                     </video>
                                 </div>
-                                
+
                                 <!-- Mensaje opcional si el video no carga -->
                                 <div id="videoError" style="display: none; background: rgba(220, 53, 69, 0.1); border: 1px solid #dc3545; border-radius: 8px; padding: 1rem; margin-top: 1rem; text-align: center;">
                                     <i class="fas fa-exclamation-triangle me-2" style="color: #dc3545;"></i>
@@ -337,21 +337,21 @@
 
     <!-- Bootstrap JS Bundle + Popper -->
     <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
-    
+
     <script>
     function playVideo() {
     const thumbnail = document.getElementById('videoThumbnail');
     const playButton = document.querySelector('.play-button');
     const video = document.getElementById('tutorialVideo');
     const videoError = document.getElementById('videoError');
-    
+
     // Ocultar miniatura y botón de play
     thumbnail.style.display = 'none';
     playButton.style.display = 'none';
-    
+
     // Mostrar el video
     video.style.display = 'block';
-    
+
     // Intentar reproducir el video
     video.play().catch(error => {
         console.error('Error al reproducir el video:', error);
@@ -397,7 +397,7 @@
                 <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
                 <h3 style="color: var(--accent-color); margin-bottom: 1rem;">¿Completar Tutorial?</h3>
                 <p style="color: #ddd; margin-bottom: 2rem;">
-                    Al completar este tutorial ganarás <strong style="color: var(--accent-color);">{{ $tutorial->puntos_otorgados }} puntos</strong> 
+                    Al completar este tutorial ganarás <strong style="color: var(--accent-color);">{{ $tutorial->puntos_otorgados }} puntos</strong>
                     que se sumarán a tu total. ¡Solo puedes completarlo una vez!
                 </p>
                 <div style="display: flex; gap: 1rem; justify-content: center;">
@@ -441,11 +441,11 @@
                     to { opacity: 1; }
                 }
                 @keyframes slideDown {
-                    from { 
+                    from {
                         transform: translateY(-50px) scale(0.8);
                         opacity: 0;
                     }
-                    to { 
+                    to {
                         transform: translateY(0) scale(1);
                         opacity: 1;
                     }
@@ -457,14 +457,14 @@
 
 function cerrarModal() {
     console.log('🔴 Intentando cerrar modal...');
-    
+
     // Buscar el modal más reciente (último hijo del body)
     const bodyChildren = Array.from(document.body.children);
-    const modals = bodyChildren.filter(child => 
-        child.style.position === 'fixed' && 
+    const modals = bodyChildren.filter(child =>
+        child.style.position === 'fixed' &&
         child.style.zIndex === '10000'
     );
-    
+
     if (modals.length > 0) {
         const lastModal = modals[modals.length - 1];
         console.log('✅ Modal encontrado, eliminando...');
@@ -490,7 +490,7 @@ function cerrarModal() {
     function confirmarCompletado() {
         // Cerrar el modal de confirmación
         cerrarModal();
-        
+
         // Mostrar modal de carga
         mostrarModalCarga();
 
@@ -629,14 +629,14 @@ function cerrarModal() {
             styles.id = 'celebration-styles';
             styles.textContent = `
                 @keyframes celebrate {
-                    0% { 
+                    0% {
                         transform: scale(0.5) rotate(-5deg);
                         opacity: 0;
                     }
-                    50% { 
+                    50% {
                         transform: scale(1.1) rotate(2deg);
                     }
-                    100% { 
+                    100% {
                         transform: scale(1) rotate(0);
                         opacity: 1;
                     }

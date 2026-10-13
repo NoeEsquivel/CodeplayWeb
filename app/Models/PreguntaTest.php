@@ -18,7 +18,7 @@ class PreguntaTest extends Model
         'opcion_b',
         'opcion_c',
         'opcion_d',
-        'respuesta_correcta'
+        'respuesta_correcta',
     ];
 
     // Relaciones

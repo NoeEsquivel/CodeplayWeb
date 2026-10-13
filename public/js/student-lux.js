@@ -125,7 +125,7 @@
 
     function currentPageTitle() {
         const title = document.querySelector('main h1, .container h1, h1');
-        return title?.textContent?.trim().replace(/\s+/g, ' ').slice(0, 65) || 'esta pantalla';
+        return title?.textContent?.trim().replaceAll(/\s+/g, ' ').slice(0, 65) || 'esta pantalla';
     }
 
     function guideForRoute() {
@@ -234,7 +234,7 @@
                 ['Quiero explorar la aventura', 'aventura'],
                 ['Quiero practicar tests', 'tests'],
                 ['Quiero ver mi progreso', 'progreso']
-            ].forEach(([label, key]) => button(label, () => { window.location.assign(root.dataset[key]); }));
+            ].forEach(([label, key]) => button(label, () => { globalThis.location.assign(root.dataset[key]); }));
             button('Volver a las opciones', showMenu);
             button('Descansa un poco', close);
         });

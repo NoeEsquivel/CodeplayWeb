@@ -9,19 +9,17 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RequireRole
 {
-    public function __construct(private readonly EnsureSecurityReady $security)
-    {
-    }
+    public function __construct(private readonly EnsureSecurityReady $security) {}
 
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         $usuario = $request->attributes->get('usuario_actual');
 
-        if (!$usuario instanceof Usuario) {
+        if (! $usuario instanceof Usuario) {
             $usuario = Usuario::find($request->session()->get('usuario_id'));
         }
 
-        if (!$usuario || !in_array($usuario->rol, $roles, true)) {
+        if (! $usuario || ! in_array($usuario->rol, $roles, true)) {
             if ($request->expectsJson()) {
                 return response()->json(['success' => false, 'message' => 'No tienes permiso para realizar esta acción.'], 403);
             }

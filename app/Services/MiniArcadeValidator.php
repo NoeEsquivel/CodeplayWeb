@@ -16,42 +16,43 @@ final class MiniArcadeValidator
             return null;
         }
         $documents = json_decode($code, true, 8);
-        if (!is_array($documents) || count($documents) !== 3) {
+        if (! is_array($documents) || count($documents) !== 3) {
             return null;
         }
         foreach (['menu', 'culebrita', 'memoria'] as $name) {
-            if (!isset($documents[$name]) || !is_string($documents[$name]) || trim($documents[$name]) === '') {
+            if (! isset($documents[$name]) || ! is_string($documents[$name]) || trim($documents[$name]) === '') {
                 return null;
             }
         }
+
         return $documents;
     }
 
     public function passes(string $code): bool
     {
-        return !in_array(false, $this->checks($code), true);
+        return ! in_array(false, $this->checks($code), true);
     }
 
     public function checks(string $code): array
     {
         $checks = array_fill_keys(self::KEYS, false);
         $documents = $this->documents($code);
-        if (!$documents) {
+        if (! $documents) {
             return $checks;
         }
         $pages = [];
         $scripts = [];
         foreach ($documents as $name => $html) {
             $dom = $this->document($html);
-            if (!$dom) {
+            if (! $dom) {
                 return $checks;
             }
             $pages[$name] = new DOMXPath($dom);
             $scripts[$name] = '';
             foreach ($dom->getElementsByTagName('script') as $script) {
-                if (!$script->hasAttribute('src') && (!$script->hasAttribute('type')
+                if (! $script->hasAttribute('src') && (! $script->hasAttribute('type')
                     || in_array($script->getAttribute('type'), ['text/javascript', 'application/javascript'], true))) {
-                    $scripts[$name] .= "\n" . $script->textContent;
+                    $scripts[$name] .= "\n".$script->textContent;
                 }
             }
         }
@@ -59,7 +60,7 @@ final class MiniArcadeValidator
         $description = $this->text($pages['menu'], '//*[@id="descripcion"]');
         $checks['menuTitle'] = mb_strlen($title) >= 4 && mb_strtolower($title) !== 'mi mini arcade';
         $checks['menuDescription'] = mb_strlen($description) >= 35
-            && !str_contains(mb_strtolower($description), 'escribe aquí cómo jugar');
+            && ! str_contains(mb_strtolower($description), 'escribe aquí cómo jugar');
         $checks['structure'] = $this->exists($pages['menu'], '//button[@data-vista="culebrita"] | //a[@data-vista="culebrita"]')
             && $this->exists($pages['menu'], '//button[@data-vista="memoria"] | //a[@data-vista="memoria"]')
             && $this->exists($pages['culebrita'], '//canvas[@id="tableroSerpiente"]')
@@ -95,21 +96,23 @@ final class MiniArcadeValidator
         $checks['memoryWin'] = $this->functionPasses($scripts['memoria'], 'partidaTerminada', ['parejas'], [
             [[0], false], [[1], false], [[5], false], [[6], true],
         ]);
+
         return $checks;
     }
 
     private function document(string $html): ?DOMDocument
     {
-        if (!preg_match('/<html\b/i', $html) || !preg_match('/<body\b/i', $html)
+        if (! preg_match('/<html\b/i', $html) || ! preg_match('/<body\b/i', $html)
             || preg_match('/<!ENTITY\b|<!DOCTYPE[^>]*\b(?:SYSTEM|PUBLIC)\b/i', $html)) {
             return null;
         }
         $previous = libxml_use_internal_errors(true);
         try {
-            $dom = new DOMDocument();
+            $dom = new DOMDocument;
             $dom->resolveExternals = false;
             $dom->substituteEntities = false;
-            return $dom->loadHTML('<?xml encoding="UTF-8">' . $html, LIBXML_NONET) ? $dom : null;
+
+            return $dom->loadHTML('<?xml encoding="UTF-8">'.$html, LIBXML_NONET) ? $dom : null;
         } finally {
             libxml_clear_errors();
             libxml_use_internal_errors($previous);
@@ -140,10 +143,12 @@ final class MiniArcadeValidator
                 if (end($tokens) === 'return' && (str_contains($token, "\n") || str_contains($token, "\r"))) {
                     $tokens[] = ';';
                 }
+
                 continue;
             }
             $tokens[] = $token;
         }
+
         return $tokens;
     }
 
@@ -190,7 +195,7 @@ final class MiniArcadeValidator
         }
         try {
             foreach ($cases as [$arguments, $expected]) {
-                $result = (new MiniArcadeExpression())->calculate($body, array_combine($parameters, $arguments));
+                $result = (new MiniArcadeExpression)->calculate($body, array_combine($parameters, $arguments));
                 if (is_array($expected) && is_array($result)) {
                     ksort($expected);
                     ksort($result);
@@ -202,6 +207,7 @@ final class MiniArcadeValidator
         } catch (\Throwable $error) {
             return false;
         }
+
         return true;
     }
 }

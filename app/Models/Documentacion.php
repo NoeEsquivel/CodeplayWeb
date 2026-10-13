@@ -13,7 +13,7 @@ class Documentacion extends Model
 
     protected $fillable = [
         'titulo',
-        'contenido'
+        'contenido',
     ];
 
     // Relaciones

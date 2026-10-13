@@ -1,14 +1,15 @@
 <?php
 
+use App\Models\AventuraExpedicion;
+use App\Services\AventuraCatalogo;
+use App\Services\AventuraInventario;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use App\Services\AventuraCatalogo;
-use App\Services\AventuraInventario;
-use App\Models\AventuraExpedicion;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         // Check ambiguity before MySQL DDL (which is not transactional).
@@ -17,7 +18,7 @@ return new class extends Migration {
             throw new RuntimeException('Hay varias expediciones abiertas para un usuario. Conciliarlas antes de migrar.');
         }
         foreach (DB::table('aventura_expediciones')->whereIn('estado', ['preparacion', 'activa'])->get() as $run) {
-            (new AventuraCatalogo())->cotizar(json_decode($run->equipo, true, 512, JSON_THROW_ON_ERROR), [5, 10, 15, 20]);
+            (new AventuraCatalogo)->cotizar(json_decode($run->equipo, true, 512, JSON_THROW_ON_ERROR), [5, 10, 15, 20]);
         }
         Schema::table('items', function (Blueprint $table) {
             $table->string('clave_catalogo', 80)->nullable()->unique();
@@ -41,7 +42,7 @@ return new class extends Migration {
             $table->string('posicion', 20)->nullable();
         });
         DB::transaction(function () {
-            foreach ((new AventuraCatalogo())->items() as $item) {
+            foreach ((new AventuraCatalogo)->items() as $item) {
                 DB::table('items')->insert([
                     'clave_catalogo' => $item['id'], 'nombre' => $item['nombre'],
                     'tipo' => $item['tipo'] === 'pocion' ? 'consumible' : 'equipamiento',
@@ -54,7 +55,7 @@ return new class extends Migration {
                 $equipo = json_decode($anterior->equipo, true, 512, JSON_THROW_ON_ERROR);
                 $run = AventuraExpedicion::findOrFail($anterior->id);
                 AventuraInventario::guardar($run, $equipo);
-                $bonus = (new AventuraCatalogo())->cotizar($equipo, [5, 10, 15, 20])['bonus'];
+                $bonus = (new AventuraCatalogo)->cotizar($equipo, [5, 10, 15, 20])['bonus'];
                 $personaje = DB::table('aventura_personajes')->where('usuario_id', $anterior->usuario_id)->first();
                 DB::table('aventura_expediciones')->where('id', $anterior->id)->update([
                     'vida_actual' => 100 + 5 * (($personaje->vitalidad ?? 1) + $bonus['vitalidad'] - 1),
@@ -83,8 +84,11 @@ return new class extends Migration {
         DB::table('inventario')->whereNotNull('expedicion_id')->delete();
         DB::table('items')->whereNotNull('clave_catalogo')->whereNotIn('id', DB::table('inventario')->select('item_id'))->delete();
         Schema::table('inventario', function (Blueprint $table) {
-            if (DB::getDriverName() === 'sqlite') $table->dropColumn('expedicion_id');
-            else $table->dropConstrainedForeignId('expedicion_id');
+            if (DB::getDriverName() === 'sqlite') {
+                $table->dropColumn('expedicion_id');
+            } else {
+                $table->dropConstrainedForeignId('expedicion_id');
+            }
             $table->dropColumn('posicion');
         });
         Schema::table('items', function (Blueprint $table) {

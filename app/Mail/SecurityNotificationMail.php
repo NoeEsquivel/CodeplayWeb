@@ -15,8 +15,7 @@ class SecurityNotificationMail extends Mailable
         public string $bodyText,
         public ?string $actionUrl = null,
         public ?string $actionLabel = null,
-    ) {
-    }
+    ) {}
 
     public function build(): self
     {

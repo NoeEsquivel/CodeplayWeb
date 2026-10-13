@@ -15,11 +15,11 @@ class ProgresoTutorial extends Model
         'usuario_id',
         'tutorial_id',
         'estado',
-        'fecha'
+        'fecha',
     ];
 
     protected $casts = [
-        'fecha' => 'datetime'
+        'fecha' => 'datetime',
     ];
 
     protected $attributes = [

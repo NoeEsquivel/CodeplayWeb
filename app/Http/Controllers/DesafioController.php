@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\MiniArcadeValidator;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
-use App\Services\MiniArcadeValidator;
 
 class DesafioController extends Controller
 {
@@ -13,14 +13,14 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $desafiosCompletados = 0;
-        
+
         if ($usuarioId) {
             $desafiosCompletados = DB::table('desafio_recompensas')
                 ->where('usuario_id', $usuarioId)
                 ->where('completado_primera_vez', true)
                 ->count();
         }
-        
+
         return view('desafios.index', compact('desafiosCompletados'));
     }
 
@@ -29,14 +29,14 @@ class DesafioController extends Controller
         $usuarioId = session('usuario_id');
         $desafiosCompletados = 0;
         $nivelesCompletados = [];
-        
+
         if ($usuarioId) {
             // Obtener número de desafíos completados
             $desafiosCompletados = DB::table('desafio_recompensas')
                 ->where('usuario_id', $usuarioId)
                 ->where('completado_primera_vez', true)
                 ->count();
-            
+
             // Obtener qué niveles específicos están completados
             $nivelesCompletados = DB::table('desafio_recompensas')
                 ->where('usuario_id', $usuarioId)
@@ -44,7 +44,7 @@ class DesafioController extends Controller
                 ->pluck('nivel_desafio')
                 ->toArray();
         }
-        
+
         return view('desafios.desafio_programacion', compact('desafiosCompletados', 'nivelesCompletados'));
     }
 
@@ -52,7 +52,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 1);
-        
+
         return view('desafios.fundamentos_web.desafiolvl1', compact('infoRecompensa'));
     }
 
@@ -60,7 +60,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 2);
-        
+
         return view('desafios.fundamentos_web.desafiolvl2', compact('infoRecompensa'));
     }
 
@@ -68,7 +68,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 3);
-        
+
         return view('desafios.fundamentos_web.desafiolvl3', compact('infoRecompensa'));
     }
 
@@ -76,7 +76,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 4);
-        
+
         return view('desafios.fundamentos_web.desafiolvl4', compact('infoRecompensa'));
     }
 
@@ -84,7 +84,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 5);
-        
+
         return view('desafios.fundamentos_web.desafiolvl5', compact('infoRecompensa'));
     }
 
@@ -92,7 +92,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 6);
-        
+
         return view('desafios.fundamentos_web.desafiolvl6', compact('infoRecompensa'));
     }
 
@@ -100,7 +100,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 7);
-        
+
         return view('desafios.fundamentos_web.desafiolvl7', compact('infoRecompensa'));
     }
 
@@ -108,7 +108,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 8);
-        
+
         return view('desafios.fundamentos_web.desafiolvl8', compact('infoRecompensa'));
     }
 
@@ -116,7 +116,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 9);
-        
+
         return view('desafios.fundamentos_web.desafiolvl9', compact('infoRecompensa'));
     }
 
@@ -124,7 +124,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 10);
-        
+
         return view('desafios.fundamentos_web.desafiolvl10', compact('infoRecompensa'));
     }
 
@@ -132,7 +132,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 11);
-        
+
         return view('desafios.fundamentos_web.desafiolvl11', compact('infoRecompensa'));
     }
 
@@ -140,7 +140,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 12);
-        
+
         return view('desafios.fundamentos_web.desafiolvl12', compact('infoRecompensa'));
     }
 
@@ -148,7 +148,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 13);
-        
+
         return view('desafios.fundamentos_web.desafiolvl13', compact('infoRecompensa'));
     }
 
@@ -156,7 +156,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 14);
-        
+
         return view('desafios.fundamentos_web.desafiolvl14', compact('infoRecompensa'));
     }
 
@@ -164,7 +164,7 @@ class DesafioController extends Controller
     {
         $usuarioId = session('usuario_id');
         $infoRecompensa = $this->obtenerInfoRecompensa($usuarioId, 15);
-        
+
         return view('desafios.fundamentos_web.desafiolvl15', compact('infoRecompensa'));
     }
 
@@ -215,8 +215,8 @@ class DesafioController extends Controller
     public function validarProyectoFinal(Request $request)
     {
         $datos = $request->validate(['codigo' => ['required', 'string', 'max:60000']]);
-        $validador = new MiniArcadeValidator();
-        if (!$validador->documents($datos['codigo'])) {
+        $validador = new MiniArcadeValidator;
+        if (! $validador->documents($datos['codigo'])) {
             return response()->json(['success' => false, 'message' => 'Envía las tres vistas del proyecto.'], 422);
         }
 
@@ -239,7 +239,7 @@ class DesafioController extends Controller
         if ($recompensa && $recompensa->ultima_recompensa) {
             $ultimaRecompensa = Carbon::parse($recompensa->ultima_recompensa);
             $proximaRecompensa = $ultimaRecompensa->addHours(24);
-            
+
             if (Carbon::now()->lt($proximaRecompensa)) {
                 $puedeReclamar = false;
                 $tiempoRestante = $proximaRecompensa->diffForHumans();
@@ -259,7 +259,7 @@ class DesafioController extends Controller
             'tiempo_restante' => $tiempoRestante,
             'puntos_base' => $puntosBase,
             'puntos_otorgar' => $puntosOtorgar,
-            'ya_completado' => $recompensa ? true : false
+            'ya_completado' => $recompensa ? true : false,
         ];
     }
 
@@ -273,7 +273,7 @@ class DesafioController extends Controller
             11 => 200, 12 => 200, 13 => 200, 14 => 200, // Niveles 11-14: 200 puntos
             15 => 300,                                // Nivel 15: 300 puntos
             16 => 400, 17 => 400, 18 => 400, 19 => 500, // Nivel 19: 500 puntos
-            20 => 1000                                // Nivel 20: 1000 puntos
+            20 => 1000,                                // Nivel 20: 1000 puntos
         ];
 
         return $puntos[$nivel] ?? 50;
@@ -290,12 +290,12 @@ class DesafioController extends Controller
 
         $nivel = (int) $datos['nivel'];
         $codigo = $datos['codigo'];
-        
-        if (!$usuarioId) {
+
+        if (! $usuarioId) {
             return response()->json(['success' => false, 'error' => 'Usuario no autenticado']);
         }
 
-        if (!$this->codigoCumpleRequisitos($nivel, $codigo)) {
+        if (! $this->codigoCumpleRequisitos($nivel, $codigo)) {
             return response()->json([
                 'success' => false,
                 'error' => 'El código no cumple los requisitos del desafío.',
@@ -318,38 +318,39 @@ class DesafioController extends Controller
             if ($recompensaExistente) {
                 // Ya completado antes
                 $completadoPrimeraVez = $recompensaExistente->completado_primera_vez;
-                
+
                 // Verificar si puede reclamar recompensa diaria
                 if ($recompensaExistente->ultima_recompensa) {
                     $ultimaRecompensa = Carbon::parse($recompensaExistente->ultima_recompensa);
                     $proximaRecompensa = $ultimaRecompensa->addHours(24);
-                    
+
                     if (Carbon::now()->lt($proximaRecompensa)) {
                         DB::rollBack();
+
                         return response()->json([
-                            'success' => false, 
+                            'success' => false,
                             'error' => 'recompensa_cooldown',
-                            'tiempo_restante' => $proximaRecompensa->diffForHumans()
+                            'tiempo_restante' => $proximaRecompensa->diffForHumans(),
                         ]);
                     }
                 }
-                
+
                 $puntosOtorgar = floor($puntosBase / 2);
-                
+
                 // Actualizar registro existente
                 DB::table('desafio_recompensas')
                     ->where('usuario_id', $usuarioId)
                     ->where('nivel_desafio', $nivel)
                     ->update([
-                        'puntos_obtenidos' => DB::raw('puntos_obtenidos + ' . $puntosOtorgar),
+                        'puntos_obtenidos' => DB::raw('puntos_obtenidos + '.$puntosOtorgar),
                         'ultima_recompensa' => Carbon::now(),
-                        'updated_at' => Carbon::now()
+                        'updated_at' => Carbon::now(),
                     ]);
             } else {
                 // Primera vez completando
                 $completadoPrimeraVez = true;
                 $puntosOtorgar = $puntosBase;
-                
+
                 // Crear nuevo registro
                 DB::table('desafio_recompensas')->insert([
                     'usuario_id' => $usuarioId,
@@ -358,7 +359,7 @@ class DesafioController extends Controller
                     'puntos_obtenidos' => $puntosOtorgar,
                     'ultima_recompensa' => Carbon::now(),
                     'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now()
+                    'updated_at' => Carbon::now(),
                 ]);
             }
 
@@ -366,8 +367,8 @@ class DesafioController extends Controller
             DB::table('usuarios')
                 ->where('id', $usuarioId)
                 ->update([
-                    'puntos_totales' => DB::raw('puntos_totales + ' . $puntosOtorgar),
-                    'updated_at' => Carbon::now()
+                    'puntos_totales' => DB::raw('puntos_totales + '.$puntosOtorgar),
+                    'updated_at' => Carbon::now(),
                 ]);
 
             // Actualizar sesión
@@ -381,12 +382,13 @@ class DesafioController extends Controller
                 'puntos_otorgados' => $puntosOtorgar,
                 'completado_primera_vez' => $completadoPrimeraVez,
                 'puntos_totales' => $usuario->puntos_totales,
-                'puntos_disponibles' => ($usuario->puntos_totales - $usuario->puntos_usados)
+                'puntos_disponibles' => ($usuario->puntos_totales - $usuario->puntos_usados),
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'error' => 'Error al procesar recompensa: ' . $e->getMessage()]);
+
+            return response()->json(['success' => false, 'error' => 'Error al procesar recompensa: '.$e->getMessage()]);
         }
     }
 
@@ -401,7 +403,7 @@ class DesafioController extends Controller
 
         $contieneTodos = static function (array $fragmentos) use ($lower): bool {
             foreach ($fragmentos as $fragmento) {
-                if (!str_contains($lower, $fragmento)) {
+                if (! str_contains($lower, $fragmento)) {
                     return false;
                 }
             }
@@ -446,7 +448,7 @@ class DesafioController extends Controller
             17 => $this->codigoFormularioInteractivoValido($codigo),
             18 => $this->codigoDashboardResponsivoValido($codigo),
             19 => $this->codigoTiendaOnlineValido($codigo),
-            20 => (new MiniArcadeValidator())->passes($codigo),
+            20 => (new MiniArcadeValidator)->passes($codigo),
             default => false,
         };
     }
@@ -456,7 +458,7 @@ class DesafioController extends Controller
         $lower = mb_strtolower($codigo, 'UTF-8');
 
         foreach ($fragmentos as $fragmento) {
-            if (!str_contains($lower, mb_strtolower($fragmento, 'UTF-8'))) {
+            if (! str_contains($lower, mb_strtolower($fragmento, 'UTF-8'))) {
                 return false;
             }
         }

@@ -19,7 +19,7 @@ class ExcelExportService
             throw new RuntimeException('No fue posible preparar el archivo de Excel.');
         }
 
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
         if ($zip->open($temporary, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
             @unlink($temporary);
             throw new RuntimeException('No fue posible crear el archivo de Excel.');
@@ -147,6 +147,7 @@ class ExcelExportService
     private function safeSheetName(string $name): string
     {
         $name = preg_replace('~[\\\\/?*\\[\\]:]~u', ' ', trim($name)) ?: 'Reporte';
+
         return mb_substr($name, 0, 31);
     }
 
@@ -158,6 +159,7 @@ class ExcelExportService
             $name = chr(65 + ($number % 26)).$name;
             $number = intdiv($number, 26);
         }
+
         return $name;
     }
 

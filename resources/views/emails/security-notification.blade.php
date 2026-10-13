@@ -1,5 +1,8 @@
 <!doctype html>
 <html lang="es">
+<head>
+    <title>{{ $subjectLine }}</title>
+</head>
 <body style="font-family:Arial,sans-serif;color:#132a2d">
     <h1 style="font-size:22px">{{ $subjectLine }}</h1>
     <p style="white-space:pre-line">{{ $bodyText }}</p>

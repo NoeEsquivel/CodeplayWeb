@@ -29,7 +29,10 @@ class AventuraMundo
 
     public static function region(int $escenario): array
     {
-        if ($escenario < 1 || $escenario > 50) throw new \InvalidArgumentException('Escenario fuera del mundo.');
+        if ($escenario < 1 || $escenario > 50) {
+            throw new \InvalidArgumentException('Escenario fuera del mundo.');
+        }
+
         return self::regiones()[intdiv($escenario - 1, 10)];
     }
 
@@ -86,6 +89,7 @@ class AventuraMundo
             default => self::regiones()[2]['caminos'],
         };
     }
+
     /** Rutas inspiradas en los hitos visibles del mapa de Montañas Heladas. */
     public static function caminosHielo(int $escenario): array
     {
@@ -103,6 +107,7 @@ class AventuraMundo
             default => self::regiones()[3]['caminos'],
         };
     }
+
     /** Rutas inspiradas en los hitos visibles del mapa de las Tierras del Dragón. */
     public static function caminosDragon(int $escenario): array
     {
@@ -120,15 +125,22 @@ class AventuraMundo
             default => self::regiones()[4]['caminos'],
         };
     }
+
     public static function tipo(int $escenario, int $tirada): string
     {
         self::region($escenario);
-        if ($tirada < 1 || $tirada > 100) throw new \InvalidArgumentException('Tirada fuera de rango.');
-        if ($escenario % 10 === 0) return $escenario === 50 ? 'dragon' : 'jefe';
+        if ($tirada < 1 || $tirada > 100) {
+            throw new \InvalidArgumentException('Tirada fuera de rango.');
+        }
+        if ($escenario % 10 === 0) {
+            return $escenario === 50 ? 'dragon' : 'jefe';
+        }
         $limite = 0;
         foreach (self::PROBABILIDADES as $tipo => $peso) {
             $limite += $peso;
-            if ($tirada <= $limite) return $tipo;
+            if ($tirada <= $limite) {
+                return $tipo;
+            }
         }
         throw new \LogicException('Probabilidades incompletas.');
     }

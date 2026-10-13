@@ -13,12 +13,14 @@ class SecurityMailService
     {
         try {
             Mail::to($email)->send(new SecurityNotificationMail($subject, $body, $actionUrl, $actionLabel));
+
             return true;
         } catch (Throwable $exception) {
             Log::error('No se pudo enviar una notificación de seguridad.', [
                 'email' => $email,
                 'error' => $exception->getMessage(),
             ]);
+
             return false;
         }
     }

@@ -23,20 +23,27 @@ class TestAnswerEvaluator
     private function normalizar(mixed $valor): string
     {
         $texto = Str::lower(Str::ascii(trim((string) $valor)));
+
         return preg_replace('/\s+/', ' ', $texto) ?? $texto;
     }
 
     private function normalizarLista(mixed $valores): array
     {
-        if (!is_array($valores)) return [];
+        if (! is_array($valores)) {
+            return [];
+        }
         $lista = array_values(array_unique(array_map(fn ($valor) => $this->normalizar($valor), $valores)));
         sort($lista);
+
         return $lista;
     }
 
     private function normalizarBooleano(mixed $valor): ?bool
     {
-        if (is_bool($valor)) return $valor;
+        if (is_bool($valor)) {
+            return $valor;
+        }
+
         return match ($this->normalizar($valor)) {
             '1', 'true', 'verdadero', 'si' => true,
             '0', 'false', 'falso', 'no' => false,
@@ -44,4 +51,3 @@ class TestAnswerEvaluator
         };
     }
 }
-

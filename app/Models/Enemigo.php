@@ -20,7 +20,7 @@ class Enemigo extends Model
         'daño',
         'defensa',
         'velocidad',
-        'recompensa_puntos'
+        'recompensa_puntos',
     ];
 
     protected $attributes = [

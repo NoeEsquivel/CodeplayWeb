@@ -7,6 +7,7 @@ use Illuminate\Validation\ValidationException;
 class AventuraCatalogo
 {
     public const STATS = ['dano', 'magia', 'armadura', 'inteligencia', 'vitalidad'];
+
     public const RAREZAS = ['normal' => 'Normal', 'raro' => 'Raro', 'super_raro' => 'Super raro', 'ultra_raro' => 'Ultra raro', 'legendario' => 'Legendario'];
 
     public function items(): array
@@ -63,10 +64,14 @@ class AventuraCatalogo
         $add('filo-validacion', 'Filo de la validación', 'arma', 'raro', 80, ['dano' => 5, 'inteligencia' => 2], 'Un filo preciso para quien comprueba antes de actuar.', 'sword', 10);
         $add('manto-memoria', 'Manto de la memoria', 'armadura', 'super_raro', 190, ['armadura' => 8, 'inteligencia' => 4], 'Un homenaje a tus primeras sesiones y cookies.', 'robe', 15);
         $add('compilador-origen', 'Compilador del origen', 'arma', 'legendario', 700, ['dano' => 16, 'magia' => 16, 'inteligencia' => 4], 'Reliquia única del proyecto final. Tu conocimiento abre su sello.', 'sword', 20);
+
         return $items;
     }
 
-    public static function vacio(): array { return ['arma' => null, 'armadura' => null, 'hechizos' => [], 'pociones' => []]; }
+    public static function vacio(): array
+    {
+        return ['arma' => null, 'armadura' => null, 'hechizos' => [], 'pociones' => []];
+    }
 
     /** Cada diez niveles completos abre un espacio adicional para hechizos. */
     public static function limiteHechizos(int $nivel): int
@@ -81,24 +86,43 @@ class AventuraCatalogo
         $bonus = array_fill_keys(self::STATS, 0);
         $usar = function ($id, $tipo, $cantidad = 1) use ($items, $completados, &$costo, &$bonus) {
             $item = $items[$id] ?? null;
-            if (!$item || $item['tipo'] !== $tipo) throw ValidationException::withMessages(['equipo' => 'Ese objeto no pertenece a esta categoría.']);
-            if ($item['desafio'] && !in_array($item['desafio'], $completados, true)) throw ValidationException::withMessages(['equipo' => 'Completa el desafío ' . $item['desafio'] . ' para desbloquear ' . $item['nombre'] . '.']);
+            if (! $item || $item['tipo'] !== $tipo) {
+                throw ValidationException::withMessages(['equipo' => 'Ese objeto no pertenece a esta categoría.']);
+            }
+            if ($item['desafio'] && ! in_array($item['desafio'], $completados, true)) {
+                throw ValidationException::withMessages(['equipo' => 'Completa el desafío '.$item['desafio'].' para desbloquear '.$item['nombre'].'.']);
+            }
             $costo += $item['precio'] * $cantidad;
-            foreach ($item['bonus'] as $stat => $valor) $bonus[$stat] += $valor;
+            foreach ($item['bonus'] as $stat => $valor) {
+                $bonus[$stat] += $valor;
+            }
         };
-        foreach (['arma', 'armadura'] as $slot) if ($equipo[$slot] !== null) $usar($equipo[$slot], $slot);
+        foreach (['arma', 'armadura'] as $slot) {
+            if ($equipo[$slot] !== null) {
+                $usar($equipo[$slot], $slot);
+            }
+        }
         $limiteHechizos = self::limiteHechizos($nivel);
-        if (count($equipo['hechizos']) > $limiteHechizos || count(array_unique($equipo['hechizos'])) !== count($equipo['hechizos'])) throw ValidationException::withMessages(['equipo' => 'Puedes equipar hasta '.$limiteHechizos.' hechizos diferentes con tu nivel actual.']);
-        foreach ($equipo['hechizos'] as $id) $usar($id, 'hechizo');
+        if (count($equipo['hechizos']) > $limiteHechizos || count(array_unique($equipo['hechizos'])) !== count($equipo['hechizos'])) {
+            throw ValidationException::withMessages(['equipo' => 'Puedes equipar hasta '.$limiteHechizos.' hechizos diferentes con tu nivel actual.']);
+        }
+        foreach ($equipo['hechizos'] as $id) {
+            $usar($id, 'hechizo');
+        }
         $cantidad = 0;
         $vistos = [];
         foreach ($equipo['pociones'] as $pocion) {
-            if (in_array($pocion['id'], $vistos, true) || !is_int($pocion['cantidad']) || $pocion['cantidad'] < 1 || $pocion['cantidad'] > 20) throw ValidationException::withMessages(['equipo' => 'Revisa las cantidades de pociones.']);
+            if (in_array($pocion['id'], $vistos, true) || ! is_int($pocion['cantidad']) || $pocion['cantidad'] < 1 || $pocion['cantidad'] > 20) {
+                throw ValidationException::withMessages(['equipo' => 'Revisa las cantidades de pociones.']);
+            }
             $vistos[] = $pocion['id'];
             $cantidad += $pocion['cantidad'];
             $usar($pocion['id'], 'pocion', $pocion['cantidad']);
         }
-        if ($cantidad > 20) throw ValidationException::withMessages(['equipo' => 'La mochila admite hasta 20 pociones en total.']);
+        if ($cantidad > 20) {
+            throw ValidationException::withMessages(['equipo' => 'La mochila admite hasta 20 pociones en total.']);
+        }
+
         return ['costo' => $costo, 'bonus' => $bonus];
     }
 }

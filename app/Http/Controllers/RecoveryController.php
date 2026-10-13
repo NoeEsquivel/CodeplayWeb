@@ -12,9 +12,7 @@ use Illuminate\Validation\Rules\Password;
 
 class RecoveryController extends Controller
 {
-    public function __construct(private readonly SecurityMailService $mail)
-    {
-    }
+    public function __construct(private readonly SecurityMailService $mail) {}
 
     public function showRequestForm()
     {
@@ -72,7 +70,7 @@ class RecoveryController extends Controller
 
     public function showResetForm(string $token)
     {
-        if (!$this->validToken($token)) {
+        if (! $this->validToken($token)) {
             return view('recovery.invalid');
         }
 
@@ -87,7 +85,7 @@ class RecoveryController extends Controller
         ]);
 
         $registro = $this->validToken($datos['token']);
-        if (!$registro) {
+        if (! $registro) {
             return view('recovery.invalid');
         }
 

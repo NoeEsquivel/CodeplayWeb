@@ -17,7 +17,10 @@ class Clase extends Model
 
     protected $casts = ['colegio_id' => 'integer', 'activa' => 'boolean'];
 
-    public function colegio(): BelongsTo { return $this->belongsTo(Colegio::class); }
+    public function colegio(): BelongsTo
+    {
+        return $this->belongsTo(Colegio::class);
+    }
 
     public function profesores(): BelongsToMany
     {
@@ -38,7 +41,7 @@ class Clase extends Model
 
     public function agregarProfesor(Usuario $usuario): void
     {
-        if (!$usuario->esProfesor()) {
+        if (! $usuario->esProfesor()) {
             throw new \InvalidArgumentException('Solo un usuario Profesor puede asignarse como profesor de una clase.');
         }
         $this->validarMismoColegio($usuario);
@@ -47,19 +50,26 @@ class Clase extends Model
 
     public function agregarAlumno(Usuario $usuario): void
     {
-        if (!$usuario->esAlumno()) {
+        if (! $usuario->esAlumno()) {
             throw new \InvalidArgumentException('Solo un usuario Alumno puede asignarse como alumno de una clase.');
         }
         $this->validarMismoColegio($usuario);
         $this->alumnos()->syncWithoutDetaching([$usuario->id]);
     }
 
-    public function quitarProfesor(Usuario $usuario): void { $this->profesores()->detach($usuario->id); }
-    public function quitarAlumno(Usuario $usuario): void { $this->alumnos()->detach($usuario->id); }
+    public function quitarProfesor(Usuario $usuario): void
+    {
+        $this->profesores()->detach($usuario->id);
+    }
+
+    public function quitarAlumno(Usuario $usuario): void
+    {
+        $this->alumnos()->detach($usuario->id);
+    }
 
     private function validarMismoColegio(Usuario $usuario): void
     {
-        if (!$usuario->colegio_id || (int) $usuario->colegio_id !== (int) $this->colegio_id) {
+        if (! $usuario->colegio_id || (int) $usuario->colegio_id !== (int) $this->colegio_id) {
             throw new \InvalidArgumentException('El usuario y la clase deben pertenecer al mismo colegio.');
         }
     }

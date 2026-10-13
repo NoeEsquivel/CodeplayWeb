@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 return new class extends Migration
 {
     private const NOMBRE_COLEGIO = 'INED MARIA LUISA';
+
     private const CODIGO_COLEGIO = 'INED-MARIA-LUISA';
 
     public function up(): void
@@ -52,7 +53,7 @@ return new class extends Migration
             ->where('codigo', self::CODIGO_COLEGIO)
             ->value('id');
 
-        if (!$colegioId) {
+        if (! $colegioId) {
             return;
         }
 

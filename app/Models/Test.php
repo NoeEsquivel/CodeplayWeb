@@ -13,7 +13,7 @@ class Test extends Model
 
     protected $fillable = [
         'documentacion_id',
-        'titulo'
+        'titulo',
     ];
 
     // Relaciones

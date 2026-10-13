@@ -7,9 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class LiveTestCleanupService
 {
-    public function __construct(private readonly TestHistoryService $history)
-    {
-    }
+    public function __construct(private readonly TestHistoryService $history) {}
 
     public function clean(int $inactiveHours = 24, int $retentionDays = 365): array
     {
@@ -34,13 +32,17 @@ class LiveTestCleanupService
                 foreach ($rows as $row) {
                     $didClose = DB::transaction(function () use ($row, $inactiveBefore) {
                         $session = TestSesion::lockForUpdate()->find($row->id);
-                        if (!$session || !in_array($session->estado, ['configuracion', 'espera', 'activa', 'pausada'], true)) return false;
+                        if (! $session || ! in_array($session->estado, ['configuracion', 'espera', 'activa', 'pausada'], true)) {
+                            return false;
+                        }
 
                         $expiredWaiting = in_array($session->estado, ['configuracion', 'espera'], true)
                             && $session->disponible_hasta && $session->disponible_hasta->isPast();
                         $recentParticipant = $session->participantes()
                             ->where('ultima_actividad_at', '>=', $inactiveBefore)->exists();
-                        if (!$expiredWaiting && ($session->updated_at->greaterThanOrEqualTo($inactiveBefore) || $recentParticipant)) return false;
+                        if (! $expiredWaiting && ($session->updated_at->greaterThanOrEqualTo($inactiveBefore) || $recentParticipant)) {
+                            return false;
+                        }
 
                         $session->preguntas()->whereIn('estado', ['pendiente', 'abierta', 'resultado'])
                             ->update(['estado' => 'cerrada', 'cerrada_at' => now()]);
@@ -51,9 +53,12 @@ class LiveTestCleanupService
                             'estado' => 'cerrada', 'cerrada_at' => now(), 'version' => $session->version + 1,
                         ])->save();
                         $this->history->snapshot($session->fresh());
+
                         return true;
                     });
-                    if ($didClose) $closed++;
+                    if ($didClose) {
+                        $closed++;
+                    }
                 }
             });
 
@@ -71,7 +76,9 @@ class LiveTestCleanupService
                 foreach ($rows as $row) {
                     DB::transaction(function () use ($row, &$redacted) {
                         $session = TestSesion::lockForUpdate()->find($row->id);
-                        if (!$session || (!in_array($session->estado, ['finalizada', 'cerrada'], true))) return;
+                        if (! $session || (! in_array($session->estado, ['finalizada', 'cerrada'], true))) {
+                            return;
+                        }
                         $session->participantes()->get()->each(function ($participant) {
                             $participant->forceFill([
                                 'reconexion_token_hash' => hash('sha256', 'caducado:'.$participant->id.':'.bin2hex(random_bytes(16))),

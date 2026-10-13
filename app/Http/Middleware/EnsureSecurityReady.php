@@ -14,23 +14,23 @@ class EnsureSecurityReady
     {
         $usuario = $request->attributes->get('usuario_actual');
 
-        if (!$usuario instanceof Usuario || !$usuario->requiereCorreoVerificado()
-            || !Schema::hasColumn('usuarios', 'email_verified_at')) {
+        if (! $usuario instanceof Usuario || ! $usuario->requiereCorreoVerificado()
+            || ! Schema::hasColumn('usuarios', 'email_verified_at')) {
             return $next($request);
         }
 
-        if (!$usuario->email) {
+        if (! $usuario->email) {
             return $this->block($request, 'Debes registrar tu correo electrónico para continuar.', 'EMAIL_REQUIRED', 'security.email.form');
         }
 
-        if (!$usuario->email_verified_at) {
+        if (! $usuario->email_verified_at) {
             return $this->block($request, 'Debes verificar tu correo electrónico para continuar.', 'EMAIL_VERIFICATION_REQUIRED', 'security.email.pending');
         }
 
         if ($usuario->esMaster()) {
             $dobleFactor = $usuario->twoFactorAuthentication;
 
-            if (!$dobleFactor || !$dobleFactor->confirmed_at) {
+            if (! $dobleFactor || ! $dobleFactor->confirmed_at) {
                 return $this->block($request, 'Debes configurar el segundo factor de seguridad.', 'TWO_FACTOR_SETUP_REQUIRED', 'security.2fa.setup');
             }
 

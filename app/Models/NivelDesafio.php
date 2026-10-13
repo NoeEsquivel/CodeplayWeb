@@ -15,7 +15,7 @@ class NivelDesafio extends Model
         'numero',
         'descripcion',
         'dificultad',
-        'puntos_otorgados'
+        'puntos_otorgados',
     ];
 
     protected $attributes = [

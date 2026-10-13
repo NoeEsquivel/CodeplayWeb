@@ -8,15 +8,17 @@ use App\Services\ExcelExportService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
-use Illuminate\Http\Response;
 
 class TeacherPanelController extends Controller
 {
     private const DOCUMENTATION_TOTAL = 22;
+
     private const ADVENTURE_TOTAL = 50;
+
     private const MODULES = ['todos', 'documentacion', 'tutoriales', 'desafios', 'aventura'];
 
     public function classes(Request $request): JsonResponse
@@ -70,6 +72,7 @@ class TeacherPanelController extends Controller
             'Cache-Control' => 'no-store, no-cache, must-revalidate',
         ]);
     }
+
     public function assignStudent(Request $request, Clase $clase, Usuario $usuario): JsonResponse
     {
         $teacher = $this->teacher($request);
@@ -80,6 +83,7 @@ class TeacherPanelController extends Controller
         abort_unless($alreadyVisible, 403, 'Solo puedes asignar alumnos ya vinculados a una de tus clases.');
 
         $clase->agregarAlumno($usuario);
+
         return response()->json(['success' => true, 'message' => 'Alumno asignado a la clase.']);
     }
 
@@ -115,7 +119,7 @@ class TeacherPanelController extends Controller
         }
 
         $students = $this->studentsQuery($teacher, $filters['clase_id']);
-        if ($filters['alumno_id'] && !(clone $students)->whereKey($filters['alumno_id'])->exists()) {
+        if ($filters['alumno_id'] && ! (clone $students)->whereKey($filters['alumno_id'])->exists()) {
             abort(403, 'No tienes acceso al progreso de este alumno.');
         }
 
@@ -125,7 +129,9 @@ class TeacherPanelController extends Controller
     private function reportRows(Usuario $teacher, array $filters): array
     {
         $students = $this->studentsQuery($teacher, $filters['clase_id']);
-        if ($filters['alumno_id']) $students->whereKey($filters['alumno_id']);
+        if ($filters['alumno_id']) {
+            $students->whereKey($filters['alumno_id']);
+        }
         if ($filters['buscar'] !== '') {
             $search = $filters['buscar'];
             $students->where(function (Builder $query) use ($search) {
@@ -165,7 +171,9 @@ class TeacherPanelController extends Controller
             ->where('colegio_id', $teacher->colegio_id)
             ->whereHas('clasesComoAlumno', function ($q) use ($classIds, $classId) {
                 $q->whereIn('clases.id', $classIds);
-                if ($classId) $q->where('clases.id', $classId);
+                if ($classId) {
+                    $q->where('clases.id', $classId);
+                }
             });
     }
 
@@ -190,7 +198,9 @@ class TeacherPanelController extends Controller
             ? (int) (DB::table('aventura_expediciones')->where('usuario_id', $student->id)->max('escenario') ?? 0) : 0;
         $victories = Schema::hasTable('aventura_expediciones')
             ? DB::table('aventura_expediciones')->where('usuario_id', $student->id)->where('estado', 'victoria')->count() : 0;
-        if ($victories > 0) $adventureScene = self::ADVENTURE_TOTAL;
+        if ($victories > 0) {
+            $adventureScene = self::ADVENTURE_TOTAL;
+        }
 
         return [
             'documentacion' => $this->progress($documentation, self::DOCUMENTATION_TOTAL, $documentation.' documentos consultados'),
@@ -203,6 +213,7 @@ class TeacherPanelController extends Controller
     private function progress(int $completed, int $total, string $detail): array
     {
         $completed = max(0, min($completed, max($total, $completed)));
+
         return [
             'completados' => $completed,
             'total' => $total,
@@ -217,10 +228,15 @@ class TeacherPanelController extends Controller
         foreach (['documentacion', 'tutoriales', 'desafios', 'aventura'] as $module) {
             $values = [];
             foreach ($rows as $row) {
-                if (isset($row['modulos'][$module])) $values[] = $row['modulos'][$module]['porcentaje'];
+                if (isset($row['modulos'][$module])) {
+                    $values[] = $row['modulos'][$module]['porcentaje'];
+                }
             }
-            if ($values !== []) $summary['promedios'][$module] = round(array_sum($values) / count($values), 1);
+            if ($values !== []) {
+                $summary['promedios'][$module] = round(array_sum($values) / count($values), 1);
+            }
         }
+
         return $summary;
     }
 
@@ -229,6 +245,7 @@ class TeacherPanelController extends Controller
         $teacher = $request->attributes->get('usuario_actual');
         abort_unless($teacher instanceof Usuario && $teacher->esProfesor(), 403);
         abort_unless($teacher->colegio_id, 422, 'Tu cuenta no tiene un colegio asignado.');
+
         return $teacher;
     }
 
@@ -237,6 +254,4 @@ class TeacherPanelController extends Controller
         abort_unless($class->profesores()->whereKey($teacher->id)->exists()
             && (int) $class->colegio_id === (int) $teacher->colegio_id, 404);
     }
-
-
 }

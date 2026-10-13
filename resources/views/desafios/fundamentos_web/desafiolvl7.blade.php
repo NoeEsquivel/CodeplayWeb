@@ -30,7 +30,7 @@
             --accent-color: #00ff9d;
             --challenge-color: #FF5722;
         }
-        
+
         body {
             font-family: 'Roboto', sans-serif;
             background: url('{{ asset("Imagenes/Pantalla_Inicio.jpg") }}') no-repeat center center fixed;
@@ -39,7 +39,7 @@
             min-height: 100vh;
             position: relative;
         }
-        
+
         body::after {
             content: '';
             position: absolute;
@@ -50,12 +50,12 @@
             background-color: rgba(0, 0, 0, 0.6);
             z-index: -1;
         }
-        
+
         .navbar-custom {
             background: rgba(0, 0, 0, 0.8) !important;
             border-bottom: 3px solid var(--accent-color);
         }
-        
+
         .game-title {
             font-family: 'Press Start 2P', cursive;
             text-shadow: 3px 3px 0 #000;
@@ -87,12 +87,12 @@
             transition: all 0.3s;
             color: white !important;
         }
-        
+
         .btn-home:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: scale(1.05);
         }
-        
+
         .challenge-container {
             background: rgba(0, 0, 0, 0.7);
             border-radius: 15px;
@@ -100,32 +100,32 @@
             margin-bottom: 2rem;
             border-left: 5px solid var(--challenge-color);
         }
-        
+
         .challenge-header {
             border-bottom: 2px solid var(--challenge-color);
             padding-bottom: 1rem;
             margin-bottom: 2rem;
         }
-        
+
         .challenge-title {
             font-family: 'Press Start 2P', cursive;
             color: var(--accent-color);
             font-size: 1.5rem;
         }
-        
+
         .badge-level {
             background-color: var(--challenge-color);
             font-size: 0.9rem;
             padding: 0.35rem 0.75rem;
         }
-        
+
         .editor-container {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
             margin-bottom: 2rem;
         }
-        
+
         .code-editor, .result-panel {
             flex: 1;
             min-width: 300px;
@@ -133,14 +133,14 @@
             border-radius: 10px;
             overflow: hidden;
         }
-        
+
         .CodeMirror {
             height: 100% !important;
             font-size: 14px;
             border: 3px solid var(--accent-color);
             border-radius: 10px;
         }
-        
+
         .result-panel {
             background: white;
             border: 3px solid var(--accent-color);
@@ -149,7 +149,7 @@
             color: black;
             overflow-y: auto;
         }
-        
+
         .btn-run, .btn-submit {
             border-radius: 50px;
             padding: 0.75rem 2rem;
@@ -158,30 +158,30 @@
             margin-top: 1rem;
             font-weight: bold;
         }
-        
+
         .btn-run {
             background: #4CAF50;
             border: none;
             color: white;
         }
-        
+
         .btn-run:hover {
             background: #3e8e41;
             transform: scale(1.05);
         }
-        
+
         .btn-submit {
             background: var(--accent-color);
             border: none;
             color: #000;
         }
-        
+
         .btn-submit:hover {
             background: #00e68a;
             transform: scale(1.05);
             box-shadow: 0 5px 15px rgba(0, 255, 157, 0.4);
         }
-        
+
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -197,36 +197,36 @@
             pointer-events: none;
             transition: opacity 0.3s;
         }
-        
+
         .loading-content {
             text-align: center;
             color: var(--accent-color);
         }
-        
+
         .spinner-custom {
             width: 5rem;
             height: 5rem;
             border-width: 6px;
         }
-        
+
         .section-title {
             color: var(--accent-color);
             border-left: 4px solid var(--accent-color);
             padding-left: 1rem;
             margin: 1.5rem 0 1rem;
         }
-        
+
         .objective-list {
             list-style-type: none;
             padding-left: 0;
         }
-        
+
         .objective-list li {
             padding: 0.5rem 0;
             padding-left: 2rem;
             position: relative;
         }
-        
+
         .objective-list li::before {
             content: '✓';
             color: var(--accent-color);
@@ -234,7 +234,7 @@
             left: 0;
             font-weight: bold;
         }
-        
+
         .hint-box {
             background: rgba(0, 0, 0, 0.5);
             border-left: 4px solid #FFC107;
@@ -242,7 +242,7 @@
             margin: 1rem 0;
             border-radius: 0 5px 5px 0;
         }
-        
+
         .hint-title {
             color: #FFC107;
             font-weight: bold;
@@ -294,10 +294,10 @@
                 </a>
                 <img src="{{ asset('images/local/code-icon-48.png') }}" alt="Logo" width="40" height="40">
             </div>
-            
+
             <!-- Título Centrado -->
             <span class="game-title position-absolute start-50 translate-middle-x">CODEPLAY</span>
-            
+
             <!-- Usuario derecha -->
             <div class="player-name-display">
                 <i class="fas fa-user me-2"></i>
@@ -320,18 +320,18 @@
                         </div>
                         <p class="text-white-50 mt-2"><i class="fas fa-coins me-2"></i>Recompensa: 100 puntos</p>
                     </div>
-                    
+
                     <!-- Descripción del Desafío -->
                     <h3 class="section-title">Objetivo</h3>
                     <p>Organiza cuatro bloques como una pequeña maqueta de página usando CSS Grid. Aquí la meta es entender que Grid trabaja con filas, columnas y espacios entre piezas.</p>
-                    
+
                     <ul class="objective-list">
                         <li>Usa <code>display: grid</code> en el contenedor principal</li>
                         <li>Crea columnas con <code>grid-template-columns</code></li>
                         <li>Agrega <code>gap</code> para separar los bloques</li>
                         <li>Mejora la vista con <code>padding</code>, <code>background-color</code> y <code>border-radius</code></li>
                     </ul>
-                    
+
                     <div class="hint-box">
                         <div class="hint-title"><i class="fas fa-image me-2"></i>Referencia visual</div>
                         <p>Observa la imagen como guía. No tienes que copiarla perfecta; busca que tu resultado demuestre el mismo concepto.</p>
@@ -339,18 +339,18 @@
                             <img src="{{ asset('Imagenes/desafio7_grid_referencia.svg') }}" alt="Referencia visual del desafío 7" class="img-fluid rounded" style="max-height: 360px; border: 2px solid var(--accent-color); box-shadow: 0 0 18px rgba(0, 255, 136, 0.25);">
                         </div>
                     </div>
-                    
+
                     <div class="hint-box">
                         <div class="hint-title"><i class="fas fa-lightbulb me-2"></i>Pista</div>
                         <p class="mb-0">Grid también se aplica al contenedor padre. Imagina que dibujas una mesa con columnas: cada bloque cae en una celda de esa mesa.</p>
                     </div>
-                    
+
                     <!-- Editor y Resultado -->
                     <h3 class="section-title">Tu Código</h3>
                     <div class="editor-container">
                         <div class="code-editor">
-                            <textarea id="html-code"><!DOCTYPE html>
-<html>
+                            <textarea id="html-code" aria-label="Editor de código"><!DOCTYPE html>
+<html lang="es">
 <head>
     <title>CSS Grid Layout</title>
     <style>
@@ -379,7 +379,7 @@
                             <!-- Aquí se mostrará el resultado -->
                         </div>
                     </div>
-                    
+
                     <!-- Botones de Acción -->
                     <div class="text-center">
                         <button class="btn btn-run me-3" id="runBtn">
@@ -389,7 +389,7 @@
                             <i class="fas fa-check-circle me-2"></i>Enviar Solución
                         </button>
                     </div>
-                    
+
                     <!-- Mensaje de Éxito (oculto inicialmente) -->
                     <div class="alert alert-success mt-3 text-center animate__animated animate__fadeIn" id="successMessage" style="display: none;">
                         <h4><i class="fas fa-check-circle me-2"></i>¡Desafío Completado!</h4>
@@ -412,7 +412,7 @@
 
     <!-- Bootstrap JS Bundle + Popper -->
     <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
-    
+
     <script>
         // Inicializar el editor de código
         const editor = CodeMirror.fromTextArea(document.getElementById('html-code'), {
@@ -424,15 +424,15 @@
             lineWrapping: true,
             autoCloseTags: true
         });
-        
+
         // Función para ejecutar el código y mostrar el resultado
         function runCode() {
             const code = editor.getValue();
             const resultFrame = document.getElementById('result');
-            
+
             // Limpiar el resultado anterior
             resultFrame.innerHTML = '';
-            
+
             // Crear un iframe para mostrar el resultado de forma segura
             const iframe = document.createElement('iframe');
             iframe.style.width = '100%';
@@ -448,7 +448,7 @@
         function mostrarNotificacion(titulo, mensaje, tipo = 'info') {
             const notificacion = document.createElement('div');
             notificacion.className = `custom-notification notification-${tipo}`;
-            
+
             notificacion.innerHTML = `
                 <div style="display: flex; align-items: flex-start; gap: 15px;">
                     <div style="font-size: 1.8rem;">
@@ -555,10 +555,10 @@ async function checkChallenge() {
             if (data.success) {
                 lanzarConfeti();
                 const successMessage = document.getElementById('successMessage');
-                const puntosMsg = data.completado_primera_vez ? 
+                const puntosMsg = data.completado_primera_vez ?
                     `¡Primera vez completado! Has ganado ${data.puntos_otorgados} puntos.` :
                     `¡Desafío recompletado! Has ganado ${data.puntos_otorgados} puntos.`;
-                
+
                 successMessage.innerHTML = `
                     <h4><i class="fas fa-check-circle me-2"></i>¡Desafío Completado!</h4>
                     <p class="mb-0">${puntosMsg} Puntos totales: ${data.puntos_totales}</p>
@@ -618,18 +618,18 @@ async function checkChallenge() {
         // Mostrar advertencia si ya completó el desafío
         window.addEventListener('load', function() {
             const infoRecompensa = @json($infoRecompensa);
-            
+
             if (infoRecompensa.ya_completado) {
                 let mensaje = '';
                 let tipo = 'warning';
-                
+
                 if (!infoRecompensa.puede_reclamar) {
                     mensaje = `Ya completaste este desafío. Puedes practicar nuevamente, pero la próxima recompensa estará disponible ${infoRecompensa.tiempo_restante}.`;
                     tipo = 'info';
                 } else {
                     mensaje = `Ya completaste este desafío. Puedes practicar nuevamente y ganar ${infoRecompensa.puntos_otorgar} puntos (mitad de la recompensa original).`;
                 }
-                
+
                 mostrarNotificacion('Desafío Ya Completado', mensaje, tipo);
             }
         });
@@ -637,18 +637,18 @@ async function checkChallenge() {
         // Event Listeners
         document.getElementById('runBtn').addEventListener('click', runCode);
         document.getElementById('submitBtn').addEventListener('click', checkChallenge);
-        
+
         // Ejecutar el código al cargar la página para mostrar el ejemplo inicial
         window.addEventListener('load', runCode);
-        
+
         // Función para navegar con animación
         function navigateWithAnimation(url) {
             const overlay = document.getElementById('loadingOverlay');
-            
+
             // Mostrar animación
             overlay.style.opacity = '1';
             overlay.style.pointerEvents = 'auto';
-            
+
             // Redirigir después de 1.5 segundos
             setTimeout(() => {
                 window.location.href = url;

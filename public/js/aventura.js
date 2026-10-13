@@ -251,7 +251,7 @@
             if (response.redirected || !response.headers.get('content-type')?.includes('application/json')) throw new Error('Tu sesión terminó. Vuelve a iniciar sesión.');
             const data = await response.json();
             if (!response.ok) throw new Error(response.status === 409 ? 'La aventura cambió en otra pestaña. Recarga antes de reiniciar.' : Object.values(data.errors || {}).flat()[0] || data.message || 'No se pudo reiniciar. Inténtalo de nuevo.');
-            window.location.assign(data.url);
+            globalThis.location.assign(data.url);
         } catch (error) {
             $('restartError').textContent = error.message;
             $('restartError').hidden = false;
@@ -259,7 +259,7 @@
             button.disabled = false;
         }
     });
-    window.addEventListener('beforeunload', event => { if (changed()) { event.preventDefault(); event.returnValue = ''; } });
+    globalThis.addEventListener('beforeunload', event => { if (changed()) { event.preventDefault(); event.returnValue = ''; } });
     render();
 
 

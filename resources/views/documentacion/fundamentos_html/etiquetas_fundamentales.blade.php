@@ -19,7 +19,7 @@
             --secondary-color: #2575fc;
             --accent-color: #00ff9d;
         }
-        
+
         body {
             font-family: 'Roboto', sans-serif;
             background: url('{{ asset("Imagenes/Pantalla_Inicio.jpg") }}') no-repeat center center fixed;
@@ -29,7 +29,7 @@
             position: relative;
             overflow-x: hidden;
         }
-        
+
         body::after {
             content: '';
             position: absolute;
@@ -40,12 +40,12 @@
             background-color: rgba(0, 0, 0, 0.6);
             z-index: -1;
         }
-        
+
         .navbar-custom {
             background: rgba(0, 0, 0, 0.8) !important;
             border-bottom: 3px solid var(--accent-color);
         }
-        
+
         .player-name-display {
             background: rgba(255, 255, 255, 0.1);
             border: 2px solid white;
@@ -69,7 +69,7 @@
             font-size: 1.5rem;
             margin: 0 auto;
         }
-        
+
         .btn-home, .btn-user {
             background: transparent;
             border: 2px solid white;
@@ -77,12 +77,12 @@
             transition: all 0.3s;
             color: white !important;
         }
-        
+
         .btn-home:hover, .btn-user:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: scale(1.05);
         }
-        
+
         /* Animación de libro abriéndose */
         .book-animation {
             position: fixed;
@@ -97,7 +97,7 @@
             align-items: center;
             flex-direction: column;
         }
-        
+
         .book {
             width: 200px;
             height: 300px;
@@ -106,7 +106,7 @@
             transform: perspective(1000px) rotateY(0deg);
             animation: openBook 2s forwards;
         }
-        
+
         .book-cover {
             position: absolute;
             width: 100%;
@@ -119,7 +119,7 @@
             animation: openCover 2s forwards;
             animation-delay: 0.5s;
         }
-        
+
         .book-content {
             position: absolute;
             width: 95%;
@@ -133,22 +133,22 @@
             animation: fadeInContent 1s forwards;
             animation-delay: 2s;
         }
-        
+
         @keyframes openBook {
             0% { transform: perspective(1000px) rotateY(0deg); }
             100% { transform: perspective(1000px) rotateY(30deg); }
         }
-        
+
         @keyframes openCover {
             0% { transform: rotateY(0deg); }
             100% { transform: rotateY(-160deg); }
         }
-        
+
         @keyframes fadeInContent {
             0% { opacity: 0; }
             100% { opacity: 1; }
         }
-        
+
         /* Estilos del contenido */
         .doc-container {
             background: rgba(0, 0, 0, 0.8);
@@ -158,7 +158,7 @@
             margin-top: 2rem;
             animation: fadeIn 1s;
         }
-        
+
         .doc-image {
             border: 2px solid var(--accent-color);
             border-radius: 10px;
@@ -166,7 +166,7 @@
             box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
             transition: transform 0.3s;
         }
-        
+
         .doc-image:hover {
             transform: scale(1.02);
         }
@@ -177,7 +177,7 @@
             margin-top: -0.5rem;
             margin-bottom: 1.25rem;
         }
-        
+
         .code-block {
             background: #1e1e1e;
             border-radius: 10px;
@@ -186,26 +186,26 @@
             border-left: 4px solid var(--accent-color);
             overflow-x: auto;
         }
-        
+
         .tag {
             color: #569cd6;
         }
-        
+
         .attribute {
             color: #9cdcfe;
         }
-        
+
         .value {
             color: #ce9178;
         }
-        
+
         .btn-success {
             background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
             border: none;
             padding: 10px 25px;
             margin: 0 10px;
         }
-        
+
         .btn-success:hover {
             background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
             transform: translateY(-2px);
@@ -274,15 +274,15 @@
     <div class="test-blocked-modal" id="testBlockedModal">
         <div class="test-blocked-content">
             <div class="emoticon">😴 ⏰ 🚫</div>
-            <h3 class="text-warning mb-3">¡Test No Disponible!</h3>
-            <p class="lead">Solo puedes realizar este Test cada 24 horas, regresa mañana e intentalo de nuevo 😊🎮</p>
-            
+            <h3 class="text-warning mb-3">¡Test no disponible!</h3>
+            <p class="lead">Solo puedes realizar este test cada {{ \App\Services\TestAvailabilityService::COOLDOWN_HOURS }} horas. Podrás intentarlo nuevamente cuando termine el contador. 😊🎮</p>
+
             <div class="countdown-timer" id="countdownTimer">
                 --:--:--
             </div>
-            
+
             <p class="text-muted">Tiempo restante para poder realizar el test nuevamente</p>
-            
+
             <button class="btn btn-success mt-3" onclick="closeTestBlockedModal()">
                 <i class="fas fa-check me-2"></i>Entendido
             </button>
@@ -297,10 +297,10 @@
                 <i class="fas fa-home text-white"></i>
             </a>
             <img src="{{ asset('images/local/code-icon-48.png') }}" alt="Logo" width="40" height="40">
-            
+
             <!-- Título Centrado -->
             <span class="game-title">CODEPLAY</span>
-            
+
             <!-- Nombre del jugador - ACTUALIZADO -->
             <div class="ms-auto">
                 <div class="player-name-display">
@@ -326,12 +326,12 @@
                 <p>Una etiqueta le dice al navegador <em>qué tipo de contenido</em> es cada parte. No es lo mismo un título que un párrafo, ni un recuadro de sección que una palabra destacada. Si usas la etiqueta correcta, la página se entiende mejor, se puede estilizar con CSS y también es más accesible (lectores de pantalla, SEO, etc.).</p>
                 <p>La mayoría de estas etiquetas tienen <strong>apertura y cierre</strong>: <code>&lt;p&gt;texto&lt;/p&gt;</code>. Unas pocas van solas, como <code>&lt;br&gt;</code> y <code>&lt;hr&gt;</code>, porque no envuelven contenido.</p>
             </div>
-            
+
             <div class="col-md-6">
                 <h2 class="mt-3"><i class="fas fa-heading me-2"></i>Encabezados y párrafos</h2>
                 <p>Los encabezados van de <code>&lt;h1&gt;</code> (el más importante) a <code>&lt;h6&gt;</code> (el menos importante). Marcan la jerarquía del documento, como los capítulos de un libro: el <code>h1</code> es el título de la obra y los demás, los apartados.</p>
                 <p>El texto normal se escribe con <code>&lt;p&gt;</code>. Cada párrafo es una idea. No juntes varios temas en un solo <code>p</code> ni uses <code>&lt;br&gt;</code> para “inventar” párrafos: el navegador ya deja espacio entre un <code>p</code> y otro.</p>
-                
+
                 <h4><i class="fas fa-lightbulb me-2"></i>Reglas rápidas:</h4>
                 <ul>
                     <li>Usa <strong>un solo h1</strong> por página, como título principal.</li>
@@ -340,13 +340,13 @@
                     <li>Nunca uses un encabezado solo porque quieres letra grande: para eso está el CSS.</li>
                 </ul>
             </div>
-            
+
             <div class="col-md-6">
                 <img src="{{ asset('Imagenes/html_encabezados.svg') }}"
                      alt="Vista de encabezados h1 a h6 y un párrafo tal como se ven en el navegador"
                      class="img-fluid doc-image">
                 <p class="doc-caption">A la derecha de cada título aparece la etiqueta que lo genera. Observa cómo el tamaño baja de h1 a h6 y cómo el párrafo se lee como texto corrido.</p>
-                
+
                 <div class="code-block">
                     <span class="tag">&lt;h1&gt;</span>Título principal<span class="tag">&lt;/h1&gt;</span><br>
                     <span class="tag">&lt;h2&gt;</span>Subtítulo de sección<span class="tag">&lt;/h2&gt;</span><br>
@@ -435,7 +435,7 @@
                     <span class="tag">&lt;hr&gt;</span>
                 </div>
             </div>
-            
+
             <div class="col-12 mt-4">
                 <h2><i class="fas fa-tags me-2"></i>Resumen de etiquetas</h2>
                 <div class="table-responsive">
@@ -487,7 +487,7 @@
                     </table>
                 </div>
             </div>
-            
+
             <div class="col-12 mt-4">
                 <h2><i class="fas fa-play-circle me-2"></i>Práctica Rápida</h2>
                 <p>Junta todo en una sola página: un contenedor <code>div</code>, título, párrafos, un nombre con <code>span</code>, una lista y un poco de énfasis. Ábrela en el navegador y comprueba que cada etiqueta se vea como en las imágenes de este módulo.</p>
@@ -514,7 +514,7 @@
                     <span class="tag">&lt;/html&gt;</span>
                 </div>
             </div>
-            
+
             <div class="col-12 text-center mt-4">
                 <button class="btn btn-lg btn-success" onclick="navigateWithAnimation('{{ route('alumno.documentacion') }}')">
                     <i class="fas fa-arrow-left me-2"></i>Volver a Documentación
@@ -528,19 +528,19 @@
 
     <!-- Bootstrap JS Bundle + Popper -->
     <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
-    
+
     <script>
         // Ocultar animación y mostrar contenido después de 3 segundos
         setTimeout(() => {
             document.getElementById('bookAnimation').style.display = 'none';
             document.getElementById('docContent').style.display = 'block';
         }, 3000);
-        
+
         // Función para navegar con animación
         function navigateWithAnimation(url) {
             document.getElementById('bookAnimation').style.display = 'flex';
             document.getElementById('docContent').style.display = 'none';
-            
+
             setTimeout(() => {
                 window.location.href = url;
             }, 1500);
@@ -570,7 +570,7 @@
         function showTestBlockedModal(nextAvailableTime) {
             const modal = document.getElementById('testBlockedModal');
             modal.style.display = 'flex';
-            
+
             startCountdown(nextAvailableTime);
         }
 
@@ -578,7 +578,7 @@
         function closeTestBlockedModal() {
             const modal = document.getElementById('testBlockedModal');
             modal.style.display = 'none';
-            
+
             if (countdownInterval) {
                 clearInterval(countdownInterval);
             }
@@ -587,34 +587,34 @@
         // Función para iniciar el temporizador
         function startCountdown(nextAvailableTime) {
             const countdownElement = document.getElementById('countdownTimer');
-            
+
             function updateCountdown() {
                 const now = new Date().getTime();
                 const targetTime = new Date(nextAvailableTime).getTime();
                 const timeLeft = targetTime - now;
-                
+
                 if (timeLeft <= 0) {
                     countdownElement.innerHTML = '00:00:00';
                     clearInterval(countdownInterval);
-                    
+
                     setTimeout(() => {
                         closeTestBlockedModal();
                     }, 1000);
                     return;
                 }
-                
+
                 const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-                
-                const formattedTime = 
+
+                const formattedTime =
                     String(hours).padStart(2, '0') + ':' +
                     String(minutes).padStart(2, '0') + ':' +
                     String(seconds).padStart(2, '0');
-                
+
                 countdownElement.innerHTML = formattedTime;
             }
-            
+
             updateCountdown();
             countdownInterval = setInterval(updateCountdown, 1000);
         }

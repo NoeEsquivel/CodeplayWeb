@@ -8,12 +8,13 @@ use Illuminate\Support\Facades\DB;
 
 class TestAvailabilityService
 {
-    public const COOLDOWN_HOURS = 24;
+    public const COOLDOWN_HOURS = 23;
 
     public function testForModule(string $module): object
     {
         $test = DB::table('tests')->where('modulo', $module)->first();
         abort_unless($test, 404, 'Test no encontrado');
+
         return $test;
     }
 
@@ -48,6 +49,7 @@ class TestAvailabilityService
 
         return $tests->map(function ($test) use ($stats) {
             $result = $stats->get($test->id);
+
             return (array) $test + [
                 'intentos' => (int) ($result->intentos ?? 0),
                 'mejor_puntaje' => isset($result->mejor_puntaje) ? (float) $result->mejor_puntaje : null,
@@ -58,7 +60,7 @@ class TestAvailabilityService
 
     private function fromLastAttempt(?string $lastAttempt): array
     {
-        if (!$lastAttempt) {
+        if (! $lastAttempt) {
             return [
                 'disponible' => true,
                 'ultimo_intento' => null,

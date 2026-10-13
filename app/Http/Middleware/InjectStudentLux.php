@@ -14,13 +14,13 @@ class InjectStudentLux
     {
         $response = $next($request);
 
-        if (!$request->isMethod('GET') || $response->getStatusCode() !== 200
-            || !str_contains(strtolower((string) $response->headers->get('Content-Type')), 'text/html')) {
+        if (! $request->isMethod('GET') || $response->getStatusCode() !== 200
+            || ! str_contains(strtolower((string) $response->headers->get('Content-Type')), 'text/html')) {
             return $response;
         }
 
         $usuario = $request->attributes->get('usuario_actual');
-        if (!$usuario instanceof Usuario || !$usuario->esAlumno()) {
+        if (! $usuario instanceof Usuario || ! $usuario->esAlumno()) {
             return $response;
         }
 
@@ -32,7 +32,7 @@ class InjectStudentLux
 
         $routeName = (string) $request->route()?->getName();
         $welcomePending = $routeName === 'inicio.alumno'
-            && !DB::table('usuarios')->where('id', $usuario->id)
+            && ! DB::table('usuarios')->where('id', $usuario->id)
                 ->whereNotNull('lux_bienvenida_vista_at')->exists();
 
         $style = '<link rel="stylesheet" href="'.e(asset('css/student-lux.css')).'">';
@@ -42,7 +42,9 @@ class InjectStudentLux
             $bodyEnd = strripos($html, '</body>');
         }
         $widget = view('partials.student-lux', compact('routeName', 'welcomePending'))->render();
-        if ($headEnd === false) $widget = $style.$widget;
+        if ($headEnd === false) {
+            $widget = $style.$widget;
+        }
         $response->setContent(substr_replace($html, $widget, $bodyEnd, 0));
         $response->headers->remove('Content-Length');
 

@@ -16,7 +16,7 @@ class StudentProgressDashboardTest extends TestCase
     {
         parent::setUp();
 
-        if (!in_array('sqlite', \PDO::getAvailableDrivers(), true)) {
+        if (! in_array('sqlite', \PDO::getAvailableDrivers(), true)) {
             $this->markTestSkipped('Se requiere pdo_sqlite.');
         }
 
@@ -37,7 +37,7 @@ class StudentProgressDashboardTest extends TestCase
         Carbon::setTestNow('2026-09-26 12:00:00');
         $student = $this->student('Alumno Dashboard', 500, 120);
         $other = $this->student('Alumno Externo Dashboard', 9876, 0);
-        [$blocked, $ready, $new] = $this->testsCatalog();
+        [$blocked, $ready, $new] = $this->createTestCatalog();
 
         DB::table('progreso_documentacion')->insert([
             'usuario_id' => $student->id, 'documento' => 'html1', 'visto_at' => now(),
@@ -55,6 +55,7 @@ class StudentProgressDashboardTest extends TestCase
             ->assertSee('Tu recorrido en CODEPLAY')
             ->assertSee('Documentación revisada')
             ->assertSee('Documentación pendiente de revisar')
+            ->assertSee('23 horas después de cada intento.')
             ->assertSee('Podrás ganar puntos en', false)
             ->assertSee(route('test.show', 'css1'), false)
             ->assertSee(route('test.show', 'js1'), false)
@@ -65,29 +66,33 @@ class StudentProgressDashboardTest extends TestCase
         $this->assertStringNotContainsString('href="'.route('test.show', 'html1').'"', $html);
     }
 
-    public function test_test_entry_and_availability_use_the_same_24_hour_rule(): void
+    public function test_test_entry_and_availability_use_the_same_23_hour_rule(): void
     {
         Carbon::setTestNow('2026-09-26 12:00:00');
         $student = $this->student('Alumno Espera', 0, 0);
-        [$testId] = $this->testsCatalog();
+        [$testId] = $this->createTestCatalog();
         DB::table('resultados_test')->insert([
             'usuario_id' => $student->id, 'test_id' => $testId, 'puntaje' => 50,
-            'fecha' => now(), 'created_at' => now()->subHours(23), 'updated_at' => now(),
+            'fecha' => now(), 'created_at' => now()->subHours(22)->subMinutes(59), 'updated_at' => now(),
         ]);
 
         $this->withSession($this->sessionFor($student))
             ->getJson('/test/html1/check')
             ->assertOk()
             ->assertJsonPath('canTakeTest', false);
-        $this->get('/test/html1')->assertRedirect(route('alumno.documentacion'));
+        $this->get('/test/html1')
+            ->assertRedirect(route('alumno.documentacion'))
+            ->assertSessionHas('error', 'Este test podrá realizarse nuevamente 23 horas después del último intento. Consulta Mi Progreso para ver el tiempo restante.');
 
-        DB::table('resultados_test')->where('usuario_id', $student->id)->update(['created_at' => now()->subHours(25)]);
+        DB::table('resultados_test')->where('usuario_id', $student->id)->update(['created_at' => now()->subHours(23)]);
 
         $this->getJson('/test/html1/check')
             ->assertOk()
             ->assertJsonPath('canTakeTest', true)
             ->assertJsonPath('nextAvailableTime', null);
-        $this->get('/test/html1')->assertOk();
+        $this->get('/test/html1')
+            ->assertOk()
+            ->assertSee('una vez cada 23 horas');
     }
 
     public function test_main_student_menu_opens_the_progress_dashboard(): void
@@ -101,7 +106,7 @@ class StudentProgressDashboardTest extends TestCase
             ->assertDontSee('Próximamente: Revisa tus estadísticas y logros');
     }
 
-    private function testsCatalog(): array
+    private function createTestCatalog(): array
     {
         $ids = [];
         foreach ([
@@ -117,6 +122,7 @@ class StudentProgressDashboardTest extends TestCase
                 'created_at' => now(), 'updated_at' => now(),
             ]);
         }
+
         return $ids;
     }
 

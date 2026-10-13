@@ -14,7 +14,7 @@ class Tutorial extends Model
     protected $fillable = [
         'titulo',
         'dificultad',
-        'puntos_otorgados'
+        'puntos_otorgados',
     ];
 
     protected $attributes = [

@@ -14,7 +14,7 @@ class Inventario extends Model
     protected $fillable = [
         'usuario_id',
         'item_id',
-        'cantidad'
+        'cantidad',
     ];
 
     protected $casts = ['cantidad' => 'integer', 'expedicion_id' => 'integer'];

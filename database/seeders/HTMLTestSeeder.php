@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -38,7 +37,7 @@ class HTMLTestSeeder extends Seeder
                 'opcion_b' => 'High Tech Modern Language',
                 'opcion_c' => 'Home Tool Markup Language',
                 'opcion_d' => 'Hyper Transfer Markup Language',
-                'respuesta_correcta' => 'a'
+                'respuesta_correcta' => 'a',
             ],
             [
                 'pregunta' => '¿Cuál es la etiqueta correcta para el encabezado más grande?',
@@ -46,7 +45,7 @@ class HTMLTestSeeder extends Seeder
                 'opcion_b' => '<h6>',
                 'opcion_c' => '<h1>',
                 'opcion_d' => '<head>',
-                'respuesta_correcta' => 'c'
+                'respuesta_correcta' => 'c',
             ],
             [
                 'pregunta' => '¿Qué etiqueta se usa para crear un párrafo?',
@@ -54,7 +53,7 @@ class HTMLTestSeeder extends Seeder
                 'opcion_b' => '<p>',
                 'opcion_c' => '<para>',
                 'opcion_d' => '<text>',
-                'respuesta_correcta' => 'b'
+                'respuesta_correcta' => 'b',
             ],
             [
                 'pregunta' => '¿Dónde se coloca el título de la página web?',
@@ -62,7 +61,7 @@ class HTMLTestSeeder extends Seeder
                 'opcion_b' => 'En la etiqueta <head>',
                 'opcion_c' => 'En la etiqueta <title>',
                 'opcion_d' => 'Tanto b como c son correctas',
-                'respuesta_correcta' => 'd'
+                'respuesta_correcta' => 'd',
             ],
             [
                 'pregunta' => '¿Cuál es la estructura básica de un documento HTML?',
@@ -70,7 +69,7 @@ class HTMLTestSeeder extends Seeder
                 'opcion_b' => '<!DOCTYPE html><html><head><body>',
                 'opcion_c' => '<html><head><body>',
                 'opcion_d' => '<!DOCTYPE html><html><head></head><body></body></html>',
-                'respuesta_correcta' => 'd'
+                'respuesta_correcta' => 'd',
             ],
             [
                 'pregunta' => '¿Qué etiqueta se usa para insertar una imagen?',
@@ -78,7 +77,7 @@ class HTMLTestSeeder extends Seeder
                 'opcion_b' => '<pic>',
                 'opcion_c' => '<img>',
                 'opcion_d' => '<picture>',
-                'respuesta_correcta' => 'c'
+                'respuesta_correcta' => 'c',
             ],
             [
                 'pregunta' => '¿Para qué sirve la etiqueta <div>?',
@@ -86,7 +85,7 @@ class HTMLTestSeeder extends Seeder
                 'opcion_b' => 'Para hacer divisiones matemáticas',
                 'opcion_c' => 'Para crear listas',
                 'opcion_d' => 'Para insertar videos',
-                'respuesta_correcta' => 'a'
+                'respuesta_correcta' => 'a',
             ],
             [
                 'pregunta' => '¿Cuál es la etiqueta correcta para un enlace?',
@@ -94,7 +93,7 @@ class HTMLTestSeeder extends Seeder
                 'opcion_b' => '<a>',
                 'opcion_c' => '<href>',
                 'opcion_d' => '<anchor>',
-                'respuesta_correcta' => 'b'
+                'respuesta_correcta' => 'b',
             ],
             [
                 'pregunta' => '¿Qué significa la etiqueta <!DOCTYPE html>?',
@@ -102,7 +101,7 @@ class HTMLTestSeeder extends Seeder
                 'opcion_b' => 'Es un comentario',
                 'opcion_c' => 'Define la versión de CSS',
                 'opcion_d' => 'Inicia el documento HTML',
-                'respuesta_correcta' => 'a'
+                'respuesta_correcta' => 'a',
             ],
             [
                 'pregunta' => '¿Dónde va el contenido visible de la página web?',
@@ -110,8 +109,8 @@ class HTMLTestSeeder extends Seeder
                 'opcion_b' => 'En la etiqueta <body>',
                 'opcion_c' => 'En la etiqueta <main>',
                 'opcion_d' => 'En la etiqueta <content>',
-                'respuesta_correcta' => 'b'
-            ]
+                'respuesta_correcta' => 'b',
+            ],
         ];
 
         foreach ($preguntas as $pregunta) {

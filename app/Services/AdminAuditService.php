@@ -19,7 +19,7 @@ class AdminAuditService
         array $details = [],
         ?int $collegeId = null,
     ): ?RegistroAdministrativo {
-        if (!Schema::hasTable('registros_administrativos')) {
+        if (! Schema::hasTable('registros_administrativos')) {
             return null;
         }
 

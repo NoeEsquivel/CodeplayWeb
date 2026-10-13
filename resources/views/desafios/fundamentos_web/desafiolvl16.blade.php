@@ -301,8 +301,8 @@
 
             <div class="editor-container">
                 <div class="code-editor">
-                    <textarea id="codeEditor"><!DOCTYPE html>
-<html>
+                    <textarea id="codeEditor" aria-label="Editor de código"><!DOCTYPE html>
+<html lang="es">
 <head>
     <title>Mi Página Web Personal</title>
     <style>
@@ -319,7 +319,7 @@
 </html></textarea>
                 </div>
                 <div class="result-panel">
-                    <iframe id="resultFrame" class="result-iframe" sandbox="allow-scripts allow-modals"></iframe>
+                    <iframe id="resultFrame" class="result-iframe" title="Vista previa de tu página web" sandbox="allow-scripts allow-modals"></iframe>
                 </div>
             </div>
 
@@ -540,7 +540,7 @@
         function updateValidation(showMessage = true) {
             const checks = evaluateCode();
             const grid = document.getElementById('validationGrid');
-            grid.innerHTML = checks.map(check => `
+            grid.innerHTML = checks.map(check = aria-label="Editor de código"> `
                 <div class="validation-item ${check.ok ? 'ok' : 'missing'}">
                     <i class="fas ${check.ok ? 'fa-check-circle' : 'fa-circle-xmark'} me-2"></i>${check.label}
                 </div>

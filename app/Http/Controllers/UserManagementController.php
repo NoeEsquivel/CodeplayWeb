@@ -29,7 +29,9 @@ class UserManagementController extends Controller
     public function indexApi(Request $request, string $rol): JsonResponse
     {
         $actor = $this->actor($request);
-        if (!$this->puedeAdministrarRol($actor, $rol)) return $this->forbidden();
+        if (! $this->puedeAdministrarRol($actor, $rol)) {
+            return $this->forbidden();
+        }
 
         $query = Usuario::query()->with('colegio:id,nombre,codigo,activo')->where('rol', $rol);
         if ($rol === Usuario::ROL_PROFESOR) {
@@ -38,12 +40,16 @@ class UserManagementController extends Controller
             $query->with('clasesComoAlumno:id,nombre,ciclo_escolar,activa');
         }
         if ($actor->esProfesor()) {
-            if (!$actor->colegio_id) return response()->json([]);
+            if (! $actor->colegio_id) {
+                return response()->json([]);
+            }
             $clases = $actor->clasesComoProfesor()->pluck('clases.id');
             $query->where('colegio_id', $actor->colegio_id)
                 ->whereHas('clasesComoAlumno', fn ($q) => $q->whereIn('clases.id', $clases));
         } elseif ($actor->esAdministradorColegio()) {
-            if (!$actor->colegio_id) return response()->json([]);
+            if (! $actor->colegio_id) {
+                return response()->json([]);
+            }
             $query->where('colegio_id', $actor->colegio_id);
         } elseif ($request->filled('colegio_id')) {
             $colegioId = $request->validate(['colegio_id' => ['integer', 'exists:colegios,id']])['colegio_id'];
@@ -54,7 +60,9 @@ class UserManagementController extends Controller
             'id', 'colegio_id', 'nombre', 'nombre_completo', 'email', 'rol', 'cambio_clave_requerido',
             'puntos_totales', 'puntos_usados', 'ultimo_acceso', 'created_at', 'updated_at',
         ];
-        if (Schema::hasColumn('usuarios', 'activo')) $columnas[] = 'activo';
+        if (Schema::hasColumn('usuarios', 'activo')) {
+            $columnas[] = 'activo';
+        }
 
         return response()->json($query->orderBy('nombre')->get($columnas));
     }
@@ -91,7 +99,9 @@ class UserManagementController extends Controller
             'clave' => ['required', 'string', Password::min(8)->letters()->mixedCase()->numbers()],
         ], $this->mensajesValidacion());
 
-        if (!$this->puedeAdministrarRol($actor, $datos['rol'])) return $this->forbidden();
+        if (! $this->puedeAdministrarRol($actor, $datos['rol'])) {
+            return $this->forbidden();
+        }
 
         $colegioId = $actor->esMaster() ? (int) $datos['colegio_id'] : (int) $actor->colegio_id;
         if ($colegioId <= 0) {
@@ -101,7 +111,7 @@ class UserManagementController extends Controller
         }
 
         $colegio = Colegio::findOrFail($colegioId);
-        if (!$colegio->activo) {
+        if (! $colegio->activo) {
             return response()->json([
                 'success' => false, 'message' => 'No se pueden crear usuarios dentro de un colegio desactivado.',
                 'code' => 'COLLEGE_INACTIVE',
@@ -116,20 +126,20 @@ class UserManagementController extends Controller
                 ->where('activa', true)
                 ->whereHas('profesores', fn ($q) => $q->where('usuarios.id', $actor->id))
                 ->first();
-            if (!$claseAsignada) {
+            if (! $claseAsignada) {
                 return response()->json([
                     'success' => false,
                     'code' => 'CLASS_NOT_ALLOWED',
                     'message' => 'Solo puedes asignar alumnos a una de tus clases activas.',
                 ], 422);
             }
-        } elseif (!empty($datos['clase_id'])) {
+        } elseif (! empty($datos['clase_id'])) {
             $claseAsignada = Clase::query()
                 ->whereKey($datos['clase_id'])
                 ->where('colegio_id', $colegioId)
                 ->where('activa', true)
                 ->first();
-            if (!$claseAsignada) {
+            if (! $claseAsignada) {
                 return response()->json([
                     'success' => false,
                     'code' => 'CLASS_NOT_ALLOWED',
@@ -139,8 +149,8 @@ class UserManagementController extends Controller
         }
 
         $profesorAsignado = null;
-        if (!empty($datos['profesor_id'])) {
-            if ($datos['rol'] !== Usuario::ROL_ALUMNO || !$claseAsignada) {
+        if (! empty($datos['profesor_id'])) {
+            if ($datos['rol'] !== Usuario::ROL_ALUMNO || ! $claseAsignada) {
                 return response()->json([
                     'success' => false,
                     'code' => 'TEACHER_CLASS_REQUIRED',
@@ -153,7 +163,7 @@ class UserManagementController extends Controller
                 ->where('rol', Usuario::ROL_PROFESOR)
                 ->when(Schema::hasColumn('usuarios', 'activo'), fn ($query) => $query->where('activo', true))
                 ->first();
-            if (!$profesorAsignado) {
+            if (! $profesorAsignado) {
                 return response()->json([
                     'success' => false,
                     'code' => 'TEACHER_NOT_ALLOWED',
@@ -164,10 +174,12 @@ class UserManagementController extends Controller
 
         $nombreCompleto = $this->normalizarNombre((string) ($datos['nombre_completo'] ?? $datos['nombre']));
         $nombre = $this->normalizarNombre((string) $datos['nombre']);
-        if ($this->nombreExiste($nombre)) return $this->respuestaNombreOcupado($nombre, $nombreCompleto);
-        $asignarClaseGeneral = !($actor->esAdministradorColegio()
+        if ($this->nombreExiste($nombre)) {
+            return $this->respuestaNombreOcupado($nombre, $nombreCompleto);
+        }
+        $asignarClaseGeneral = ! ($actor->esAdministradorColegio()
             && $datos['rol'] === Usuario::ROL_PROFESOR
-            && !$claseAsignada);
+            && ! $claseAsignada);
 
         try {
             $usuario = DB::transaction(function () use ($datos, $nombre, $nombreCompleto, $colegioId, $claseAsignada, $profesorAsignado, $asignarClaseGeneral) {
@@ -176,16 +188,27 @@ class UserManagementController extends Controller
                     'clave' => Hash::make($datos['clave']), 'rol' => $datos['rol'],
                     'cambio_clave_requerido' => true, 'puntos_totales' => 0, 'puntos_usados' => 0,
                 ];
-                if (Schema::hasColumn('usuarios', 'activo')) $atributos['activo'] = true;
+                if (Schema::hasColumn('usuarios', 'activo')) {
+                    $atributos['activo'] = true;
+                }
                 $usuario = Usuario::create($atributos);
-                if ($claseAsignada && $usuario->esProfesor()) $claseAsignada->agregarProfesor($usuario);
-                elseif ($claseAsignada && $usuario->esAlumno()) $claseAsignada->agregarAlumno($usuario);
-                elseif ($asignarClaseGeneral) $this->asignarClaseGeneral($usuario, $colegioId);
-                if ($claseAsignada && $profesorAsignado) $claseAsignada->agregarProfesor($profesorAsignado);
+                if ($claseAsignada && $usuario->esProfesor()) {
+                    $claseAsignada->agregarProfesor($usuario);
+                } elseif ($claseAsignada && $usuario->esAlumno()) {
+                    $claseAsignada->agregarAlumno($usuario);
+                } elseif ($asignarClaseGeneral) {
+                    $this->asignarClaseGeneral($usuario, $colegioId);
+                }
+                if ($claseAsignada && $profesorAsignado) {
+                    $claseAsignada->agregarProfesor($profesorAsignado);
+                }
+
                 return $usuario;
             });
         } catch (QueryException $exception) {
-            if ($this->esConflictoUnico($exception)) return $this->respuestaNombreOcupado($nombre, $nombreCompleto);
+            if ($this->esConflictoUnico($exception)) {
+                return $this->respuestaNombreOcupado($nombre, $nombreCompleto);
+            }
             throw $exception;
         }
 
@@ -206,7 +229,9 @@ class UserManagementController extends Controller
     {
         $actor = $this->actor($request);
         $usuario = Usuario::findOrFail($id);
-        if (!$this->puedeAdministrarUsuario($actor, $usuario)) return $this->forbidden();
+        if (! $this->puedeAdministrarUsuario($actor, $usuario)) {
+            return $this->forbidden();
+        }
 
         if ($request->filled('email')) {
             $request->merge(['email' => mb_strtolower(trim((string) $request->input('email')), 'UTF-8')]);
@@ -262,7 +287,9 @@ class UserManagementController extends Controller
     {
         $actor = $this->actor($request);
         $usuario = Usuario::findOrFail($id);
-        if (!$this->puedeAdministrarUsuario($actor, $usuario)) return $this->forbidden();
+        if (! $this->puedeAdministrarUsuario($actor, $usuario)) {
+            return $this->forbidden();
+        }
 
         $datos = $request->validate([
             'nueva_clave' => ['required', 'string', Password::min(8)->letters()->mixedCase()->numbers()],
@@ -288,7 +315,9 @@ class UserManagementController extends Controller
         if ($usuario->is($actor)) {
             return response()->json(['success' => false, 'message' => 'No puedes desactivar tu propia cuenta.'], 422);
         }
-        if (!$this->puedeAdministrarUsuario($actor, $usuario)) return $this->forbidden();
+        if (! $this->puedeAdministrarUsuario($actor, $usuario)) {
+            return $this->forbidden();
+        }
 
         $datos = $request->validate(['activo' => ['required', 'boolean']]);
         $usuario->activo = (bool) $datos['activo'];
@@ -314,11 +343,13 @@ class UserManagementController extends Controller
         $actor = $this->actor($request);
         abort_unless($actor->esMaster(), 403);
         $usuario = Usuario::with('colegio')->findOrFail($id);
-        if ($usuario->esMaster() || $usuario->is($actor)) return $this->forbidden();
+        if ($usuario->esMaster() || $usuario->is($actor)) {
+            return $this->forbidden();
+        }
 
         $datos = $request->validate(['colegio_id' => ['required', 'integer', 'exists:colegios,id']]);
         $destino = Colegio::findOrFail($datos['colegio_id']);
-        if (!$destino->activo) {
+        if (! $destino->activo) {
             return response()->json([
                 'success' => false, 'code' => 'COLLEGE_INACTIVE',
                 'message' => 'No se puede trasladar un usuario a un colegio desactivado.',
@@ -331,8 +362,12 @@ class UserManagementController extends Controller
         }
 
         DB::transaction(function () use ($usuario, $destino) {
-            if ($usuario->esProfesor()) $usuario->clasesComoProfesor()->detach();
-            if ($usuario->esAlumno()) $usuario->clasesComoAlumno()->detach();
+            if ($usuario->esProfesor()) {
+                $usuario->clasesComoProfesor()->detach();
+            }
+            if ($usuario->esAlumno()) {
+                $usuario->clasesComoAlumno()->detach();
+            }
 
             $usuario->colegio_id = $destino->id;
             if (Schema::hasColumn('usuarios', 'session_version')) {
@@ -361,7 +396,9 @@ class UserManagementController extends Controller
         if ($usuario->is($actor)) {
             return response()->json(['success' => false, 'message' => 'No puedes eliminar tu propio usuario'], 422);
         }
-        if (!$this->puedeAdministrarUsuario($actor, $usuario)) return $this->forbidden();
+        if (! $this->puedeAdministrarUsuario($actor, $usuario)) {
+            return $this->forbidden();
+        }
 
         $detalles = ['nombre' => $usuario->nombre, 'rol' => $usuario->rol, 'colegio_id' => $usuario->colegio_id];
         $this->audit->record($request, $actor, 'usuario.eliminado', $usuario, $detalles);
@@ -383,36 +420,50 @@ class UserManagementController extends Controller
     {
         $clase = Clase::query()->where('colegio_id', $colegioId)
             ->where('codigo', 'GENERAL')->where('activa', true)->first();
-        if ($clase && $usuario->esAlumno()) $clase->agregarAlumno($usuario);
-        elseif ($clase && $usuario->esProfesor()) $clase->agregarProfesor($usuario);
+        if ($clase && $usuario->esAlumno()) {
+            $clase->agregarAlumno($usuario);
+        } elseif ($clase && $usuario->esProfesor()) {
+            $clase->agregarProfesor($usuario);
+        }
     }
 
     private function actor(Request $request): Usuario
     {
         $actor = $request->attributes->get('usuario_actual');
         abort_unless($actor instanceof Usuario, 401, 'Usuario no autenticado.');
+
         return $actor;
     }
 
     private function puedeAdministrarRol(Usuario $actor, string $rol): bool
     {
-        if ($actor->esMaster()) return in_array($rol, self::ROLES_GESTIONABLES, true);
+        if ($actor->esMaster()) {
+            return in_array($rol, self::ROLES_GESTIONABLES, true);
+        }
         if ($actor->esAdministradorColegio()) {
             return in_array($rol, [Usuario::ROL_PROFESOR, Usuario::ROL_ALUMNO], true);
         }
+
         return $actor->esProfesor() && $rol === Usuario::ROL_ALUMNO;
     }
 
     private function puedeAdministrarUsuario(Usuario $actor, Usuario $objetivo): bool
     {
-        if ($objetivo->esMaster() || !$this->puedeAdministrarRol($actor, (string) $objetivo->rol)) return false;
-        if ($actor->esMaster()) return true;
-        if (!$actor->colegio_id || (int) $actor->colegio_id !== (int) $objetivo->colegio_id) return false;
+        if ($objetivo->esMaster() || ! $this->puedeAdministrarRol($actor, (string) $objetivo->rol)) {
+            return false;
+        }
+        if ($actor->esMaster()) {
+            return true;
+        }
+        if (! $actor->colegio_id || (int) $actor->colegio_id !== (int) $objetivo->colegio_id) {
+            return false;
+        }
         if ($actor->esProfesor()) {
             return $objetivo->clasesComoAlumno()
                 ->whereHas('profesores', fn ($q) => $q->where('usuarios.id', $actor->id))
                 ->exists();
         }
+
         return $actor->esAdministradorColegio();
     }
 
@@ -433,30 +484,39 @@ class UserManagementController extends Controller
     {
         $this->actor($request);
         $datos = $request->validate(['nombre_completo' => ['required', 'string', 'min:3', 'max:160']]);
+
         return response()->json(['suggested_username' => $this->sugerirNombreDesdeNombreCompleto($datos['nombre_completo'])]);
     }
 
     private function sugerirNombreDesdeNombreCompleto(string $nombreCompleto): string
     {
         $partes = preg_split('/\s+/u', $this->normalizarNombre($nombreCompleto), -1, PREG_SPLIT_NO_EMPTY) ?: [];
-        if ($partes === []) return 'Usuario';
+        if ($partes === []) {
+            return 'Usuario';
+        }
         $indiceApellido = count($partes) >= 3 ? count($partes) - 2 : min(1, count($partes) - 1);
         $inicial = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', Str::ascii($partes[0])) ?: 'U', 0, 1));
         $apellidoLimpio = preg_replace('/[^A-Za-z0-9]/', '', Str::ascii($partes[$indiceApellido])) ?: 'Usuario';
         $base = $inicial.ucfirst(strtolower($apellidoLimpio));
         $base = mb_substr($base, 0, 100, 'UTF-8');
-        if (!$this->nombreExiste($base)) return $base;
+        if (! $this->nombreExiste($base)) {
+            return $base;
+        }
         for ($numero = 2; $numero <= 9999; $numero++) {
             $sufijo = (string) $numero;
             $sugerencia = mb_substr($base, 0, 100 - strlen($sufijo), 'UTF-8').$sufijo;
-            if (!$this->nombreExiste($sugerencia)) return $sugerencia;
+            if (! $this->nombreExiste($sugerencia)) {
+                return $sugerencia;
+            }
         }
+
         return mb_substr($base, 0, 92, 'UTF-8').substr((string) hrtime(true), -8);
     }
 
     private function respuestaNombreOcupado(string $nombre, string $nombreCompleto): JsonResponse
     {
         $sugerencia = $this->sugerirNombreDesdeNombreCompleto($nombreCompleto);
+
         return response()->json([
             'success' => false, 'code' => 'USERNAME_TAKEN',
             'message' => "Ya existe un nombre de usuario con el nombre «{$nombre}». Te recomendamos usar «{$sugerencia}».",

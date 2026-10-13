@@ -64,6 +64,7 @@ class FriendLiveTestController extends Controller
             $union = $motor->unir($this->usuario(), $acceso, null, 'amigos');
             $sesion = $union['sesion'];
             $request->session()->put("live_test_tokens.{$sesion->id}", $union['reconexion_token']);
+
             return redirect()->route('alumno.tests.amigos.room', $sesion);
         } catch (\DomainException $e) {
             return back()->withInput()->with('error', $e->getMessage());
@@ -79,6 +80,7 @@ class FriendLiveTestController extends Controller
             abort(404);
         }
         $token = session("live_test_tokens.{$sesion->id}");
+
         return view('alumno.tests-amigos-sala', compact('sesion', 'estado', 'token'));
     }
 
@@ -111,10 +113,13 @@ class FriendLiveTestController extends Controller
     {
         try {
             $this->autorizarAnfitrion($sesion);
-            if ($sesion->estado !== 'configuracion') $motor->repetir($this->usuario(), $sesion, true);
+            if ($sesion->estado !== 'configuracion') {
+                $motor->repetir($this->usuario(), $sesion, true);
+            }
             $sesion = $sesion->fresh();
             $bancos = $this->bancosDisponibles($this->usuario());
             $seleccionados = $sesion->bancos()->pluck('test_bancos.id')->map(fn ($id) => (int) $id)->all();
+
             return view('alumno.tests-amigos-configurar', compact('sesion', 'bancos', 'seleccionados'));
         } catch (\DomainException $e) {
             return redirect()->route('alumno.tests.amigos.room', $sesion)->with('error', $e->getMessage());
@@ -130,6 +135,7 @@ class FriendLiveTestController extends Controller
                 ...$datos,
                 'orden_aleatorio' => $request->boolean('orden_aleatorio'),
             ], $bancos->all());
+
             return redirect()->route('alumno.tests.amigos.room', $sesion)
                 ->with('success', 'Configuración guardada. Todos continúan en la mesa de espera.');
         } catch (\DomainException|\InvalidArgumentException $e) {
@@ -157,6 +163,7 @@ class FriendLiveTestController extends Controller
         if ($seleccion->count() !== count(array_unique(array_map('intval', $ids)))) {
             throw new \DomainException('Uno de los bancos seleccionados no está disponible.');
         }
+
         return $seleccion;
     }
 
@@ -177,6 +184,7 @@ class FriendLiveTestController extends Controller
         abort_unless($sesion->tipo === 'amigos', 404);
         try {
             $accion();
+
             return redirect()->route('alumno.tests.amigos.room', $sesion)->with('success', $mensaje);
         } catch (\DomainException $e) {
             return redirect()->route('alumno.tests.amigos.room', $sesion)->with('error', $e->getMessage());

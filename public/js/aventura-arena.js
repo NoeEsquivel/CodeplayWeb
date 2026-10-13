@@ -7,7 +7,7 @@
     const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
     const pause = async ms => { const end = performance.now() + (reduced() ? Math.min(ms,120) : ms/Number(speed)); while(performance.now()<end) await new Promise(r=>setTimeout(r,40)); };
     function audio() {
-        audioContext ||= new (window.AudioContext||window.webkitAudioContext)();
+        audioContext ||= new (globalThis.AudioContext||globalThis.webkitAudioContext)();
         if(audioContext.state==='suspended') audioContext.resume();
         return audioContext;
     }
@@ -114,7 +114,7 @@
         const orb=document.createElement('span');orb.className='spell-orb';orb.textContent='✧';
         const x=a.left+a.width/2-c.left,y=a.top+a.height/2-c.top;
         orb.style.left=x+'px';orb.style.top=y+'px';arena.querySelector('.arena-fx').append(orb);
-        orb.animate([{transform:'translate(0,0) scale(.6)',opacity:1},{transform:`translate(${b.left+b.width/2-c.left-x}px,${b.top+b.height/2-c.top-y}px) scale(1.4)`,opacity:0}],{duration:420/Number(speed),easing:'ease-in'}).finished.finally(()=>orb.remove());
+        orb.animate([{transform:'translate(0,0) scale(.6)',opacity:1},{transform:`translate(${b.left+b.width/2-c.left-x}px,${b.top+b.height/2-c.top-y}px) scale(1.4)`,opacity:0}],{duration:420/Number(speed),easing:'ease-in'}).finished.then(()=>orb.remove(),()=>orb.remove());
     }
     function number(arena,actor,delta) {
         if(!delta||!actor)return;
@@ -205,17 +205,17 @@
             let restoreSpriteTimer = null;
             if (heroPoseEndsAt) {
                 const remaining = Math.max(0, heroPoseEndsAt - performance.now());
-                restoreSpriteTimer = window.setTimeout(() => restoreHeroSprite(player, event.vida, maxHp), remaining);
+                restoreSpriteTimer = globalThis.setTimeout(() => restoreHeroSprite(player, event.vida, maxHp), remaining);
             }
             await continueTurn;
             // Al continuar, el siguiente evento puede ser un ataque enemigo.
             // Restablecemos aquí para que nunca conserve el sprite anterior.
-            if (restoreSpriteTimer !== null) window.clearTimeout(restoreSpriteTimer);
+            if (restoreSpriteTimer !== null) globalThis.clearTimeout(restoreSpriteTimer);
             if (heroAction === 'atacar' || heroAction === 'pocion' || (event.actor.startsWith('enemigo-') && heroSprite?.dataset.heroPose === 'defense')) restoreHeroSprite(player,event.vida,maxHp);
             narration.classList.remove('is-correct', 'is-incorrect');
             visualEffects.forEach(effect=>effect?.remove());
         }
         continueResolve=null;theatre.removeAttribute('aria-busy');theatre.classList.remove('is-playing');hint.hidden=true;
     }
-    window.CodePlayArena={init,play};
+    globalThis.CodePlayArena={init,play};
 })();

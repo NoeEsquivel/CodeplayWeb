@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\AventuraPersonaje;
 use App\Models\AventuraExpedicion;
+use App\Models\AventuraPersonaje;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +14,7 @@ class AventuraService
     private function integrada(): bool
     {
         // Keep the existing camp usable while deployment of the migration is pending.
-        return !Schema::hasColumn('aventura_expediciones', 'equipo');
+        return ! Schema::hasColumn('aventura_expediciones', 'equipo');
     }
 
     private function usuario(int $id): Usuario
@@ -43,26 +43,32 @@ class AventuraService
     {
         return DB::transaction(function () use ($id) {
             $usuario = $this->usuario($id);
+
             return $this->resumen($usuario, $this->personaje($id), $this->expedicion($id));
         }, 3);
     }
 
     private function resumen(Usuario $usuario, AventuraPersonaje $personaje, AventuraExpedicion $expedicion): array
     {
-        $catalogo = new AventuraCatalogo();
+        $catalogo = new AventuraCatalogo;
         $completados = $this->completados($usuario->id);
         $stats = $personaje->only(AventuraCatalogo::STATS);
         // Equipped purchases were authorized when saved. Read their bonuses even if a challenge is administratively reset.
         $bonus = $catalogo->cotizar($expedicion->equipo, [5, 10, 15, 20], $personaje->nivel)['bonus'];
         $total = [];
-        foreach ($stats as $stat => $valor) $total[$stat] = $valor + $bonus[$stat];
+        foreach ($stats as $stat => $valor) {
+            $total[$stat] = $valor + $bonus[$stat];
+        }
         $vidaMaxima = AventuraMejoras::vida($expedicion, 100 + 5 * ($total['vitalidad'] - 1));
         $manaMaximo = 50 + 2 * ($total['inteligencia'] - 1);
         if ($this->integrada() && $expedicion->estado === 'preparacion') {
             $expedicion->vida_actual = $vidaMaxima;
             $expedicion->mana_actual = $manaMaximo;
-            if ($expedicion->isDirty()) $expedicion->save();
+            if ($expedicion->isDirty()) {
+                $expedicion->save();
+            }
         }
+
         return [
             'personaje' => ['nombre' => $personaje->nombre_aventurero ?: $usuario->nombre, 'nivel' => $personaje->nivel, 'experiencia' => $personaje->experiencia, 'siguiente' => $personaje->experienciaSiguiente(), 'limite_hechizos' => AventuraCatalogo::limiteHechizos($personaje->nivel), 'base' => $stats, 'bonus' => $bonus, 'total' => $total, 'vida' => $vidaMaxima, 'mana' => $manaMaximo, 'ultimo_aumento' => $personaje->ultimo_aumento],
             'expedicion' => $expedicion->only(['id', 'estado', 'version', 'equipo', 'inversion', 'escenario', 'vida_actual', 'mana_actual', 'oro', 'efectos', 'mejoras', 'iniciada_at']),
@@ -71,10 +77,9 @@ class AventuraService
                 'posicion' => $fila->posicion, 'rareza' => $fila->item->rareza,
             ])->all() : [],
             'puntos' => ['ganados' => (int) $usuario->puntos_totales, 'disponibles' => (int) $usuario->puntos_totales - (int) $usuario->puntos_usados, 'invertidos' => $expedicion->inversion, 'presupuesto' => (int) $usuario->puntos_totales - (int) $usuario->puntos_usados + $expedicion->inversion],
-            'catalogo' => array_values(array_map(fn ($item) => $item + ['desbloqueado' => !$item['desafio'] || in_array($item['desafio'], $completados, true)], $catalogo->items())),
+            'catalogo' => array_values(array_map(fn ($item) => $item + ['desbloqueado' => ! $item['desafio'] || in_array($item['desafio'], $completados, true)], $catalogo->items())),
         ];
     }
-
 
     public function renombrar(int $id, string $nombre): array
     {
@@ -83,6 +88,7 @@ class AventuraService
             $personaje = $this->personaje($id);
             $personaje->nombre_aventurero = preg_replace('/\s+/u', ' ', trim($nombre)) ?: $usuario->nombre;
             $personaje->save();
+
             return $this->resumen($usuario, $personaje->refresh(), $this->expedicion($id));
         }, 3);
     }
@@ -95,17 +101,23 @@ class AventuraService
             $expedicion = $this->expedicion($id);
             abort_if($expedicion->id !== $expedicionId || $expedicion->version !== $version, 409, 'Tu equipo cambió en otra pestaña. Recarga para ver la selección actual.');
             abort_if($expedicion->estado !== 'preparacion', 409, 'Solo puedes cambiar el equipo antes de iniciar la aventura.');
-            $costo = (new AventuraCatalogo())->cotizar($equipo, $this->completados($id), $personaje->nivel)['costo'];
+            $costo = (new AventuraCatalogo)->cotizar($equipo, $this->completados($id), $personaje->nivel)['costo'];
             $diferencia = $costo - $expedicion->inversion;
-            if ($diferencia > (int) $usuario->puntos_totales - (int) $usuario->puntos_usados) throw ValidationException::withMessages(['equipo' => 'No tienes suficientes puntos. Retira algún objeto o sigue aprendiendo en CodePlay.']);
+            if ($diferencia > (int) $usuario->puntos_totales - (int) $usuario->puntos_usados) {
+                throw ValidationException::withMessages(['equipo' => 'No tienes suficientes puntos. Retira algún objeto o sigue aprendiendo en CodePlay.']);
+            }
             // Account and expedition are changed atomically; never accept prices or balances from the browser.
             $usuario->puntos_usados = (int) $usuario->puntos_usados + $diferencia;
             $usuario->save();
-            if ($this->integrada()) AventuraInventario::guardar($expedicion, $equipo);
-            else $expedicion->equipo = json_encode($equipo);
+            if ($this->integrada()) {
+                AventuraInventario::guardar($expedicion, $equipo);
+            } else {
+                $expedicion->equipo = json_encode($equipo);
+            }
             $expedicion->inversion = $costo;
             $expedicion->version++;
             $expedicion->save();
+
             return $this->resumen($usuario, $personaje, $expedicion);
         }, 3);
     }
@@ -116,11 +128,15 @@ class AventuraService
         DB::transaction(function () use ($id, $expedicionId) {
             $usuario = $this->usuario($id);
             $run = AventuraExpedicion::where('usuario_id', $id)->findOrFail($expedicionId);
-            if ($run->estado === 'activa') return; // Retry resumes; never restores health or resets the scenario.
+            if ($run->estado === 'activa') {
+                return;
+            } // Retry resumes; never restores health or resets the scenario.
             abort_if($run->estado !== 'preparacion', 409);
             $this->resumen($usuario, $this->personaje($id), $run);
             $run->estado = 'activa';
-            if ($this->integrada()) $run->iniciada_at = now();
+            if ($this->integrada()) {
+                $run->iniciada_at = now();
+            }
             $run->version++;
             $run->save();
         }, 3);
@@ -146,8 +162,12 @@ class AventuraService
         DB::transaction(function () use ($id, $expedicionId, $estado, $version) {
             $usuario = $this->usuario($id);
             $run = AventuraExpedicion::where('usuario_id', $id)->findOrFail($expedicionId);
-            if ($estado === 'victoria') abort_unless(AventuraFinal::victoria($id,$expedicionId),409,'Primero debes derrotar al Dragón.');
-            if ($run->estado === $estado) return; // Repeated request cannot refund twice.
+            if ($estado === 'victoria') {
+                abort_unless(AventuraFinal::victoria($id, $expedicionId), 409, 'Primero debes derrotar al Dragón.');
+            }
+            if ($run->estado === $estado) {
+                return;
+            } // Repeated request cannot refund twice.
             abort_if($version !== null && $run->version !== $version, 409, 'La aventura cambió en otra pestaña. Recarga antes de reiniciar.');
             abort_if($run->estado !== 'activa', 409);
             // A prior interrupted save can leave the expedition investment out
@@ -163,21 +183,30 @@ class AventuraService
                 $run->oro = 0;
                 $run->efectos = [];
                 $run->mejoras = [];
-            } else $run->equipo = json_encode(AventuraCatalogo::vacio());
+            } else {
+                $run->equipo = json_encode(AventuraCatalogo::vacio());
+            }
             $run->finalizada_at = now();
             $run->version++;
             $run->save();
         }, 3);
     }
 
-    protected function incremento(int $nivel): int { return random_int(0, 2 + intdiv(max(1, $nivel) - 1, 10)); }
+    protected function incremento(int $nivel): int
+    {
+        return random_int(0, 2 + intdiv(max(1, $nivel) - 1, 10));
+    }
 
     public function otorgarExperiencia(int $id, string $evento, int $cantidad): void
     {
-        if ($cantidad < 1 || $cantidad > 10000 || $evento === '' || strlen($evento) > 120) throw new \InvalidArgumentException('Evento de experiencia inválido.');
+        if ($cantidad < 1 || $cantidad > 10000 || $evento === '' || strlen($evento) > 120) {
+            throw new \InvalidArgumentException('Evento de experiencia inválido.');
+        }
         DB::transaction(function () use ($id, $evento, $cantidad) {
             $this->usuario($id);
-            if (DB::table('aventura_experiencia_eventos')->where('usuario_id', $id)->where('evento', $evento)->exists()) return;
+            if (DB::table('aventura_experiencia_eventos')->where('usuario_id', $id)->where('evento', $evento)->exists()) {
+                return;
+            }
             $personaje = $this->personaje($id);
             DB::table('aventura_experiencia_eventos')->insert(['usuario_id' => $id, 'evento' => $evento, 'experiencia' => $cantidad, 'created_at' => now(), 'updated_at' => now()]);
             $personaje->experiencia += $cantidad;

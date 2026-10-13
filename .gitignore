@@ -19,3 +19,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+/.scannerwork/
+/sonarqube-issues.csv
+/sonarqube-issues.json
+/sonarqube-scanner.log

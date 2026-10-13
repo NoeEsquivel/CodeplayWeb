@@ -30,7 +30,7 @@
             --hard-color: #F44336;
             --master-color: #9C27B0;
         }
-        
+
         body {
             font-family: 'Roboto', sans-serif;
             background: url('{{ asset("Imagenes/Pantalla_Inicio.jpg") }}') no-repeat center center fixed;
@@ -39,7 +39,7 @@
             min-height: 100vh;
             position: relative;
         }
-        
+
         body::after {
             content: '';
             position: absolute;
@@ -50,12 +50,12 @@
             background-color: rgba(0, 0, 0, 0.6);
             z-index: -1;
         }
-        
+
         .navbar-custom {
             background: rgba(0, 0, 0, 0.8) !important;
             border-bottom: 3px solid var(--accent-color);
         }
-        
+
         .game-title {
             font-family: 'Press Start 2P', cursive;
             text-shadow: 3px 3px 0 #000;
@@ -87,12 +87,12 @@
             transition: all 0.3s;
             color: white !important;
         }
-        
+
         .btn-home:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: scale(1.05);
         }
-        
+
         .level-card {
             height: 120px;
             border-radius: 15px;
@@ -108,12 +108,12 @@
             margin-bottom: 20px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
-        
+
         .level-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(0,0,0,0.4);
         }
-        
+
         .level-card::before {
             content: '';
             position: absolute;
@@ -124,7 +124,7 @@
             background: rgba(0,0,0,0.4);
             z-index: 1;
         }
-        
+
         .level-card-content {
             position: relative;
             z-index: 2;
@@ -135,23 +135,23 @@
             flex-direction: column;
             justify-content: center;
         }
-        
+
         .level-number {
             font-family: 'Press Start 2P', cursive;
             font-size: 1.5rem;
             margin-bottom: 0.5rem;
         }
-        
+
         .level-title {
             font-size: 0.9rem;
             margin-bottom: 0.5rem;
         }
-        
+
         .level-stars {
             font-size: 0.8rem;
             color: gold;
         }
-        
+
         .level-badge {
             position: absolute;
             top: 10px;
@@ -161,45 +161,45 @@
             border-radius: 50px;
             font-weight: bold;
         }
-        
+
         /* Colores por dificultad */
         .level-easy {
             background: linear-gradient(135deg, var(--easy-color), #81C784);
             border: 2px solid #81C784;
         }
-        
+
         .level-medium {
             background: linear-gradient(135deg, var(--medium-color), #FFD54F);
             border: 2px solid #FFD54F;
         }
-        
+
         .level-hard {
             background: linear-gradient(135deg, var(--hard-color), #E57373);
             border: 2px solid #E57373;
         }
-        
+
         .level-master {
             background: linear-gradient(135deg, var(--master-color), #BA68C8);
             border: 2px solid #BA68C8;
         }
-        
+
         .badge-easy {
             background-color: var(--easy-color);
         }
-        
+
         .badge-medium {
             background-color: var(--medium-color);
             color: #000;
         }
-        
+
         .badge-hard {
             background-color: var(--hard-color);
         }
-        
+
         .badge-master {
             background-color: var(--master-color);
         }
-        
+
         .section-title {
             font-family: 'Press Start 2P', cursive;
             font-size: 1.8rem;
@@ -207,11 +207,11 @@
             margin-bottom: 2rem;
             text-shadow: 3px 3px 0 #000;
         }
-        
+
         .difficulty-section {
             margin-bottom: 3rem;
         }
-        
+
         .difficulty-title {
             font-family: 'Press Start 2P', cursive;
             font-size: 1.2rem;
@@ -221,7 +221,7 @@
             display: inline-block;
             margin-bottom: 1.5rem;
         }
-        
+
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -237,35 +237,35 @@
             pointer-events: none;
             transition: opacity 0.3s;
         }
-        
+
         .loading-content {
             text-align: center;
             color: var(--accent-color);
         }
-        
+
         .spinner-custom {
             width: 5rem;
             height: 5rem;
             border-width: 6px;
         }
-        
+
         .user-progress {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             padding: 1rem;
             margin-bottom: 2rem;
         }
-        
+
         .progress-text {
             color: var(--accent-color);
             font-weight: bold;
         }
-        
+
         .locked-level {
             filter: brightness(0.5);
             position: relative;
         }
-        
+
         .unlock-celebration-overlay {
             position: fixed;
             inset: 0;
@@ -349,7 +349,7 @@
             0%, 100% { box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
             50% { box-shadow: 0 0 28px rgba(0, 255, 157, 0.95); transform: translateY(-6px) scale(1.03); }
         }
-        
+
         .locked-icon {
             position: absolute;
             top: 50%;
@@ -363,7 +363,7 @@
         .level-card.completed {
             position: relative;
             border: 3px solid #00ff9d !important;
-            box-shadow: 
+            box-shadow:
                 0 0 20px rgba(0, 255, 157, 0.5),
                 0 0 40px rgba(0, 255, 157, 0.3),
                 inset 0 0 20px rgba(0, 255, 157, 0.2);
@@ -387,13 +387,13 @@
 
         @keyframes glow {
             from {
-                box-shadow: 
+                box-shadow:
                     0 0 20px rgba(0, 255, 157, 0.5),
                     0 0 40px rgba(0, 255, 157, 0.3),
                     inset 0 0 20px rgba(0, 255, 157, 0.2);
             }
             to {
-                box-shadow: 
+                box-shadow:
                     0 0 30px rgba(0, 255, 157, 0.8),
                     0 0 60px rgba(0, 255, 157, 0.5),
                     inset 0 0 30px rgba(0, 255, 157, 0.3);
@@ -454,10 +454,10 @@
                 </a>
                 <img src="{{ asset('images/local/code-icon-48.png') }}" alt="Logo" width="40" height="40">
             </div>
-            
+
             <!-- Título Centrado -->
             <span class="game-title position-absolute start-50 translate-middle-x">CODEPLAY</span>
-            
+
             <!-- Usuario derecha -->
             <div class="player-name-display">
                 <i class="fas fa-user me-2"></i>
@@ -474,35 +474,35 @@
                 <h1 class="section-title animate__animated animate__fadeIn">
                     <i class="fas fa-laptop-code me-3"></i>DESAFÍOS DE PROGRAMACIÓN
                 </h1>
-                
+
                 <!-- Progreso del Usuario -->
                 <div class="user-progress animate__animated animate__fadeIn animate__delay-1s">
                     <div class="row align-items-center">
                         <div class="col-md-6 text-start">
                             <h5 class="progress-text">
                                 <i class="fas fa-trophy me-2"></i>
-                                Nivel: <span id="userLevel">1</span> | 
+                                Nivel: <span id="userLevel">1</span> |
                                 Puntos: <span id="userPoints">{{ session('puntos_disponibles') ?? 0 }}</span>
                             </h5>
                         </div>
                         <div class="col-md-6 text-end">
                             <h5 class="progress-text">
                                 <i class="fas fa-star me-2"></i>
-                                Desafíos completados: 
+                                Desafíos completados:
                                 <span id="completedChallenges">{{ $desafiosCompletados ?? 0 }}</span>/20
                             </h5>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Niveles Fáciles (1-5) - Fundamentos HTML/CSS -->
                 <div class="difficulty-section animate__animated animate__fadeIn">
                     <h2 class="difficulty-title bg-success">FUNDAMENTOS WEB</h2>
                     <div class="row">
                         <!-- Nivel 1: Hola Mundo -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-easy {{ in_array(1, $nivelesCompletados ?? []) ? 'completed' : '' }}" 
-                                onclick="navigateToLevel(1)">
+                            <div class="level-card level-easy {{ in_array(1, $nivelesCompletados ?? []) ? 'completed' : '' }}"
+                                role="link" tabindex="0" onclick="navigateToLevel(1)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(1)}">
                                 <div class="level-card-content">
                                     @if(in_array(1, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -520,10 +520,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Nivel 2: Etiquetas HTML -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-easy {{ in_array(2, $nivelesCompletados ?? []) ? 'completed' : '' }}" onclick="navigateToLevel(2)">
+                            <div class="level-card level-easy {{ in_array(2, $nivelesCompletados ?? []) ? 'completed' : '' }}" role="link" tabindex="0" onclick="navigateToLevel(2)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(2)}">
                                 <div class="level-card-content">
                                     @if(in_array(2, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -541,10 +541,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Nivel 3: Enlaces e Imágenes -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-easy {{ in_array(3, $nivelesCompletados ?? []) ? 'completed' : '' }}" onclick="navigateToLevel(3)">
+                            <div class="level-card level-easy {{ in_array(3, $nivelesCompletados ?? []) ? 'completed' : '' }}" role="link" tabindex="0" onclick="navigateToLevel(3)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(3)}">
                                 <div class="level-card-content">
                                     @if(in_array(3, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -562,10 +562,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Nivel 4: CSS Básico -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-easy {{ in_array(4, $nivelesCompletados ?? []) ? 'completed' : '' }}" onclick="navigateToLevel(4)">
+                            <div class="level-card level-easy {{ in_array(4, $nivelesCompletados ?? []) ? 'completed' : '' }}" role="link" tabindex="0" onclick="navigateToLevel(4)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(4)}">
                                 <div class="level-card-content">
                                     @if(in_array(4, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -583,10 +583,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Nivel 5: Modelo de Caja -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-easy {{ in_array(5, $nivelesCompletados ?? []) ? 'completed' : '' }}" onclick="navigateToLevel(5)">
+                            <div class="level-card level-easy {{ in_array(5, $nivelesCompletados ?? []) ? 'completed' : '' }}" role="link" tabindex="0" onclick="navigateToLevel(5)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(5)}">
                                 <div class="level-card-content">
                                     @if(in_array(5, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -606,14 +606,14 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Niveles Intermedios (6-10) - CSS Avanzado y JS Básico -->
                 <div class="difficulty-section animate__animated animate__fadeIn">
                     <h2 class="difficulty-title bg-warning text-dark">CSS Y JAVASCRIPT</h2>
                     <div class="row">
                         <!-- Nivel 6: Flexbox -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-medium {{ in_array(6, $nivelesCompletados ?? []) ? 'completed' : '' }}" onclick="navigateToLevel(6)">
+                            <div class="level-card level-medium {{ in_array(6, $nivelesCompletados ?? []) ? 'completed' : '' }}" role="link" tabindex="0" onclick="navigateToLevel(6)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(6)}">
                                 <div class="level-card-content">
                                     @if(in_array(6, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -631,10 +631,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Nivel 7: CSS Grid -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-medium {{ in_array(7, $nivelesCompletados ?? []) ? 'completed' : '' }}" onclick="navigateToLevel(7)">
+                            <div class="level-card level-medium {{ in_array(7, $nivelesCompletados ?? []) ? 'completed' : '' }}" role="link" tabindex="0" onclick="navigateToLevel(7)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(7)}">
                                 <div class="level-card-content">
                                     @if(in_array(7, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -652,10 +652,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Nivel 8: JavaScript Básico -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-medium {{ in_array(8, $nivelesCompletados ?? []) ? 'completed' : '' }}" onclick="navigateToLevel(8)">
+                            <div class="level-card level-medium {{ in_array(8, $nivelesCompletados ?? []) ? 'completed' : '' }}" role="link" tabindex="0" onclick="navigateToLevel(8)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(8)}">
                                 <div class="level-card-content">
                                     @if(in_array(8, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -673,10 +673,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Nivel 9: Eventos DOM -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-medium {{ in_array(9, $nivelesCompletados ?? []) ? 'completed' : '' }}" onclick="navigateToLevel(9)">
+                            <div class="level-card level-medium {{ in_array(9, $nivelesCompletados ?? []) ? 'completed' : '' }}" role="link" tabindex="0" onclick="navigateToLevel(9)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(9)}">
                                 <div class="level-card-content">
                                     @if(in_array(9, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -694,10 +694,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Nivel 10: Formularios JS -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-medium {{ in_array(10, $nivelesCompletados ?? []) ? 'completed' : '' }}" onclick="navigateToLevel(10)">
+                            <div class="level-card level-medium {{ in_array(10, $nivelesCompletados ?? []) ? 'completed' : '' }}" role="link" tabindex="0" onclick="navigateToLevel(10)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(10)}">
                                 <div class="level-card-content">
                                     @if(in_array(10, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -717,14 +717,14 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Niveles Difíciles (11-15) - Bootstrap y PHP -->
                 <div class="difficulty-section animate__animated animate__fadeIn">
                     <h2 class="difficulty-title bg-danger">FRAMEWORKS Y PHP</h2>
                     <div class="row">
                         <!-- Nivel 11: Bootstrap Grid -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-hard {{ in_array(11, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearDificiles ? '' : 'locked-level' }}" id="level11" @if($desbloquearDificiles) onclick="navigateToLevel(11)" @endif>
+                            <div class="level-card level-hard {{ in_array(11, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearDificiles ? '' : 'locked-level' }}" id="level11" @if($desbloquearDificiles) role="link" tabindex="0" onclick="navigateToLevel(11)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(11)}" @endif>
                                 <div class="level-card-content">
                                     @if(in_array(11, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -745,10 +745,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Nivel 12: Componentes Bootstrap -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-hard {{ in_array(12, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearDificiles ? '' : 'locked-level' }}" id="level12" @if($desbloquearDificiles) onclick="navigateToLevel(12)" @endif>
+                            <div class="level-card level-hard {{ in_array(12, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearDificiles ? '' : 'locked-level' }}" id="level12" @if($desbloquearDificiles) role="link" tabindex="0" onclick="navigateToLevel(12)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(12)}" @endif>
                                 <div class="level-card-content">
                                     @if(in_array(12, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -769,10 +769,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Nivel 13: Introducción PHP -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-hard {{ in_array(13, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearDificiles ? '' : 'locked-level' }}" id="level13" @if($desbloquearDificiles) onclick="navigateToLevel(13)" @endif>
+                            <div class="level-card level-hard {{ in_array(13, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearDificiles ? '' : 'locked-level' }}" id="level13" @if($desbloquearDificiles) role="link" tabindex="0" onclick="navigateToLevel(13)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(13)}" @endif>
                                 <div class="level-card-content">
                                     @if(in_array(13, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -793,10 +793,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Nivel 14: Formularios PHP -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-hard {{ in_array(14, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearDificiles ? '' : 'locked-level' }}" id="level14" @if($desbloquearDificiles) onclick="navigateToLevel(14)" @endif>
+                            <div class="level-card level-hard {{ in_array(14, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearDificiles ? '' : 'locked-level' }}" id="level14" @if($desbloquearDificiles) role="link" tabindex="0" onclick="navigateToLevel(14)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(14)}" @endif>
                                 <div class="level-card-content">
                                     @if(in_array(14, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -817,10 +817,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Nivel 15: Sesiones PHP -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-hard {{ in_array(15, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearDificiles ? '' : 'locked-level' }}" id="level15" @if($desbloquearDificiles) onclick="navigateToLevel(15)" @endif>
+                            <div class="level-card level-hard {{ in_array(15, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearDificiles ? '' : 'locked-level' }}" id="level15" @if($desbloquearDificiles) role="link" tabindex="0" onclick="navigateToLevel(15)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(15)}" @endif>
                                 <div class="level-card-content">
                                     @if(in_array(15, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -843,14 +843,14 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Niveles Maestros (16-20) - Proyectos Integradores -->
                 <div class="difficulty-section animate__animated animate__fadeIn">
                     <h2 class="difficulty-title bg-purple">PROYECTOS INTEGRADORES</h2>
                     <div class="row">
                         <!-- Nivel 16: Página Personal -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-master {{ in_array(16, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearMaestros ? '' : 'locked-level' }}" id="level16" @if($desbloquearMaestros) onclick="navigateToLevel(16)" @endif>
+                            <div class="level-card level-master {{ in_array(16, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearMaestros ? '' : 'locked-level' }}" id="level16" @if($desbloquearMaestros) role="link" tabindex="0" onclick="navigateToLevel(16)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(16)}" @endif>
                                 <div class="level-card-content">
                                     @if(in_array(16, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -871,10 +871,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Nivel 17: Formulario Completo -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-master {{ in_array(17, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearMaestros ? '' : 'locked-level' }}" id="level17" @if($desbloquearMaestros) onclick="navigateToLevel(17)" @endif>
+                            <div class="level-card level-master {{ in_array(17, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearMaestros ? '' : 'locked-level' }}" id="level17" @if($desbloquearMaestros) role="link" tabindex="0" onclick="navigateToLevel(17)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(17)}" @endif>
                                 <div class="level-card-content">
                                     @if(in_array(17, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -895,10 +895,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Nivel 18: Dashboard -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-master {{ in_array(18, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearMaestros ? '' : 'locked-level' }}" id="level18" @if($desbloquearMaestros) onclick="navigateToLevel(18)" @endif>
+                            <div class="level-card level-master {{ in_array(18, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearMaestros ? '' : 'locked-level' }}" id="level18" @if($desbloquearMaestros) role="link" tabindex="0" onclick="navigateToLevel(18)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(18)}" @endif>
                                 <div class="level-card-content">
                                     @if(in_array(18, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -919,10 +919,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Nivel 19: E-commerce -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-master {{ in_array(19, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearMaestros ? '' : 'locked-level' }}" id="level19" @if($desbloquearMaestros) onclick="navigateToLevel(19)" @endif>
+                            <div class="level-card level-master {{ in_array(19, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearMaestros ? '' : 'locked-level' }}" id="level19" @if($desbloquearMaestros) role="link" tabindex="0" onclick="navigateToLevel(19)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(19)}" @endif>
                                 <div class="level-card-content">
                                     @if(in_array(19, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -944,10 +944,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Nivel 20: Proyecto Final -->
                         <div class="col-6 col-md-4 col-lg-3">
-                            <div class="level-card level-master {{ in_array(20, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearMaestros ? '' : 'locked-level' }}" id="level20" @if($desbloquearMaestros) onclick="navigateToLevel(20)" @endif>
+                            <div class="level-card level-master {{ in_array(20, $nivelesCompletados ?? []) ? 'completed' : '' }} {{ $desbloquearMaestros ? '' : 'locked-level' }}" id="level20" @if($desbloquearMaestros) role="link" tabindex="0" onclick="navigateToLevel(20)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToLevel(20)}" @endif>
                                 <div class="level-card-content">
                                     @if(in_array(20, $nivelesCompletados ?? []))
                                         <div class="completed-badge">
@@ -1003,16 +1003,16 @@
 
     <!-- Bootstrap JS Bundle + Popper -->
     <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
-    
+
     <script>
 // Función para navegar con animación
 function navigateWithAnimation(url) {
     const overlay = document.getElementById('loadingOverlay');
-    
+
     // Mostrar animación
     overlay.style.opacity = '1';
     overlay.style.pointerEvents = 'auto';
-    
+
     // Redirigir después de 1.5 segundos
     setTimeout(() => {
         window.location.href = url;
@@ -1114,7 +1114,7 @@ function navigateToLevel(levelNumber) {
                         <div style="font-weight: bold; font-size: 1.1rem; margin-bottom: 5px;">${titulo}</div>
                         <div style="font-size: 0.9rem; opacity: 0.9;">${mensaje}</div>
                     </div>
-                    <button onclick="this.parentElement.parentElement.remove()" 
+                    <button onclick="this.parentElement.parentElement.remove()"
                             style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; padding: 0; margin: 0;">
                         ✕
                     </button>
@@ -1219,7 +1219,7 @@ function navigateToLevel(levelNumber) {
         function cargarProgresoUsuario() {
             const puntos = {{ session('puntos_disponibles') ?? 0 }};
             document.getElementById('userPoints').textContent = puntos;
-            
+
             // Mantener el nivel visual del usuario basado en puntos.
             const nivel = Math.floor(puntos / 100) + 1;
             document.getElementById('userLevel').textContent = nivel;

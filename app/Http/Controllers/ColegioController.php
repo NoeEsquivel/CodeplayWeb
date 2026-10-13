@@ -33,7 +33,9 @@ class ColegioController extends Controller
     public function show(Colegio $colegio): JsonResponse
     {
         $columnas = ['id', 'colegio_id', 'nombre', 'nombre_completo', 'email', 'rol', 'ultimo_acceso'];
-        if (Schema::hasColumn('usuarios', 'activo')) $columnas[] = 'activo';
+        if (Schema::hasColumn('usuarios', 'activo')) {
+            $columnas[] = 'activo';
+        }
 
         $colegio->load([
             'usuarios' => fn ($q) => $q->select($columnas)->orderBy('nombre'),
@@ -56,7 +58,9 @@ class ColegioController extends Controller
     {
         $this->actor($request);
         $columnas = ['id', 'colegio_id', 'nombre', 'nombre_completo', 'email', 'rol', 'ultimo_acceso'];
-        if (Schema::hasColumn('usuarios', 'activo')) $columnas[] = 'activo';
+        if (Schema::hasColumn('usuarios', 'activo')) {
+            $columnas[] = 'activo';
+        }
 
         $colegio->load([
             'usuarios' => fn ($q) => $q->select($columnas)->orderByRaw('COALESCE(nombre_completo, nombre), nombre'),
@@ -79,7 +83,9 @@ class ColegioController extends Controller
         $nombre = $this->normalizarNombre((string) $request->input('nombre'));
         $request->merge(['nombre' => $nombre]);
         $datos = $request->validate(['nombre' => ['required', 'string', 'max:150']], $this->mensajesValidacion());
-        if ($this->nombreExiste($datos['nombre'])) return $this->respuestaNombreDuplicado();
+        if ($this->nombreExiste($datos['nombre'])) {
+            return $this->respuestaNombreDuplicado();
+        }
 
         try {
             $colegio = DB::transaction(function () use ($datos) {
@@ -95,10 +101,13 @@ class ColegioController extends Controller
                     'descripcion' => 'Clase predeterminada del colegio.',
                     'activa' => true,
                 ]);
+
                 return $colegio;
             });
         } catch (QueryException $exception) {
-            if ($this->esConflictoUnico($exception)) return $this->respuestaNombreDuplicado();
+            if ($this->esConflictoUnico($exception)) {
+                return $this->respuestaNombreDuplicado();
+            }
             throw $exception;
         }
 
@@ -124,7 +133,7 @@ class ColegioController extends Controller
         $anterior = $colegio->only(['nombre', 'activo']);
         DB::transaction(function () use ($colegio, $datos) {
             $colegio->fill($datos)->save();
-            if (array_key_exists('activo', $datos) && !$datos['activo']
+            if (array_key_exists('activo', $datos) && ! $datos['activo']
                 && Schema::hasColumn('usuarios', 'session_version')) {
                 Usuario::query()->where('colegio_id', $colegio->id)->increment('session_version');
             }
@@ -155,6 +164,7 @@ class ColegioController extends Controller
             'nombre' => $colegio->nombre, 'codigo' => $colegio->codigo,
         ]);
         $colegio->delete();
+
         return response()->json(['success' => true, 'message' => 'Colegio eliminado exitosamente.']);
     }
 
@@ -162,6 +172,7 @@ class ColegioController extends Controller
     {
         $actor = $request->attributes->get('usuario_actual');
         abort_unless($actor instanceof Usuario && $actor->esMaster(), 403);
+
         return $actor;
     }
 
@@ -175,6 +186,7 @@ class ColegioController extends Controller
             $sufijo = '-'.$numero++;
             $codigo = rtrim(mb_substr($base, 0, 30 - strlen($sufijo), 'UTF-8'), '-').$sufijo;
         }
+
         return $codigo;
     }
 

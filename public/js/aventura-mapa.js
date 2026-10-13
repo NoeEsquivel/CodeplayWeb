@@ -24,22 +24,22 @@
         const scroll = () => {
             const anchor = root?.querySelector('.battle-status, [data-theatre]');
             if (!anchor) return;
-            const top = Math.max(0, window.scrollY + anchor.getBoundingClientRect().top - 12);
-            window.scrollTo({ top, behavior: 'auto' });
+            const top = Math.max(0, globalThis.scrollY + anchor.getBoundingClientRect().top - 12);
+            globalThis.scrollTo({ top, behavior: 'auto' });
         };
         // The browser may restore the old scroll position after rendering a
         // new page. Repeat briefly so the combat header reliably wins.
         requestAnimationFrame(() => requestAnimationFrame(scroll));
-        window.setTimeout(scroll, 90);
-        window.setTimeout(scroll, 240);
+        globalThis.setTimeout(scroll, 90);
+        globalThis.setTimeout(scroll, 240);
     }
     function preserveViewport(top) {
-        const restore = () => window.scrollTo({ top, behavior: 'auto' });
+        const restore = () => globalThis.scrollTo({ top, behavior: 'auto' });
         requestAnimationFrame(() => requestAnimationFrame(restore));
-        window.setTimeout(restore, 90);
-        window.setTimeout(restore, 240);
-        window.setTimeout(restore, 480);
-        window.setTimeout(restore, 800);
+        globalThis.setTimeout(restore, 90);
+        globalThis.setTimeout(restore, 240);
+        globalThis.setTimeout(restore, 480);
+        globalThis.setTimeout(restore, 800);
     }
     function preserveScrollContainer(getContainer, top) {
         if (top === null || top === undefined) return;
@@ -48,9 +48,9 @@
             if (container) container.scrollTop = top;
         };
         requestAnimationFrame(() => requestAnimationFrame(restore));
-        window.setTimeout(restore, 90);
-        window.setTimeout(restore, 240);
-        window.setTimeout(restore, 480);
+        globalThis.setTimeout(restore, 90);
+        globalThis.setTimeout(restore, 240);
+        globalThis.setTimeout(restore, 480);
     }
     function prepareMapView() {
         try { sessionStorage.setItem(mapFocusKey, 'pending'); } catch (_) {}
@@ -60,12 +60,12 @@
             const map = root?.querySelector('.forest-3d-map, .territory-map');
             if (!map) return;
             const bounds = map.getBoundingClientRect();
-            const top = Math.max(0, window.scrollY + bounds.top + (bounds.height / 2) - (window.innerHeight / 2));
-            window.scrollTo({ top, behavior: 'auto' });
+            const top = Math.max(0, globalThis.scrollY + bounds.top + (bounds.height / 2) - (globalThis.innerHeight / 2));
+            globalThis.scrollTo({ top, behavior: 'auto' });
         };
         requestAnimationFrame(() => requestAnimationFrame(center));
-        window.setTimeout(center, 90);
-        window.setTimeout(center, 240);
+        globalThis.setTimeout(center, 90);
+        globalThis.setTimeout(center, 240);
     }
     function beginWorldEntrance(options = {}) {
         const video = options.video || entranceVideo;
@@ -201,23 +201,23 @@
             root.inert = wasInert;
         }
     }
-    async function action(start, camino, combat = null, eventAction = false) {
+    async function action(start, camino, combat = null, eventMode = null) {
         if (busy) return;
         busy = true;
         errorBox.hidden = true;
-        const reopenGuildShop = eventAction === 'gremio' && combat?.accion === 'comprar';
+        const reopenGuildShop = eventMode === 'gremio' && combat?.accion === 'comprar';
         const guildShopError = reopenGuildShop ? root.querySelector('[data-guild-shop-error]') : null;
         if (guildShopError) {
             guildShopError.hidden = true;
             guildShopError.textContent = '';
         }
-        const guildScrollY = eventAction === 'gremio' ? window.scrollY : null;
-        const guildModalScrollTop = eventAction === 'gremio'
+        const guildScrollY = eventMode === 'gremio' ? globalThis.scrollY : null;
+        const guildModalScrollTop = eventMode === 'gremio'
             ? root.querySelector('.event-stage .story')?.scrollTop
             : null;
         // Removing the focused guild button can make some browsers jump to the
         // document start while the refreshed board replaces the current one.
-        if (eventAction === 'gremio') document.activeElement?.blur?.();
+        if (eventMode === 'gremio') document.activeElement?.blur?.();
         const buttons = root.querySelectorAll('button');
         const disabledBefore = [...buttons].map(button => button.disabled);
         buttons.forEach(button => { button.disabled = true; });
@@ -235,7 +235,7 @@
             if (combat?.accion === 'hechizo' && combat.objeto === 'supernova') {
                 await playSupernovaCinematic();
             }
-            const response = await fetch(eventAction === 'gremio' ? root.dataset.guild : eventAction ? root.dataset.event : combat ? root.dataset.combat : start ? root.dataset.start : root.dataset.path, {
+            const response = await fetch(eventMode === 'gremio' ? root.dataset.guild : eventMode === 'evento' ? root.dataset.event : combat ? root.dataset.combat : start ? root.dataset.start : root.dataset.path, {
                 method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
                 body: JSON.stringify({ expedicion_id: Number(root.dataset.id), version: Number(root.dataset.version), ...(combat || (start ? {} : { camino })) }),
                 signal: AbortSignal.timeout(20000)
@@ -254,7 +254,7 @@
             if (combat?.accion === 'continuar') prepareMapView();
             // The saved final blow is presented by the movie before the epilogue.
             if (data.cinematica_final) { location.assign(destination.href); return; }
-            if(combat && !eventAction && data.secuencia && root.querySelector('[data-theatre]')) {
+            if(combat && eventMode === null && data.secuencia && root.querySelector('[data-theatre]')) {
                 let nextRoot=null, nextTheme=document.body.dataset.theme, nextDocument=null;
                 if(destination.pathname===location.pathname) {
                     const page=await fetch(destination.href,{headers:{Accept:'text/html'},signal:AbortSignal.timeout(20000)});
@@ -263,7 +263,7 @@
                     nextRoot=nextDocument.getElementById('world');nextTheme=nextDocument.body.dataset.theme;
                     if(!nextRoot) throw new Error('El turno se guardó. Recarga para continuar.');
                 }
-                await window.CodePlayArena.play(root,data.secuencia,nextRoot);
+                await globalThis.CodePlayArena.play(root,data.secuencia,nextRoot);
                 if(nextRoot) {
                     syncBossIntroduction(nextDocument);
                     root.replaceWith(nextRoot);root=nextRoot;errorBox=root.querySelector('#worldError');busy=false;
@@ -277,7 +277,7 @@
             }
             // Story, guild and route transitions remain on this document. That
             // preserves the forest soundtrack until an actual combat begins.
-            if ((!combat || eventAction) && !start && destination.pathname === location.pathname) {
+            if ((!combat || eventMode !== null) && !start && destination.pathname === location.pathname) {
                 const page = await fetch(destination.href,{headers:{Accept:'text/html'},signal:AbortSignal.timeout(20000)});
                 if(!page.ok || page.redirected) throw new Error('La decisión se guardó. Recarga para ver el estado actual.');
                 const nextDocument = new DOMParser().parseFromString(await page.text(),'text/html');
@@ -289,7 +289,7 @@
                 document.querySelector('[data-guild-rune-question]')?.remove();
                 root.replaceWith(nextRoot);root=nextRoot;errorBox=root.querySelector('#worldError');busy=false;
                 document.body.dataset.theme=nextDocument.body.dataset.theme;
-                if (guildScrollY !== null) window.scrollTo({ top: guildScrollY, behavior: 'auto' });
+                if (guildScrollY !== null) globalThis.scrollTo({ top: guildScrollY, behavior: 'auto' });
                 history.replaceState(null,'',destination.href);bind();playAnswerFeedback(combat?.accion === 'responder');
                 if (reopenGuildShop) root.querySelector('[data-guild-shop]')?.showModal();
                 if (guildScrollY !== null) preserveViewport(guildScrollY);
@@ -335,7 +335,7 @@
         }
     }
     function bind() {
-    window.CodePlayArena?.init(root);
+    globalThis.CodePlayArena?.init(root);
     const forestMap = root.querySelector('[data-forest-map]');
     const forestPathDialog = document.getElementById('forestPathDialog');
     root.querySelector('[data-open-forest-paths]')?.addEventListener('click', event => {
@@ -344,7 +344,7 @@
         forestMap?.style.setProperty('--focus-x', nextNode.style.getPropertyValue('--x'));
         forestMap?.style.setProperty('--focus-y', nextNode.style.getPropertyValue('--y'));
         forestMap?.classList.add('is-zoomed');
-        window.setTimeout(() => forestPathDialog.showModal(), 1180);
+        globalThis.setTimeout(() => forestPathDialog.showModal(), 1180);
     });
     forestPathDialog?.addEventListener('close', () => forestMap?.classList.remove('is-zoomed'));
     forestPathDialog?.querySelector('[data-close-forest-paths]')?.addEventListener('click', () => forestMap?.classList.remove('is-zoomed'));
@@ -367,7 +367,7 @@
             if (sessionStorage.getItem(combatFocusKey) === 'pending') {
                 sessionStorage.removeItem(combatFocusKey);
                 revealCombatView();
-                window.addEventListener('pageshow', revealCombatView, { once: true });
+                globalThis.addEventListener('pageshow', revealCombatView, { once: true });
             }
         } catch (_) {}
     }
@@ -376,18 +376,18 @@
             if (sessionStorage.getItem(mapFocusKey) === 'pending') {
                 sessionStorage.removeItem(mapFocusKey);
                 revealMapView();
-                window.addEventListener('pageshow', revealMapView, { once: true });
+                globalThis.addEventListener('pageshow', revealMapView, { once: true });
             }
         } catch (_) {}
     }
-    document.getElementById('beginJourney')?.addEventListener('click', () => action(true));
+    document.getElementById('beginJourney')?.addEventListener('click', () => void action(true));
     const guildShop = root.querySelector('[data-guild-shop]');
     root.querySelector('[data-open-guild-shop]')?.addEventListener('click', () => guildShop?.showModal());
     guildShop?.querySelectorAll('[data-close-guild-shop]').forEach(button => button.addEventListener('click', () => guildShop.close()));
     const requirementDialog = root.querySelector('[data-guild-requirement-dialog]');
     let pendingGuildAction = null;
     const runGuildAction = (button) => {
-        action(false, null, {accion:button.dataset.guildAction,
+        void action(false, null, {accion:button.dataset.guildAction,
         ...(button.dataset.quest ? {encargo:button.dataset.quest} : {}),
         ...(button.dataset.source ? {origen:Number(button.dataset.source)} : {}),
         ...(button.dataset.shopItem ? {oferta:button.dataset.shopItem} : {}),
@@ -424,7 +424,7 @@
             if (remaining <= 5) guildTimer.parentElement.classList.add('is-warning');
             if (remaining <= 0) {
                 guildQuestion.querySelectorAll('[data-guild-action]').forEach(button => { button.disabled = true; });
-                action(false, null, {accion:'responder', encargo:guildQuestion.dataset.guildQuestion, origen:Number(guildQuestion.dataset.guildSource), tiempo_agotado:true}, 'gremio');
+                void action(false, null, {accion:'responder', encargo:guildQuestion.dataset.guildQuestion, origen:Number(guildQuestion.dataset.guildSource), tiempo_agotado:true}, 'gremio');
                 return false;
             }
             remaining -= 1;
@@ -439,19 +439,19 @@
     if (guildQuestion?.isConnected) document.body.append(guildQuestion);
     root.querySelectorAll('[data-event-action]').forEach(button => button.addEventListener('click', () => {
         const replacement = document.getElementById('replaceSpell')?.value;
-        action(false, null, { accion: button.dataset.eventAction,
+        void action(false, null, { accion: button.dataset.eventAction,
             ...(button.dataset.answer ? {respuesta:button.dataset.answer} : {}),
             ...(button.dataset.spell ? {hechizo:button.dataset.spell} : {}),
-            ...(replacement ? {reemplazar:replacement} : {}) }, true);
+            ...(replacement ? {reemplazar:replacement} : {}) }, 'evento');
     }));
     root.querySelectorAll('[data-path-choice]').forEach(button => button.addEventListener('click', () => {
         forestPathDialog?.close();
-        action(false, Number(button.dataset.pathChoice));
+        void action(false, Number(button.dataset.pathChoice));
     }));
     root.querySelectorAll('[data-combat-action]').forEach(button => button.addEventListener('click', () => {
         if(button.dataset.answer) root.querySelector('.rune-question-backdrop')?.remove();
         const target = root.querySelector('input[name="enemy-target"]:checked');
-        action(false, null, { accion: button.dataset.combatAction, ...(target ? {objetivo:Number(target.value)} : {}),
+        void action(false, null, { accion: button.dataset.combatAction, ...(target ? {objetivo:Number(target.value)} : {}),
             ...(button.dataset.item ? {objeto:button.dataset.item} : {}), ...(button.dataset.answer ? {respuesta:button.dataset.answer} : {}) });
     }));
     const timer = root.querySelector('[data-rune-timer]');
@@ -465,7 +465,7 @@
             if (remaining <= 0) {
                 questionModal.querySelectorAll('[data-combat-action]').forEach(button => { button.disabled = true; });
                 questionModal.remove();
-                action(false, null, { accion: 'responder', tiempo_agotado: true });
+                void action(false, null, { accion: 'responder', tiempo_agotado: true });
                 return false;
             }
             remaining -= 1;

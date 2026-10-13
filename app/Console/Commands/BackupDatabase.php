@@ -19,8 +19,9 @@ class BackupDatabase extends Command
         $connection = config('database.default');
         $database = config("database.connections.{$connection}.database");
 
-        if (!is_string($database) || $database === '' || $database === ':memory:') {
+        if (! is_string($database) || $database === '' || $database === ':memory:') {
             $this->error('La base de datos configurada no se puede respaldar como archivo.');
+
             return self::FAILURE;
         }
 
@@ -35,7 +36,7 @@ class BackupDatabase extends Command
                 : $this->backupMysql($connection, $database, $directory, $safeDatabase, $stamp);
 
             clearstatcache(true, $path);
-            if (!is_file($path) || filesize($path) === 0) {
+            if (! is_file($path) || filesize($path) === 0) {
                 throw new RuntimeException('El archivo generado está vacío.');
             }
 
@@ -47,29 +48,32 @@ class BackupDatabase extends Command
             $this->line('Archivo: '.$path);
             $this->line('Tamaño: '.number_format((int) filesize($path)).' bytes');
             $this->line('SHA-256: '.$hash);
+
             return self::SUCCESS;
         } catch (\Throwable $exception) {
             $this->error('No se pudo crear el respaldo: '.$exception->getMessage());
+
             return self::FAILURE;
         }
     }
 
     private function backupSqlite(string $database, string $directory, string $safeDatabase, string $stamp): string
     {
-        if (!is_file($database)) {
+        if (! is_file($database)) {
             throw new RuntimeException('No se encontró el archivo SQLite configurado.');
         }
 
         $path = $directory.DIRECTORY_SEPARATOR.$safeDatabase.'_'.$stamp.'.sqlite';
-        if (!File::copy($database, $path)) {
+        if (! File::copy($database, $path)) {
             throw new RuntimeException('No se pudo copiar la base SQLite.');
         }
+
         return $path;
     }
 
     private function backupMysql(string $connection, string $database, string $directory, string $safeDatabase, string $stamp): string
     {
-        if (!in_array($connection, ['mysql', 'mariadb'], true)) {
+        if (! in_array($connection, ['mysql', 'mariadb'], true)) {
             throw new RuntimeException('El motor '.$connection.' todavía no está soportado por este comando.');
         }
 
@@ -93,10 +97,11 @@ class BackupDatabase extends Command
         $process->setTimeout(300);
         $process->run();
 
-        if (!$process->isSuccessful()) {
+        if (! $process->isSuccessful()) {
             File::delete($path);
             throw new RuntimeException(trim($process->getErrorOutput()) ?: 'mysqldump terminó con error.');
         }
+
         return $path;
     }
 
@@ -112,7 +117,9 @@ class BackupDatabase extends Command
         ]);
 
         foreach ($candidates as $candidate) {
-            if (is_file($candidate)) return $candidate;
+            if (is_file($candidate)) {
+                return $candidate;
+            }
         }
 
         return 'mysqldump';

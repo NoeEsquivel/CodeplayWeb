@@ -4,15 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\TestBanco;
 use App\Models\TestBancoPregunta;
-use App\Models\TestSesionParticipante;
 use App\Models\Usuario;
 use App\Services\BankPracticeService;
-use App\Services\LiveTestSessionService;
 use App\Services\TestBankService;
+use DomainException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class StudentBankController extends Controller
@@ -43,6 +40,7 @@ class StudentBankController extends Controller
             'materia' => ['required', 'string', 'max:100'],
         ]);
         $banco = $service->crear($this->usuario(), $datos);
+
         return redirect()->route('alumno.bancos.edit', $banco)->with('success', 'Banco guardado como borrador.');
     }
 
@@ -51,6 +49,7 @@ class StudentBankController extends Controller
         $this->autorizarBanco($banco);
         $service->validarPropietario($this->usuario(), $banco);
         $banco->load(['preguntas' => fn ($q) => $q->orderBy('orden')]);
+
         return view('alumno.bancos.edit', compact('banco'));
     }
 
@@ -63,6 +62,7 @@ class StudentBankController extends Controller
             'materia' => ['required', 'string', 'max:100'],
         ]);
         $service->actualizar($this->usuario(), $banco, $datos);
+
         return back()->with('success', 'Cambios guardados. El banco quedó como borrador hasta volver a publicarlo.');
     }
 
@@ -70,6 +70,7 @@ class StudentBankController extends Controller
     {
         $this->autorizarBanco($banco);
         $copia = $service->duplicar($this->usuario(), $banco);
+
         return redirect()->route('alumno.bancos.edit', $copia)->with('success', 'Copia creada como borrador.');
     }
 
@@ -77,6 +78,7 @@ class StudentBankController extends Controller
     {
         $this->autorizarBanco($banco);
         $service->eliminar($this->usuario(), $banco);
+
         return redirect()->route('alumno.bancos.index')->with('success', 'Banco eliminado.');
     }
 
@@ -85,6 +87,7 @@ class StudentBankController extends Controller
         $this->autorizarBanco($banco);
         try {
             $service->publicar($this->usuario(), $banco);
+
             return back()->with('success', 'Banco publicado. Ya puedes generar su código.');
         } catch (\DomainException $e) {
             return back()->with('error', $e->getMessage());
@@ -96,6 +99,7 @@ class StudentBankController extends Controller
         $this->autorizarBanco($banco);
         try {
             $codigo = $service->habilitarCodigo($this->usuario(), $banco);
+
             return back()->with('success', "Código para compartir: {$codigo}");
         } catch (\DomainException $e) {
             return back()->with('error', $e->getMessage());
@@ -106,6 +110,7 @@ class StudentBankController extends Controller
     {
         $this->autorizarBanco($banco);
         $service->deshabilitarCodigo($this->usuario(), $banco);
+
         return back()->with('success', 'El código quedó desactivado. Ya no admite nuevas incorporaciones.');
     }
 
@@ -114,6 +119,7 @@ class StudentBankController extends Controller
         $this->autorizarBanco($banco);
         try {
             $service->agregarPregunta($this->usuario(), $banco, $this->questionData($request));
+
             return back()->with('success', 'Pregunta añadida. El banco quedó como borrador.');
         } catch (\InvalidArgumentException|\DomainException $e) {
             return back()->withInput()->with('error', $e->getMessage());
@@ -125,6 +131,7 @@ class StudentBankController extends Controller
         $this->autorizarBanco($banco);
         try {
             $service->actualizarPregunta($this->usuario(), $banco, $pregunta, $this->questionData($request));
+
             return back()->with('success', 'Pregunta actualizada. Publica nuevamente cuando termines.');
         } catch (\InvalidArgumentException|\DomainException $e) {
             return back()->with('error', $e->getMessage());
@@ -135,6 +142,7 @@ class StudentBankController extends Controller
     {
         $this->autorizarBanco($banco);
         $service->eliminarPregunta($this->usuario(), $banco, $pregunta);
+
         return back()->with('success', 'Pregunta eliminada.');
     }
 
@@ -142,7 +150,9 @@ class StudentBankController extends Controller
     {
         $this->autorizarBanco($banco);
         $service->validarPropietario($this->usuario(), $banco);
-        if ((int) $pregunta->banco_id !== (int) $banco->id) abort(404);
+        if ((int) $pregunta->banco_id !== (int) $banco->id) {
+            abort(404);
+        }
         $direction = $request->validate(['direccion' => ['required', 'in:subir,bajar']])['direccion'];
         $ids = $banco->preguntas()->orderBy('orden')->pluck('id')->map(fn ($id) => (int) $id)->all();
         $position = array_search((int) $pregunta->id, $ids, true);
@@ -151,6 +161,7 @@ class StudentBankController extends Controller
             [$ids[$position], $ids[$target]] = [$ids[$target], $ids[$position]];
             $service->reordenar($this->usuario(), $banco, $ids);
         }
+
         return back();
     }
 
@@ -159,11 +170,13 @@ class StudentBankController extends Controller
         $this->autorizarBanco($banco);
         try {
             $sesion = $practicas->crear($this->usuario(), $banco);
+
             return redirect()->route('alumno.tests.codeplay.jugar', $sesion);
         } catch (DomainException $e) {
             return back()->with('error', $e->getMessage());
         }
     }
+
     private function questionData(Request $request): array
     {
         $request->validate([
@@ -199,7 +212,7 @@ class StudentBankController extends Controller
     {
         $usuario = $this->usuario();
         abort_unless(
-            !$banco->esSistema()
+            ! $banco->esSistema()
             && $banco->origen === 'alumno'
             && (int) $banco->creador_usuario_id === (int) $usuario->id
             && (int) $banco->colegio_id === (int) $usuario->colegio_id,

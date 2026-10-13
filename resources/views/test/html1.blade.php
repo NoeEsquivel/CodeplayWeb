@@ -14,7 +14,7 @@
             --secondary-color: #2575fc;
             --accent-color: #00ff9d;
         }
-        
+
         body {
             font-family: 'Roboto', sans-serif;
             background: url('{{ asset("Imagenes/Pantalla_Inicio.jpg") }}') no-repeat center center fixed;
@@ -23,7 +23,7 @@
             min-height: 100vh;
             position: relative;
         }
-        
+
         body::after {
             content: '';
             position: absolute;
@@ -34,7 +34,7 @@
             background-color: rgba(0, 0, 0, 0.6);
             z-index: -1;
         }
-        
+
         .test-container {
             background: rgba(0, 0, 0, 0.8);
             border: 3px solid var(--accent-color);
@@ -42,7 +42,7 @@
             padding: 2rem;
             margin-top: 2rem;
         }
-        
+
         .pregunta-card {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
@@ -50,7 +50,7 @@
             margin-bottom: 1.5rem;
             border-left: 4px solid var(--accent-color);
         }
-        
+
         .opcion-label {
             display: block;
             padding: 12px;
@@ -60,17 +60,17 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        
+
         .opcion-label:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: translateX(5px);
         }
-        
+
         .opcion-input:checked + .opcion-label {
             background: rgba(0, 255, 157, 0.2);
             border: 2px solid var(--accent-color);
         }
-        
+
         .btn-submit {
             background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
             border: none;
@@ -78,7 +78,7 @@
             font-size: 1.1rem;
             margin-top: 1rem;
         }
-        
+
         .btn-submit:hover {
             background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
             transform: translateY(-2px);
@@ -115,29 +115,29 @@
                         <p class="lead">Responde las siguientes 5 preguntas sobre {{ $test->titulo ?? 'HTML' }}</p>
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle me-2"></i>
-                            Cada respuesta correcta vale 10 puntos. Solo puedes realizar este test una vez cada 24 horas.
+                            Cada respuesta correcta vale 10 puntos. Solo puedes realizar este test una vez cada {{ \App\Services\TestAvailabilityService::COOLDOWN_HOURS }} horas.
                         </div>
                     </div>
 
                     <form action="{{ route('test.evaluar', $modulo) }}" method="POST" id="testForm">
                         @csrf
-                        
+
                         @foreach($preguntas as $index => $pregunta)
                         <div class="pregunta-card">
                             <h5 class="mb-3">
                                 <span class="badge bg-primary me-2">{{ $index + 1 }}</span>
                                 {{ $pregunta->pregunta }}
                             </h5>
-                            
+
                             <div class="opciones">
                                 @foreach(['a', 'b', 'c', 'd'] as $letra)
                                 <div class="form-check">
-                                    <input class="form-check-input opcion-input" type="radio" 
-                                           name="respuestas[{{ $pregunta->id }}]" 
-                                           id="p{{ $pregunta->id }}{{ $letra }}" 
+                                    <input class="form-check-input opcion-input" type="radio"
+                                           name="respuestas[{{ $pregunta->id }}]"
+                                           id="p{{ $pregunta->id }}{{ $letra }}"
                                            value="{{ $letra }}" required>
                                     <label class="form-check-label opcion-label" for="p{{ $pregunta->id }}{{ $letra }}">
-                                        <strong>{{ strtoupper($letra) }}.</strong> 
+                                        <strong>{{ strtoupper($letra) }}.</strong>
                                         {{ $pregunta->{'opcion_' . $letra} }}
                                     </label>
                                 </div>

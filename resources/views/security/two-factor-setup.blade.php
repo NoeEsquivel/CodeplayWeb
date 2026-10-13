@@ -7,7 +7,7 @@
 <details class="mb-3"><summary>URI para una aplicación compatible</summary><div class="code mt-2">{{ $provisioningUri }}</div></details>
 <form method="POST" action="{{ route('security.2fa.confirm') }}">@csrf
 <label class="form-label" for="codigo">Código de 6 dígitos</label>
-<input class="form-control mb-3" id="codigo" name="codigo" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required autofocus>
+<input class="form-control mb-3" id="codigo" name="codigo" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required>
 <button class="btn btn-primary w-100" type="submit">Confirmar segundo factor</button>
 </form>
 @endsection

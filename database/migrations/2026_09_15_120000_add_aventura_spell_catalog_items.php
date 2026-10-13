@@ -4,7 +4,8 @@ use App\Services\AventuraCatalogo;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
-return new class extends Migration {
+return new class extends Migration
+{
     private const NUEVOS_HECHIZOS = [
         'quebrarrocas', 'raiz-vital', 'ritual-doble', 'tormenta-cadena',
         'furia-runica', 'imbuicion-ignea', 'terremoto',
@@ -12,7 +13,7 @@ return new class extends Migration {
 
     public function up(): void
     {
-        $catalogo = (new AventuraCatalogo())->items();
+        $catalogo = (new AventuraCatalogo)->items();
         foreach (array_merge(self::NUEVOS_HECHIZOS, ['supernova']) as $clave) {
             $item = $catalogo[$clave];
             DB::table('items')->updateOrInsert(

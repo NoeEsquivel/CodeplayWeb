@@ -18,6 +18,7 @@ class LimpiarSesionesTest extends Command
         $result = $cleanup->clean((int) $this->option('inactividad'), (int) $this->option('retencion'));
         $this->info("Sesiones abandonadas cerradas: {$result['cerradas']}");
         $this->info("Códigos antiguos caducados: {$result['codigos_caducados']}");
+
         return self::SUCCESS;
     }
 }

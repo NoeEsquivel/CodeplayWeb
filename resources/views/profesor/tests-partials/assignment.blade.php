@@ -19,8 +19,8 @@
             @endforeach
         </div>
         <div class="row g-2 mt-2">
-            <div class="col-md-6"><label class="form-label">Disponible desde</label><input class="form-control" type="datetime-local" name="disponible_desde"></div>
-            <div class="col-md-6"><label class="form-label">Disponible hasta</label><input class="form-control" type="datetime-local" name="disponible_hasta"></div>
+            <div class="col-md-6"><label class="form-label" for="bank-{{ $bank->id }}-available-from">Disponible desde</label><input class="form-control" id="bank-{{ $bank->id }}-available-from" type="datetime-local" name="disponible_desde"></div>
+            <div class="col-md-6"><label class="form-label" for="bank-{{ $bank->id }}-available-until">Disponible hasta</label><input class="form-control" id="bank-{{ $bank->id }}-available-until" type="datetime-local" name="disponible_hasta"></div>
         </div>
         <button class="teacher-btn teacher-btn-primary teacher-btn-small mt-3" title="Guarda las clases y fechas seleccionadas.">
             <i class="fas fa-save"></i>Guardar asignación

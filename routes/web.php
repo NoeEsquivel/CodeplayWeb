@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\AdminAuditController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AventuraController;
-use App\Http\Controllers\AdminAuditController;
-use App\Http\Controllers\ColegioController;
 use App\Http\Controllers\ClassroomTestController;
+use App\Http\Controllers\ColegioController;
 use App\Http\Controllers\DesafioController;
 use App\Http\Controllers\DocumentacionController;
 use App\Http\Controllers\FriendCodeController;
@@ -13,14 +13,14 @@ use App\Http\Controllers\LiveTestEngineController;
 use App\Http\Controllers\RecoveryController;
 use App\Http\Controllers\SchoolAdminController;
 use App\Http\Controllers\SecurityController;
-use App\Http\Controllers\StudentProgressController;
 use App\Http\Controllers\StudentBankController;
-use App\Http\Controllers\StudentTestsController;
 use App\Http\Controllers\StudentLuxController;
-use App\Http\Controllers\TestController;
-use App\Http\Controllers\TeacherPanelController;
+use App\Http\Controllers\StudentProgressController;
+use App\Http\Controllers\StudentTestsController;
 use App\Http\Controllers\TeacherGradebookController;
+use App\Http\Controllers\TeacherPanelController;
 use App\Http\Controllers\TeacherTestController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\TutorialController;
 use App\Http\Controllers\UserManagementController;
 use App\Services\AventuraFinal;
@@ -140,7 +140,7 @@ Route::middleware(['auth.custom', 'role:Alumno', 'lux.student'])->group(function
         Route::get('/tests/clase/{sesion}/trivia', [ClassroomTestController::class, 'trivia'])->whereNumber('sesion')->name('alumno.tests.clase.trivia');
         Route::get('/tests/clase/{sesion}/examen', [ClassroomTestController::class, 'exam'])->whereNumber('sesion')->name('alumno.tests.clase.examen');
         Route::get('/tests/clase/{sesion}/examen/resumen', [ClassroomTestController::class, 'summary'])->whereNumber('sesion')->name('alumno.tests.clase.examen.summary');
-        Route::post('/tests/clase/{sesion}/examen/{emision}/guardar', [ClassroomTestController::class, 'saveExam'])->whereNumber(['sesion','emision'])->name('alumno.tests.clase.examen.save');
+        Route::post('/tests/clase/{sesion}/examen/{emision}/guardar', [ClassroomTestController::class, 'saveExam'])->whereNumber(['sesion', 'emision'])->name('alumno.tests.clase.examen.save');
         Route::post('/tests/clase/{sesion}/examen/entregar', [ClassroomTestController::class, 'submitExam'])->whereNumber('sesion')->name('alumno.tests.clase.examen.submit');
         Route::get('/tests/codeplay', [StudentTestsController::class, 'codeplay'])->name('alumno.tests.codeplay');
         Route::post('/tests/codeplay/iniciar', [StudentTestsController::class, 'iniciar'])

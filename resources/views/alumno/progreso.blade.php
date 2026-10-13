@@ -109,7 +109,7 @@
     </section>
 
     <div class="section-title">
-        <div><h2>Documentación y tests</h2><p>Los tests vuelven a otorgar puntos 24 horas después de cada intento.</p></div>
+        <div><h2>Documentación y tests</h2><p>Los tests vuelven a otorgar puntos {{ \App\Services\TestAvailabilityService::COOLDOWN_HOURS }} horas después de cada intento.</p></div>
         @if($availableTests > 0)<div class="available-note"><i class="fas fa-bolt"></i> Tienes {{ $availableTests }} {{ $availableTests === 1 ? 'test disponible' : 'tests disponibles' }}</div>@endif
     </div>
     <section class="tests">

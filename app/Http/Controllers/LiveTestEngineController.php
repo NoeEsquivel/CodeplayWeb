@@ -71,6 +71,7 @@ class LiveTestEngineController extends Controller
     public function reconnect(Request $request, TestSesion $sesion, LiveTestEngineService $motor): JsonResponse
     {
         $token = $request->validate(['reconexion_token' => ['required', 'string', 'size:64']])['reconexion_token'];
+
         return $this->accion(fn () => $motor->reconectar($this->usuario($request), $sesion, $token));
     }
 
@@ -90,13 +91,14 @@ class LiveTestEngineController extends Controller
         $respuesta = $request->input('respuesta');
         $valores = is_array($respuesta) ? $respuesta : [$respuesta];
         if (count($valores) > 20 || collect($valores)->contains(
-            fn ($valor) => !is_scalar($valor) || mb_strlen((string) $valor) > 1000
+            fn ($valor) => ! is_scalar($valor) || mb_strlen((string) $valor) > 1000
         )) {
             return response()->json(['success' => false, 'message' => 'La respuesta enviada no es válida.'], 422);
         }
 
         return $this->accion(function () use ($request, $sesion, $motor, $respuesta) {
             $motor->responder($this->usuario($request), $sesion, $respuesta);
+
             return $motor->estado($this->usuario($request), $sesion->fresh());
         });
     }
@@ -123,6 +125,7 @@ class LiveTestEngineController extends Controller
     private function usuario(Request $request): Usuario
     {
         $usuario = $request->attributes->get('usuario_actual');
+
         return $usuario instanceof Usuario ? $usuario : Usuario::findOrFail((int) session('usuario_id'));
     }
 }

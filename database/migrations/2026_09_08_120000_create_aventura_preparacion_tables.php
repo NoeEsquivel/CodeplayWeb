@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('aventura_personajes', function (Blueprint $table) {
@@ -12,7 +13,9 @@ return new class extends Migration {
             $table->foreignId('usuario_id')->unique()->constrained('usuarios')->cascadeOnDelete();
             $table->unsignedInteger('nivel')->default(1);
             $table->unsignedInteger('experiencia')->default(0);
-            foreach (['dano', 'magia', 'armadura', 'inteligencia', 'vitalidad'] as $stat) $table->unsignedInteger($stat)->default(1);
+            foreach (['dano', 'magia', 'armadura', 'inteligencia', 'vitalidad'] as $stat) {
+                $table->unsignedInteger($stat)->default(1);
+            }
             $table->json('ultimo_aumento')->nullable();
             $table->timestamps();
         });

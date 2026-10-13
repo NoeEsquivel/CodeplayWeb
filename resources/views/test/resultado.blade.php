@@ -14,7 +14,7 @@
             --secondary-color: #2575fc;
             --accent-color: #00ff9d;
         }
-        
+
         body {
             font-family: 'Roboto', sans-serif;
             background: url('{{ asset("Imagenes/Pantalla_Inicio.jpg") }}') no-repeat center center fixed;
@@ -23,7 +23,7 @@
             min-height: 100vh;
             position: relative;
         }
-        
+
         body::after {
             content: '';
             position: absolute;
@@ -34,7 +34,7 @@
             background-color: rgba(0, 0, 0, 0.6);
             z-index: -1;
         }
-        
+
         .resultado-container {
             background: rgba(0, 0, 0, 0.8);
             border: 3px solid var(--accent-color);
@@ -42,24 +42,24 @@
             padding: 2rem;
             margin-top: 2rem;
         }
-        
+
         .puntaje-display {
             font-size: 3rem;
             font-weight: bold;
             color: var(--accent-color);
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
-        
+
         .respuesta-correcta {
             background: rgba(0, 255, 157, 0.1) !important;
             border-left: 4px solid #28a745 !important;
         }
-        
+
         .respuesta-incorrecta {
             background: rgba(220, 53, 69, 0.1) !important;
             border-left: 4px solid #dc3545 !important;
         }
-        
+
         .pregunta-resultado {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
@@ -95,11 +95,11 @@
                 <div class="resultado-container">
                     <div class="text-center mb-4">
                         <h1><i class="fas fa-chart-bar me-2"></i>Resultados del Test</h1>
-                        
+
                         <div class="puntaje-display">
                             {{ $puntaje }}/50
                         </div>
-                        
+
                         <div class="alert alert-success">
                             <i class="fas fa-coins me-2"></i>
                             ¡Has ganado <strong>{{ $puntaje }} puntos</strong> que se han sumado a tu total!
@@ -114,23 +114,23 @@
                             </span>
                             {{ $resultado['pregunta'] }}
                         </h5>
-                        
+
                         <div class="mb-2">
-                            <strong>Tu respuesta:</strong> 
+                            <strong>Tu respuesta:</strong>
                             <span class="{{ $resultado['es_correcta'] ? 'text-success' : 'text-danger' }}">
-                                {{ strtoupper($resultado['respuesta_usuario']) }}. 
+                                {{ strtoupper($resultado['respuesta_usuario']) }}.
                                 {{ $resultado['opciones'][$resultado['respuesta_usuario']] }}
                                 @if(!$resultado['es_correcta'])
                                 <i class="fas fa-times ms-1"></i>
                                 @endif
                             </span>
                         </div>
-                        
+
                         @if(!$resultado['es_correcta'])
                         <div class="mb-2">
-                            <strong>Respuesta correcta:</strong> 
+                            <strong>Respuesta correcta:</strong>
                             <span class="text-success">
-                                {{ strtoupper($resultado['respuesta_correcta']) }}. 
+                                {{ strtoupper($resultado['respuesta_correcta']) }}.
                                 {{ $resultado['opciones'][$resultado['respuesta_correcta']] }}
                                 <i class="fas fa-check ms-1"></i>
                             </span>

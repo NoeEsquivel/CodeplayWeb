@@ -350,7 +350,7 @@
                     <h3 class="section-title">Tu Código</h3>
                     <div class="editor-container">
                         <div class="code-editor">
-                            <textarea id="html-code"><?php
+                            <textarea id="html-code" aria-label="Editor de código"><?php
 // Crea una variable y muestra un mensaje con echo
 
 
@@ -555,7 +555,7 @@ async function checkChallenge() {
     const simulatedOutput = simularSalidaPhp(code).trim();
     const fallbackOutput = 'Aquí aparecería el resultado generado por PHP en el servidor.';
     const requiredChecks = [
-        { label: '<?php', ok: lowerCode.includes('<?php') },
+        { label: '\x3C?php', ok: lowerCode.includes('\x3C?php') },
         { label: 'variable con $', ok: code.includes('$') },
         { label: 'echo', ok: lowerCode.includes('echo') },
         { label: 'texto entre comillas', ok: /["'][^"']+["']/.test(code) },

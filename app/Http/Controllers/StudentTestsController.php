@@ -66,6 +66,7 @@ class StudentTestsController extends Controller
             $categoria['clave'] = $clave;
             $categoria['preguntas'] = $query->withCount(['preguntas' => fn ($q) => $q->where('activa', true)])
                 ->get()->sum('preguntas_count');
+
             return $categoria;
         })->values();
 
@@ -135,7 +136,9 @@ class StudentTestsController extends Controller
             ->orderBy('orden')
             ->first();
 
-        if (!$emision) return $this->finalizar($sesion, $participante, $usuario);
+        if (! $emision) {
+            return $this->finalizar($sesion, $participante, $usuario);
+        }
 
         $emision->forceFill(['estado' => 'abierta', 'abierta_at' => $emision->abierta_at ?? now()])->save();
         $respondidas = $participante->respuestas()->count();
@@ -164,7 +167,7 @@ class StudentTestsController extends Controller
             return back()->with('error', 'Selecciona o escribe una respuesta antes de continuar.');
         }
         $valores = is_array($respuesta) ? $respuesta : [$respuesta];
-        if (count($valores) > 10 || collect($valores)->contains(fn ($valor) => !is_scalar($valor) || mb_strlen((string) $valor) > 500)) {
+        if (count($valores) > 10 || collect($valores)->contains(fn ($valor) => ! is_scalar($valor) || mb_strlen((string) $valor) > 500)) {
             abort(422, 'La respuesta enviada no es válida.');
         }
 
@@ -179,7 +182,7 @@ class StudentTestsController extends Controller
             $conTiempo = (bool) ($sesion->configuracion['con_tiempo'] ?? false);
             $limite = (int) ($emision->pregunta->tiempo_limite ?? 20);
             $agotado = $conTiempo && $emision->abierta_at && now()->greaterThan($emision->abierta_at->copy()->addSeconds($limite + 1));
-            $correcta = !$agotado && $evaluador->esCorrecta($emision->pregunta, $respuesta);
+            $correcta = ! $agotado && $evaluador->esCorrecta($emision->pregunta, $respuesta);
             $inicio = $emision->abierta_at?->getTimestampMs() ?? now()->getTimestampMs();
             $participante->respuestas()->create([
                 'sesion_pregunta_id' => $emision->id,
@@ -204,7 +207,9 @@ class StudentTestsController extends Controller
             ->where('participante_id', $participante->id)
             ->first();
 
-        if (!$resultado) return redirect()->route('alumno.tests.codeplay.jugar', $sesion);
+        if (! $resultado) {
+            return redirect()->route('alumno.tests.codeplay.jugar', $sesion);
+        }
 
         $detalles = $participante->respuestas()
             ->with('sesionPregunta.pregunta')
@@ -212,6 +217,7 @@ class StudentTestsController extends Controller
             ->get()
             ->map(function ($respuesta) {
                 $pregunta = $respuesta->sesionPregunta->pregunta;
+
                 return [
                     'pregunta' => $pregunta->enunciado,
                     'correcta' => $respuesta->correcta,
@@ -275,14 +281,17 @@ class StudentTestsController extends Controller
         );
 
         $participante = $sesion->participantes()->where('usuario_id', $usuario->id)->firstOrFail();
+
         return [$usuario, $participante];
     }
 
     private function mostrarRespuesta(mixed $respuesta, ?array $opciones): string
     {
         $valores = is_array($respuesta) ? $respuesta : [$respuesta];
+
         return collect($valores)->map(function ($valor) use ($opciones) {
             $clave = (string) $valor;
+
             return $opciones[$clave] ?? match (strtolower($clave)) {
                 '1', 'true' => 'Verdadero',
                 '0', 'false' => 'Falso',

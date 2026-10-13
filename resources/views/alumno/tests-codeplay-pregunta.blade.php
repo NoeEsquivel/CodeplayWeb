@@ -12,7 +12,7 @@
         .card{border:1px solid var(--line);border-radius:22px;background:var(--panel);box-shadow:0 22px 70px rgba(0,0,0,.35);overflow:hidden}.question{padding:31px}.count{color:#8eeacb;font-size:13px;text-transform:uppercase;letter-spacing:2px}
         h1{font-size:clamp(22px,3.5vw,31px);line-height:1.45;margin:13px 0 25px}.options{display:grid;gap:11px}.option{position:relative}.option input{position:absolute;opacity:0}.option label{display:flex;gap:13px;align-items:center;padding:15px 17px;border:1px solid rgba(255,255,255,.12);border-radius:13px;background:rgba(255,255,255,.04);cursor:pointer;transition:.18s}
         .option label:hover{transform:translateX(4px);border-color:#69dcb9}.option input:checked+label{background:rgba(0,245,160,.13);border-color:var(--green);box-shadow:0 0 0 1px var(--green)}.letter{display:grid;place-items:center;width:31px;height:31px;border-radius:9px;background:#18363a;color:#9ff4d8;font-weight:700}
-        .text-answer{width:100%;padding:15px;border:1px solid var(--line);border-radius:12px;background:#071a1e;color:white;font:16px Roboto}.actions{display:flex;justify-content:flex-end;padding:18px 30px;background:rgba(0,0,0,.18);border-top:1px solid var(--line)}
+        .answer-label{display:block;margin-bottom:8px;color:#9ff4d8;font-weight:700}.text-answer{width:100%;padding:15px;border:1px solid var(--line);border-radius:12px;background:#071a1e;color:white;font:16px Roboto}.actions{display:flex;justify-content:flex-end;padding:18px 30px;background:rgba(0,0,0,.18);border-top:1px solid var(--line)}
         button{border:0;border-radius:12px;padding:13px 25px;background:var(--green);color:#032018;font-weight:800;font-size:15px;cursor:pointer}.error{margin-bottom:14px;padding:12px 15px;background:#672a30;border:1px solid #ff8993;border-radius:12px}
         @media(max-width:600px){body{padding:12px}.question{padding:22px 17px}.top{align-items:flex-start;flex-direction:column}.actions{padding:15px 17px}button{width:100%}}
     </style>
@@ -24,7 +24,7 @@
     <form class="card" method="POST" action="{{ route('alumno.tests.codeplay.responder', $sesion) }}">
         @csrf<div class="question"><div class="count">Pregunta {{ $numero }} de {{ $total }}</div><h1>{{ $pregunta->enunciado }}</h1>
         @if($pregunta->tipo === 'respuesta_directa')
-            <input class="text-answer" type="text" name="respuesta" maxlength="500" autocomplete="off" autofocus placeholder="Escribe tu respuesta..." required>
+            <label class="answer-label" for="respuesta-directa">Tu respuesta</label><input id="respuesta-directa" class="text-answer" type="text" name="respuesta" maxlength="500" autocomplete="off" placeholder="Escribe tu respuesta..." required>
         @elseif($pregunta->tipo === 'seleccion_multiple')
             <div class="options">@foreach($pregunta->opciones ?? [] as $clave => $opcion)<div class="option"><input type="checkbox" name="respuesta[]" value="{{ $clave }}" id="op-{{ $clave }}"><label for="op-{{ $clave }}"><span class="letter">{{ strtoupper($clave) }}</span><span>{{ $opcion }}</span></label></div>@endforeach</div>
         @elseif($pregunta->tipo === 'verdadero_falso')

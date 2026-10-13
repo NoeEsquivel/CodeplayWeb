@@ -13,8 +13,11 @@ class Usuario extends Model
     use HasFactory;
 
     public const ROL_ALUMNO = 'Alumno';
+
     public const ROL_PROFESOR = 'Profesor';
+
     public const ROL_ADMINISTRADOR_COLEGIO = 'AdministradorColegio';
+
     public const ROL_MASTER = 'Master';
 
     public const ROLES = [
@@ -50,24 +53,45 @@ class Usuario extends Model
         'puntos_usados' => 0,
     ];
 
-    public function nombreParaReportes(): string { return trim((string) $this->nombre_completo) ?: (string) $this->nombre; }
+    public function nombreParaReportes(): string
+    {
+        return trim((string) $this->nombre_completo) ?: (string) $this->nombre;
+    }
 
-    public function esProfesor(): bool { return $this->rol === self::ROL_PROFESOR; }
+    public function esProfesor(): bool
+    {
+        return $this->rol === self::ROL_PROFESOR;
+    }
 
-    public function esAdministrador(): bool { return $this->esProfesor(); }
+    public function esAdministrador(): bool
+    {
+        return $this->esProfesor();
+    }
 
-    public function esAdministradorColegio(): bool { return $this->rol === self::ROL_ADMINISTRADOR_COLEGIO; }
+    public function esAdministradorColegio(): bool
+    {
+        return $this->rol === self::ROL_ADMINISTRADOR_COLEGIO;
+    }
 
-    public function esMaster(): bool { return $this->rol === self::ROL_MASTER; }
+    public function esMaster(): bool
+    {
+        return $this->rol === self::ROL_MASTER;
+    }
 
-    public function esAlumno(): bool { return $this->rol === self::ROL_ALUMNO; }
+    public function esAlumno(): bool
+    {
+        return $this->rol === self::ROL_ALUMNO;
+    }
 
     public function requiereCorreoVerificado(): bool
     {
         return in_array($this->rol, [self::ROL_PROFESOR, self::ROL_ADMINISTRADOR_COLEGIO, self::ROL_MASTER], true);
     }
 
-    public function colegio(): BelongsTo { return $this->belongsTo(Colegio::class); }
+    public function colegio(): BelongsTo
+    {
+        return $this->belongsTo(Colegio::class);
+    }
 
     public function clasesComoProfesor(): BelongsToMany
     {
@@ -84,7 +108,10 @@ class Usuario extends Model
         return $this->hasOne(TwoFactorAuthentication::class);
     }
 
-    public function bancosTestCreados() { return $this->hasMany(TestBanco::class, 'creador_usuario_id'); }
+    public function bancosTestCreados()
+    {
+        return $this->hasMany(TestBanco::class, 'creador_usuario_id');
+    }
 
     public function bancosTestBiblioteca(): BelongsToMany
     {
@@ -93,9 +120,28 @@ class Usuario extends Model
             ->withTimestamps();
     }
 
-    public function progresoNiveles() { return $this->hasMany(ProgresoNivel::class); }
-    public function resultadosTest() { return $this->hasMany(ResultadoTest::class); }
-    public function combates() { return $this->hasMany(Combate::class); }
-    public function inventario() { return $this->hasMany(Inventario::class); }
-    public function progresoTutoriales() { return $this->hasMany(ProgresoTutorial::class); }
+    public function progresoNiveles()
+    {
+        return $this->hasMany(ProgresoNivel::class);
+    }
+
+    public function resultadosTest()
+    {
+        return $this->hasMany(ResultadoTest::class);
+    }
+
+    public function combates()
+    {
+        return $this->hasMany(Combate::class);
+    }
+
+    public function inventario()
+    {
+        return $this->hasMany(Inventario::class);
+    }
+
+    public function progresoTutoriales()
+    {
+        return $this->hasMany(ProgresoTutorial::class);
+    }
 }

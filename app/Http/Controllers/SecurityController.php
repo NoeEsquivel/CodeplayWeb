@@ -17,8 +17,7 @@ class SecurityController extends Controller
     public function __construct(
         private readonly SecurityMailService $mail,
         private readonly TotpService $totp,
-    ) {
-    }
+    ) {}
 
     public function showEmailForm(Request $request)
     {
@@ -75,7 +74,7 @@ class SecurityController extends Controller
     public function resendVerification(Request $request)
     {
         $usuario = $this->usuario($request);
-        abort_unless($usuario->email && !$usuario->email_verified_at, 422);
+        abort_unless($usuario->email && ! $usuario->email_verified_at, 422);
 
         $enviado = $this->sendVerification($usuario);
 
@@ -92,7 +91,7 @@ class SecurityController extends Controller
             ->where('expires_at', '>', now())
             ->first();
 
-        if (!$registro) {
+        if (! $registro) {
             return view('security.verify-result', ['success' => false]);
         }
 
@@ -117,7 +116,7 @@ class SecurityController extends Controller
             return redirect()->route('security.2fa.challenge');
         }
 
-        if (!$registro) {
+        if (! $registro) {
             $registro = TwoFactorAuthentication::create([
                 'usuario_id' => $usuario->id,
                 'secret' => $this->totp->generateSecret(),
@@ -136,7 +135,7 @@ class SecurityController extends Controller
         $datos = $request->validate(['codigo' => ['required', 'digits:6']]);
         $registro = $usuario->twoFactorAuthentication;
 
-        if (!$registro || !$this->totp->verify($registro->secret, $datos['codigo'])) {
+        if (! $registro || ! $this->totp->verify($registro->secret, $datos['codigo'])) {
             throw ValidationException::withMessages(['codigo' => 'El código del autenticador no es válido.']);
         }
 
@@ -171,7 +170,7 @@ class SecurityController extends Controller
         $codigo = strtoupper(trim($datos['codigo']));
         $valido = $this->totp->verify($registro->secret, $codigo);
 
-        if (!$valido) {
+        if (! $valido) {
             $hash = hash('sha256', $codigo);
             $codigos = $registro->recovery_codes ?? [];
             $indice = array_search($hash, $codigos, true);
@@ -183,7 +182,7 @@ class SecurityController extends Controller
             }
         }
 
-        if (!$valido) {
+        if (! $valido) {
             throw ValidationException::withMessages(['codigo' => 'El código ingresado no es válido.']);
         }
 
@@ -211,7 +210,7 @@ class SecurityController extends Controller
             'Verificar correo',
         );
 
-        if (!$enviado && app()->environment('local')) {
+        if (! $enviado && app()->environment('local')) {
             session()->flash('local_verification_url', $verificationUrl);
         }
 
@@ -229,6 +228,7 @@ class SecurityController extends Controller
     {
         $usuario = $this->usuario($request);
         abort_unless($usuario->esMaster() && $usuario->email_verified_at, 403);
+
         return $usuario;
     }
 
@@ -236,6 +236,7 @@ class SecurityController extends Controller
     {
         $usuario = $request->attributes->get('usuario_actual');
         abort_unless($usuario instanceof Usuario, 401);
+
         return $usuario;
     }
 

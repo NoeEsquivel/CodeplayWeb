@@ -6,7 +6,6 @@ use App\Services\TestAvailabilityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-
 class TestController extends Controller
 {
     public function show(string $modulo, TestAvailabilityService $availability)
@@ -15,9 +14,9 @@ class TestController extends Controller
         $test = $availability->testForModule($modulo);
         $status = $availability->forTest((int) $usuarioId, (int) $test->id);
 
-        if (!$status['disponible']) {
+        if (! $status['disponible']) {
             return redirect()->route('alumno.documentacion')
-                ->with('error', 'Este test todavía está en espera. Consulta Mi Progreso para ver el tiempo restante.');
+                ->with('error', 'Este test podrá realizarse nuevamente '.TestAvailabilityService::COOLDOWN_HOURS.' horas después del último intento. Consulta Mi Progreso para ver el tiempo restante.');
         }
 
         // Obtener 5 preguntas aleatorias del módulo
@@ -36,9 +35,9 @@ class TestController extends Controller
         $test = $availability->testForModule($modulo);
         $status = $availability->forTest((int) $usuarioId, (int) $test->id);
 
-        if (!$status['disponible']) {
+        if (! $status['disponible']) {
             return redirect()->route('alumno.documentacion')
-                ->with('error', 'Este test todavía está en espera. Consulta Mi Progreso para ver el tiempo restante.');
+                ->with('error', 'Este test podrá realizarse nuevamente '.TestAvailabilityService::COOLDOWN_HOURS.' horas después del último intento. Consulta Mi Progreso para ver el tiempo restante.');
         }
 
         $preguntas = DB::table('preguntas_test')
@@ -53,10 +52,10 @@ class TestController extends Controller
 
         foreach ($request->respuestas as $preguntaId => $respuestaUsuario) {
             $pregunta = $preguntas[$preguntaId] ?? null;
-            
+
             if ($pregunta) {
                 $esCorrecta = $respuestaUsuario === $pregunta->respuesta_correcta;
-                
+
                 $resultados[] = [
                     'pregunta' => $pregunta->pregunta,
                     'respuesta_usuario' => $respuestaUsuario,
@@ -67,7 +66,7 @@ class TestController extends Controller
                         'c' => $pregunta->opcion_c,
                         'd' => $pregunta->opcion_d,
                     ],
-                    'es_correcta' => $esCorrecta
+                    'es_correcta' => $esCorrecta,
                 ];
 
                 if ($esCorrecta) {
@@ -103,7 +102,4 @@ class TestController extends Controller
             'nextAvailableTime' => $status['disponible'] ? null : $status['disponible_desde']?->toISOString(),
         ]);
     }
-
-
-
 }

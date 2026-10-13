@@ -18,7 +18,7 @@ class Item extends Model
         'tipo',
         'descripcion',
         'precio',
-        'efecto'
+        'efecto',
     ];
 
     protected $attributes = [

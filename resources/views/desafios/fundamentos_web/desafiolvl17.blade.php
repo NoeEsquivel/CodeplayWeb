@@ -96,7 +96,7 @@
 
             <div class="editor-grid mt-4">
                 <div class="editor-panel">
-                    <textarea id="codeEditor"><!DOCTYPE html>
+                    <textarea id="codeEditor" aria-label="Editor de código"><!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -168,7 +168,7 @@
 
         function renderValidation(showFeedback = false) {
             const checks = evaluateCode(editor.getValue());
-            validationGrid.innerHTML = Object.entries(checks).map(([key, ok]) => `
+            validationGrid.innerHTML = Object.entries(checks).map(([key, ok]) = aria-label="Editor de código"> `
                 <div class="validation-item ${ok ? 'ok' : 'missing'}"><i class="fas ${ok ? 'fa-check' : 'fa-circle'} me-2"></i>${requirementLabels[key]}</div>
             `).join('');
             const completed = Object.values(checks).filter(Boolean).length;

@@ -9,7 +9,7 @@ class LegacyTestBankImporter
 {
     public function importar(): array
     {
-        if (!Schema::hasTable('tests') || !Schema::hasTable('preguntas_test') || !Schema::hasTable('test_bancos')) {
+        if (! Schema::hasTable('tests') || ! Schema::hasTable('preguntas_test') || ! Schema::hasTable('test_bancos')) {
             return ['bancos' => 0, 'preguntas' => 0];
         }
 
@@ -18,7 +18,7 @@ class LegacyTestBankImporter
         foreach (DB::table('tests')->orderBy('id')->get() as $test) {
             $clave = $test->modulo ?? ('test-'.$test->id);
             $bancoId = DB::table('test_bancos')->where('clave_sistema', $clave)->value('id');
-            if (!$bancoId) {
+            if (! $bancoId) {
                 $prefijo = strtolower((string) preg_replace('/[^a-z]+.*/i', '', $clave));
                 $categoria = match ($prefijo) {
                     'html' => 'html', 'css' => 'css', 'js' => 'javascript',
@@ -33,7 +33,9 @@ class LegacyTestBankImporter
                 $bancos++;
             }
 
-            if (DB::table('test_banco_preguntas')->where('banco_id', $bancoId)->exists()) continue;
+            if (DB::table('test_banco_preguntas')->where('banco_id', $bancoId)->exists()) {
+                continue;
+            }
             foreach (DB::table('preguntas_test')->where('test_id', $test->id)->orderBy('id')->get() as $indice => $pregunta) {
                 DB::table('test_banco_preguntas')->insert([
                     'banco_id' => $bancoId, 'enunciado' => $pregunta->pregunta, 'tipo' => 'opcion_unica',
@@ -45,7 +47,7 @@ class LegacyTestBankImporter
                 $preguntas++;
             }
         }
+
         return compact('bancos', 'preguntas');
     }
 }
-

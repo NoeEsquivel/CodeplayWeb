@@ -24,11 +24,11 @@ class AdminAuditController extends Controller
             ])
             ->latest('id');
 
-        if (!empty($datos['colegio_id'])) {
+        if (! empty($datos['colegio_id'])) {
             $query->where('colegio_id', $datos['colegio_id']);
         }
 
-        if (!empty($datos['accion'])) {
+        if (! empty($datos['accion'])) {
             $query->where('accion', $datos['accion']);
         }
 

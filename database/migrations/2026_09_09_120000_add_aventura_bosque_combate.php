@@ -2,10 +2,11 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::table('enemigos', function (Blueprint $table) {
@@ -27,25 +28,38 @@ return new class extends Migration {
             ['silvar', 'Silvar, Guardián de las Raíces', 210, 19, 5, 120, 'jefe', 'Bajo media vida se enfurece. Cada tercer turno prepara raíces rúnicas: responde una pregunta para interrumpirlas.'],
         ];
         foreach ($enemigos as [$clave,$nombre,$vida,$dano,$defensa,$xp,$habilidad,$descripcion]) {
-            DB::table('enemigos')->insert(['clave'=>$clave,'nombre'=>$nombre,'vida'=>$vida,'daño'=>$dano,'defensa'=>$defensa,
-                'magia'=>0,'velocidad'=>1,'recompensa_puntos'=>$clave === 'silvar' ? 60 : 8,
-                'rasgos'=>json_encode(['region'=>1,'experiencia'=>$xp,'habilidad'=>$habilidad,'descripcion'=>$descripcion]),
-                'created_at'=>now(),'updated_at'=>now()]);
+            DB::table('enemigos')->insert(['clave' => $clave, 'nombre' => $nombre, 'vida' => $vida, 'daño' => $dano, 'defensa' => $defensa,
+                'magia' => 0, 'velocidad' => 1, 'recompensa_puntos' => $clave === 'silvar' ? 60 : 8,
+                'rasgos' => json_encode(['region' => 1, 'experiencia' => $xp, 'habilidad' => $habilidad, 'descripcion' => $descripcion]),
+                'created_at' => now(), 'updated_at' => now()]);
         }
     }
+
     public function down(): void
     {
-        if (DB::table('combates')->whereNotNull('expedicion_id')->exists()) throw new RuntimeException('Conserva el historial de combates antes de revertir.');
-        foreach (DB::table('aventura_expediciones')->get() as $run) {
-            foreach (json_decode($run->exploracion ?? '[]',true) as $event) if (isset($event['combate'])) throw new RuntimeException('Hay combates guardados en expediciones.');
+        if (DB::table('combates')->whereNotNull('expedicion_id')->exists()) {
+            throw new RuntimeException('Conserva el historial de combates antes de revertir.');
         }
-        DB::table('enemigos')->whereIn('clave', ['lobo','slime','ladron','avispa','hongo','silvar'])->whereNotIn('id', DB::table('combates')->select('enemigo_id'))->delete();
+        foreach (DB::table('aventura_expediciones')->get() as $run) {
+            foreach (json_decode($run->exploracion ?? '[]', true) as $event) {
+                if (isset($event['combate'])) {
+                    throw new RuntimeException('Hay combates guardados en expediciones.');
+                }
+            }
+        }
+        DB::table('enemigos')->whereIn('clave', ['lobo', 'slime', 'ladron', 'avispa', 'hongo', 'silvar'])->whereNotIn('id', DB::table('combates')->select('enemigo_id'))->delete();
         Schema::table('combates', function (Blueprint $table) {
-            $table->dropUnique(['expedicion_id','escenario']);
-            if (DB::getDriverName() === 'sqlite') $table->dropColumn('expedicion_id');
-            else $table->dropConstrainedForeignId('expedicion_id');
-            $table->dropColumn(['escenario','resumen']);
+            $table->dropUnique(['expedicion_id', 'escenario']);
+            if (DB::getDriverName() === 'sqlite') {
+                $table->dropColumn('expedicion_id');
+            } else {
+                $table->dropConstrainedForeignId('expedicion_id');
+            }
+            $table->dropColumn(['escenario', 'resumen']);
         });
-        Schema::table('enemigos', function (Blueprint $table) { $table->dropUnique(['clave']); $table->dropColumn(['clave','rasgos']); });
+        Schema::table('enemigos', function (Blueprint $table) {
+            $table->dropUnique(['clave']);
+            $table->dropColumn(['clave', 'rasgos']);
+        });
     }
 };

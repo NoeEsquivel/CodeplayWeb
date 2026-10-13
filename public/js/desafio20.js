@@ -130,9 +130,9 @@
             else if (target?.closest('a')) event.preventDefault();
         }, true);
         document.addEventListener('submit', event => event.preventDefault(), true);
-        window.addEventListener('error', event => send('error', { message: String(event.message || 'Hay un error en esta vista.').slice(0, 350) }));
-        window.addEventListener('unhandledrejection', () => send('error', { message: 'Una operación de esta vista no pudo completarse.' }));
-        window.addEventListener('DOMContentLoaded', () => send('ready', {}));
+        globalThis.addEventListener('error', event => send('error', { message: String(event.message || 'Hay un error en esta vista.').slice(0, 350) }));
+        globalThis.addEventListener('unhandledrejection', () => send('error', { message: 'Una operación de esta vista no pudo completarse.' }));
+        globalThis.addEventListener('DOMContentLoaded', () => send('ready', {}));
     }
     function buildDocument(source, config, harness = '') {
         const doc = new DOMParser().parseFromString(source, 'text/html');
@@ -149,7 +149,7 @@
         doc.head.append(style);
         if (harness) {
             const test = doc.createElement('script');
-            test.textContent = harness + `\nwindow.addEventListener('load',()=>{try{const results=window.ArcadeChecks.run(${JSON.stringify(config.view)},window);parent.postMessage({channel:'codeplay-arcade20',token:${JSON.stringify(config.token)},kind:'results',results},${JSON.stringify(config.origin)});}catch(error){parent.postMessage({channel:'codeplay-arcade20',token:${JSON.stringify(config.token)},kind:'error',message:String(error.message).slice(0,350)},${JSON.stringify(config.origin)});}});`;
+            test.textContent = harness + `\nwindow.addEventListener('load',()=>{try{const results=globalThis.ArcadeChecks.run(${JSON.stringify(config.view)},window);parent.postMessage({channel:'codeplay-arcade20',token:${JSON.stringify(config.token)},kind:'results',results},${JSON.stringify(config.origin)});}catch(error){parent.postMessage({channel:'codeplay-arcade20',token:${JSON.stringify(config.token)},kind:'error',message:String(error.message).slice(0,350)},${JSON.stringify(config.origin)});}});`;
             doc.body.append(test);
         }
         return '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
@@ -186,7 +186,7 @@
         document.getElementById('previewName').textContent = names[view];
         previewSession = makeSession(view, editors[view].getValue(), false, '', null);
     }
-    window.addEventListener('message', event => {
+    globalThis.addEventListener('message', event => {
         if (event.origin !== 'null' || !event.data || event.data.channel !== 'codeplay-arcade20') return;
         const session = sessions.get(event.data.token);
         if (!session || event.source !== session.frame.contentWindow) return;
@@ -268,7 +268,7 @@
         document.getElementById('finalAchievement').hidden = false;
         celebration.showModal();
         document.body.classList.add('celebration-open');
-        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        if (!globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches) {
             celebration.classList.add('celebrating');
             const colors = ['#63eed4', '#c9a2ff', '#ffd66b', '#ff8dbd', '#75baff'];
             for (let i = 0; i < 70; i++) {
@@ -288,7 +288,7 @@
         // The delivery button is now disabled; return focus to an available action.
         document.getElementById('checkButton').focus({ preventScroll: true });
     });
-    window.addEventListener('pagehide', clearCelebration);
+    globalThis.addEventListener('pagehide', clearCelebration);
     submitButton.addEventListener('click', async () => {
         if (!claimAllowed() || state.busy || state.checkedRevision !== state.revision) return;
         if (!(await checkProject())) return;
@@ -314,14 +314,14 @@
         else { editor.textarea.setSelectionRange(index, index + 4); }
     });
     document.getElementById('downloadProject').addEventListener('click', () => {
-        const documents = JSON.stringify(code()).replace(/</g, '\\u003c');
-        const player = `<!DOCTYPE html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mi Mini Arcade</title><style>html,body,iframe{margin:0;width:100%;height:100%;border:0;background:#080e1e}</style><body><script>const documents=${documents};${bridge.toString()};${buildDocument.toString()};let active,token;function openView(view){if(!Object.hasOwn(documents,view))return;if(active)active.remove();token=crypto.randomUUID();active=document.createElement('iframe');active.sandbox='allow-scripts';active.title='Mini Arcade';active.srcdoc=buildDocument(documents[view],{token,view,origin:location.protocol==='file:'||location.origin==='null'?'*':location.origin});document.body.append(active);}window.addEventListener('message',event=>{const d=event.data;if(event.origin==='null'&&event.source===active.contentWindow&&d?.channel==='codeplay-arcade20'&&d.token===token&&d.kind==='navigate')openView(d.view);});openView('menu');<\/script></body></html>`;
+        const documents = JSON.stringify(code()).replaceAll(/</g, '\\u003c');
+        const player = `<!DOCTYPE html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mi Mini Arcade</title><style>html,body,iframe{margin:0;width:100%;height:100%;border:0;background:#080e1e}</style><body><script>const documents=${documents};${bridge.toString()};${buildDocument.toString()};let active,token;function openView(view){if(!Object.hasOwn(documents,view))return;if(active)active.remove();token=crypto.randomUUID();active=document.createElement('iframe');active.sandbox='allow-scripts';active.title='Mini Arcade';active.srcdoc=buildDocument(documents[view],{token,view,origin:location.protocol==='file:'||location.origin==='null'?'*':location.origin});document.body.append(active);}globalThis.addEventListener('message',event=>{const d=event.data;if(event.origin==='null'&&event.source===active.contentWindow&&d?.channel==='codeplay-arcade20'&&d.token===token&&d.kind==='navigate')openView(d.view);});openView('menu');<\/script></body></html>`;
         const url = URL.createObjectURL(new Blob([player], { type: 'text/html;charset=utf-8' }));
         const link = document.createElement('a');
         link.href = url; link.download = 'mi-mini-arcade.html'; link.click();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
     });
-    window.addEventListener('pagehide', () => { persistDraft(); for (const session of sessions.values()) dispose(session); });
+    globalThis.addEventListener('pagehide', () => { persistDraft(); for (const session of sessions.values()) dispose(session); });
     selectEditor('menu');
     renderChecks();
     preview('menu');

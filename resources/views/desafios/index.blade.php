@@ -21,7 +21,7 @@
             --challenge-color: #FF5722;
             --adventure-color: #9C27B0;
         }
-        
+
         body {
             font-family: 'Roboto', sans-serif;
             background: url('{{ asset("Imagenes/Pantalla_Inicio.jpg") }}') no-repeat center center fixed;
@@ -30,7 +30,7 @@
             min-height: 100vh;
             position: relative;
         }
-        
+
         body::after {
             content: '';
             position: absolute;
@@ -41,12 +41,12 @@
             background-color: rgba(0, 0, 0, 0.6);
             z-index: -1;
         }
-        
+
         .navbar-custom {
             background: rgba(0, 0, 0, 0.8) !important;
             border-bottom: 3px solid var(--accent-color);
         }
-        
+
         .game-title {
             font-family: 'Press Start 2P', cursive;
             text-shadow: 3px 3px 0 #000;
@@ -78,12 +78,12 @@
             transition: all 0.3s;
             color: white !important;
         }
-        
+
         .btn-home:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: scale(1.05);
         }
-        
+
         .game-option {
             height: 300px;
             border-radius: 20px;
@@ -98,12 +98,12 @@
             overflow: hidden;
             box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
-        
+
         .game-option:hover {
             transform: translateY(-10px);
             box-shadow: 0 15px 30px rgba(0,0,0,0.4);
         }
-        
+
         .game-option::before {
             content: '';
             position: absolute;
@@ -114,40 +114,40 @@
             background: rgba(0,0,0,0.5);
             z-index: 1;
         }
-        
+
         .game-option-content {
             position: relative;
             z-index: 2;
             padding: 2rem;
         }
-        
+
         .game-option-icon {
             font-size: 4rem;
             margin-bottom: 1.5rem;
         }
-        
+
         .game-option-title {
             font-family: 'Press Start 2P', cursive;
             font-size: 1.2rem;
             margin-bottom: 1rem;
             line-height: 1.4;
         }
-        
+
         .game-option-description {
             font-size: 1rem;
             opacity: 0.9;
         }
-        
+
         .challenge-option {
             background: linear-gradient(135deg, var(--challenge-color), #FF9800);
             border: 3px solid #FF9800;
         }
-        
+
         .adventure-option {
             background: linear-gradient(135deg, var(--adventure-color), #E91E63);
             border: 3px solid #E91E63;
         }
-        
+
         .section-title {
             font-family: 'Press Start 2P', cursive;
             font-size: 1.8rem;
@@ -155,7 +155,7 @@
             margin-bottom: 3rem;
             text-shadow: 3px 3px 0 #000;
         }
-        
+
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -171,18 +171,18 @@
             pointer-events: none;
             transition: opacity 0.3s;
         }
-        
+
         .loading-content {
             text-align: center;
             color: var(--accent-color);
         }
-        
+
         .spinner-custom {
             width: 5rem;
             height: 5rem;
             border-width: 6px;
         }
-        
+
         .user-progress {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
@@ -190,7 +190,7 @@
             margin-bottom: 2rem;
             border: 2px solid var(--accent-color);
         }
-        
+
         .progress-text {
             color: var(--accent-color);
             font-weight: bold;
@@ -201,15 +201,15 @@
             .game-option {
                 height: 250px;
             }
-            
+
             .game-option-title {
                 font-size: 1rem;
             }
-            
+
             .game-option-icon {
                 font-size: 3rem;
             }
-            
+
             .section-title {
                 font-size: 1.4rem;
             }
@@ -228,10 +228,10 @@
                 </a>
                 <img src="{{ asset('images/local/code-icon-48.png') }}" alt="Logo" width="40" height="40">
             </div>
-            
+
             <!-- Título Centrado -->
             <span class="game-title position-absolute start-50 translate-middle-x">CODEPLAY</span>
-            
+
             <!-- Usuario derecha -->
             <div class="player-name-display">
                 <i class="fas fa-user me-2"></i>
@@ -248,32 +248,32 @@
                 <h1 class="section-title animate__animated animate__fadeIn">
                     <i class="fas fa-gamepad me-3"></i>APRENDER JUGANDO
                 </h1>
-                
+
                 <!-- Progreso del Usuario -->
                 <div class="user-progress animate__animated animate__fadeIn animate__delay-1s">
                     <div class="row align-items-center">
                         <div class="col-md-6 text-start">
                             <h5 class="progress-text">
                                 <i class="fas fa-trophy me-2"></i>
-                                Nivel: <span id="userLevel">1</span> | 
+                                Nivel: <span id="userLevel">1</span> |
                                 Puntos: <span id="userPoints">{{ session('puntos_disponibles') ?? 0 }}</span>
                             </h5>
                         </div>
                         <div class="col-md-6 text-end">
                             <h5 class="progress-text">
                                 <i class="fas fa-star me-2"></i>
-                                Desafíos completados: 
+                                Desafíos completados:
                                 <span id="completedChallenges">{{ $desafiosCompletados ?? 0 }}</span>/20
                             </h5>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Opciones de Juego -->
                 <div class="row mt-4">
                     <!-- Opción 1: Desafíos de Programación -->
                     <div class="col-md-6 mb-4 animate__animated animate__fadeInLeft animate__delay-2s">
-                        <div class="game-option challenge-option" onclick="navegarA('desafios-programacion')">
+                        <div class="game-option challenge-option" role="link" tabindex="0" onclick="navegarA('desafios-programacion')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navegarA('desafios-programacion')}">
                             <div class="game-option-content">
                                 <div class="game-option-icon">
                                     <i class="fas fa-laptop-code"></i>
@@ -285,10 +285,10 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Opción 2: Aventura -->
                     <div class="col-md-6 mb-4 animate__animated animate__fadeInRight animate__delay-2s">
-                        <div class="game-option adventure-option" onclick="navegarA('aventura')">
+                        <div class="game-option adventure-option" role="link" tabindex="0" onclick="navegarA('aventura')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navegarA('aventura')}">
                             <div class="game-option-content">
                                 <div class="game-option-icon">
                                     <i class="fas fa-dragon"></i>
@@ -301,14 +301,14 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Descripción de las Opciones -->
                 <div class="row mt-5 animate__animated animate__fadeIn animate__delay-3s">
                     <div class="col-md-6">
                         <div class="p-4 bg-dark rounded border border-warning">
                             <h4 class="text-warning"><i class="fas fa-laptop-code me-2"></i>Desafíos de Programación</h4>
                             <p>
-                                Enfréntate a retos de código progresivos donde pondrás a prueba tus conocimientos. 
+                                Enfréntate a retos de código progresivos donde pondrás a prueba tus conocimientos.
                                 Cada nivel completado te dará puntos para mejorar tu personaje.
                             </p>
                             <p class="text-muted">
@@ -320,7 +320,7 @@
                         <div class="p-4 bg-dark rounded border border-info">
                             <h4 class="text-info"><i class="fas fa-dragon me-2"></i>Aventura</h4>
                             <p>
-                                Explora un mundo lleno de desafíos donde tu personaje avanzará resolviendo problemas de programación. 
+                                Explora un mundo lleno de desafíos donde tu personaje avanzará resolviendo problemas de programación.
                                 Derrota enemigos y encuentra tesoros con tu código.
                             </p>
                             <p class="text-muted">
@@ -345,26 +345,26 @@
 
     <!-- Bootstrap JS Bundle + Popper -->
     <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
-    
+
     <script>
             // Función para navegar con animación
             function navigateWithAnimation(url) {
                 console.log('navigateWithAnimation llamada con URL:', url);
-                
+
                 const overlay = document.getElementById('loadingOverlay');
-                
+
                 if (!overlay) {
                     console.error('No se encontró el overlay de carga');
                     window.location.href = url;
                     return;
                 }
-                
+
                 // Mostrar animación
                 overlay.style.opacity = '1';
                 overlay.style.pointerEvents = 'auto';
-                
+
                 console.log('Redirigiendo en 1.5 segundos a:', url);
-                
+
                 // Redirigir después de 1.5 segundos
                 setTimeout(() => {
                     console.log('Redirigiendo ahora a:', url);
@@ -375,7 +375,7 @@
             // Función para navegar a diferentes secciones
             function navegarA(destino) {
                 console.log('Destino:', destino);
-                
+
                 const rutas = {
                     'desafios-programacion': "{{ route('alumno.desafios.programacion') }}",
                     'aventura': "{{ route('alumno.aventura') }}"
@@ -446,7 +446,7 @@
                         <div style="font-weight: bold; font-size: 1.1rem; margin-bottom: 5px;">${titulo}</div>
                         <div style="font-size: 0.9rem; opacity: 0.9;">${mensaje}</div>
                     </div>
-                    <button onclick="this.parentElement.parentElement.remove()" 
+                    <button onclick="this.parentElement.parentElement.remove()"
                             style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; padding: 0; margin: 0;">
                         ✕
                     </button>
@@ -482,11 +482,11 @@
         function cargarProgresoUsuario() {
             const puntos = {{ session('puntos_disponibles') ?? 0 }};
             document.getElementById('userPoints').textContent = puntos;
-            
+
             // Calcular nivel basado en puntos (100 puntos por nivel)
             const nivel = Math.floor(puntos / 100) + 1;
             document.getElementById('userLevel').textContent = nivel;
-            
+
             // Por ahora, simular datos (luego vendrán de la base de datos)
             document.getElementById('completedChallenges').textContent = {{ $desafiosCompletados ?? 0 }};
             document.getElementById('availableChallenges').textContent = Math.min(nivel, 20);

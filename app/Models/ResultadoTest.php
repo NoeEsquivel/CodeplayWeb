@@ -15,12 +15,12 @@ class ResultadoTest extends Model
         'usuario_id',
         'test_id',
         'puntaje',
-        'fecha'
+        'fecha',
     ];
 
     protected $casts = [
         'fecha' => 'datetime',
-        'puntaje' => 'decimal:2'
+        'puntaje' => 'decimal:2',
     ];
 
     // Relaciones

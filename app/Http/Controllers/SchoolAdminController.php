@@ -111,7 +111,9 @@ class SchoolAdminController extends Controller
     {
         $actor = $this->actor($request);
         $this->ensureClass($actor, $clase);
-        if ($request->has('nombre')) $request->merge(['nombre' => $this->normalize((string) $request->input('nombre'))]);
+        if ($request->has('nombre')) {
+            $request->merge(['nombre' => $this->normalize((string) $request->input('nombre'))]);
+        }
 
         $datos = $request->validate([
             'nombre' => [
@@ -305,13 +307,16 @@ class SchoolAdminController extends Controller
 
     private function graduatingClass(Usuario $actor, array $datos): ?Clase
     {
-        if (empty($datos['clase_id'])) return null;
+        if (empty($datos['clase_id'])) {
+            return null;
+        }
 
         $clase = Clase::query()
             ->whereKey($datos['clase_id'])
             ->where('colegio_id', $this->collegeId($actor))
             ->firstOrFail();
         abort_unless((string) $clase->ciclo_escolar === (string) $datos['ciclo_escolar'], 422, 'La clase no pertenece al ciclo escolar seleccionado.');
+
         return $clase;
     }
 
@@ -327,15 +332,20 @@ class SchoolAdminController extends Controller
             ->where('rol', Usuario::ROL_ALUMNO)
             ->whereHas('clasesComoAlumno', function ($query) use ($cicloEscolar, $claseId) {
                 $query->where('clases.ciclo_escolar', $cicloEscolar);
-                if ($claseId) $query->where('clases.id', $claseId);
+                if ($claseId) {
+                    $query->where('clases.id', $claseId);
+                }
             });
     }
 
     private function masterGraduatingClass(array $datos): ?Clase
     {
-        if (empty($datos['clase_id'])) return null;
+        if (empty($datos['clase_id'])) {
+            return null;
+        }
         $clase = Clase::query()->whereKey($datos['clase_id'])->where('colegio_id', $datos['colegio_id'])->firstOrFail();
         abort_unless((string) $clase->ciclo_escolar === (string) $datos['ciclo_escolar'], 422, 'La clase no pertenece al ciclo escolar seleccionado.');
+
         return $clase;
     }
 
@@ -362,12 +372,14 @@ class SchoolAdminController extends Controller
     {
         $actor = $request->attributes->get('usuario_actual');
         abort_unless($actor instanceof Usuario && ($actor->esAdministradorColegio() || $actor->esMaster()), 403);
+
         return $actor;
     }
 
     private function collegeId(Usuario $actor): int
     {
         abort_unless($actor->colegio_id, 422, 'Tu cuenta no tiene un colegio asignado.');
+
         return (int) $actor->colegio_id;
     }
 
@@ -391,6 +403,7 @@ class SchoolAdminController extends Controller
             $suffix = '-'.$number++;
             $code = rtrim(mb_substr($base, 0, 50 - strlen($suffix), 'UTF-8'), '-').$suffix;
         }
+
         return $code;
     }
 

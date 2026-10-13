@@ -11,7 +11,10 @@ class Combate extends Model
 
     protected $casts = ['resumen' => 'array'];
 
-    public function expedicion() { return $this->belongsTo(AventuraExpedicion::class); }
+    public function expedicion()
+    {
+        return $this->belongsTo(AventuraExpedicion::class);
+    }
 
     protected $table = 'combates';
 
@@ -20,7 +23,7 @@ class Combate extends Model
         'enemigo_id',
         'resultado',
         'vida_restante_usuario',
-        'vida_restante_enemigo'
+        'vida_restante_enemigo',
     ];
 
     // Relaciones

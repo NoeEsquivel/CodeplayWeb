@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('puntos_obtenidos')->default(0);
             $table->timestamp('ultima_recompensa')->nullable();
             $table->timestamps();
-            
+
             $table->unique(['usuario_id', 'nivel_desafio']);
         });
     }

@@ -10,6 +10,7 @@ use Throwable;
 class SincronizarExamenesClase extends Command
 {
     protected $signature = 'tests:sincronizar-examenes';
+
     protected $description = 'Inicia y cierra automáticamente los exámenes de clase según su programación';
 
     public function handle(ClassroomExamLifecycleService $lifecycle): int
@@ -29,6 +30,7 @@ class SincronizarExamenesClase extends Command
             });
 
         $this->info("Exámenes sincronizados: {$processed}");
+
         return self::SUCCESS;
     }
 }

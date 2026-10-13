@@ -10,7 +10,9 @@ namespace App\Services;
 final class MiniArcadeExpression
 {
     private array $tokens;
+
     private array $values;
+
     private int $position = 0;
 
     public function calculate(array $tokens, array $values)
@@ -25,6 +27,7 @@ final class MiniArcadeExpression
         if ($this->position !== count($this->tokens)) {
             throw new \InvalidArgumentException('Unsupported expression');
         }
+
         return $result;
     }
 
@@ -41,6 +44,7 @@ final class MiniArcadeExpression
             $right = $this->expression($priorities[$operator] + 1, $depth + 1);
             $left = $this->operate($operator, $left, $right);
         }
+
         return $left;
     }
 
@@ -50,20 +54,22 @@ final class MiniArcadeExpression
         if ($token === '(') {
             $value = $this->expression(0, $depth + 1);
             $this->expect(')');
+
             return $value;
         }
         if ($token === '!' || $token === '-' || $token === '+') {
             $value = $this->value($depth + 1);
-            if ($depth > 24 || ($token !== '!' && !is_numeric($value))) {
+            if ($depth > 24 || ($token !== '!' && ! is_numeric($value))) {
                 throw new \InvalidArgumentException('Invalid unary value');
             }
-            return $token === '!' ? !$value : ($token === '-' ? -$value : +$value);
+
+            return $token === '!' ? ! $value : ($token === '-' ? -$value : +$value);
         }
         if ($token === '{') {
             $object = [];
             do {
                 $key = trim($this->take(), "\"'");
-                if (!in_array($key, ['x', 'y'], true) || array_key_exists($key, $object)) {
+                if (! in_array($key, ['x', 'y'], true) || array_key_exists($key, $object)) {
                     throw new \InvalidArgumentException('Invalid object key');
                 }
                 $this->expect(':');
@@ -77,6 +83,7 @@ final class MiniArcadeExpression
                 }
             } while (true);
             $this->expect('}');
+
             return $object;
         }
         if (in_array($token, ['true', 'false', 'null'], true)) {
@@ -85,27 +92,29 @@ final class MiniArcadeExpression
         if (preg_match('/^\d+(?:\.\d+)?$/D', $token)) {
             return str_contains($token, '.') ? (float) $token : (int) $token;
         }
-        if (!array_key_exists($token, $this->values)) {
+        if (! array_key_exists($token, $this->values)) {
             throw new \InvalidArgumentException('Unknown value');
         }
         $value = $this->values[$token];
         if ($this->peek() === '.') {
             $this->take();
             $key = $this->take();
-            if (!is_array($value) || !in_array($key, ['x', 'y'], true) || !array_key_exists($key, $value)) {
+            if (! is_array($value) || ! in_array($key, ['x', 'y'], true) || ! array_key_exists($key, $value)) {
                 throw new \InvalidArgumentException('Invalid property');
             }
             $value = $value[$key];
         }
+
         return $value;
     }
 
     private function operate(string $operator, $left, $right)
     {
         if (in_array($operator, ['+', '-', '<', '>', '<=', '>='], true)
-            && ((!is_int($left) && !is_float($left)) || (!is_int($right) && !is_float($right)))) {
+            && ((! is_int($left) && ! is_float($left)) || (! is_int($right) && ! is_float($right)))) {
             throw new \InvalidArgumentException('Expected numeric values');
         }
+
         return match ($operator) {
             '+' => $left + $right,
             '-' => $left - $right,
@@ -127,9 +136,10 @@ final class MiniArcadeExpression
 
     private function take(): string
     {
-        if (!array_key_exists($this->position, $this->tokens)) {
+        if (! array_key_exists($this->position, $this->tokens)) {
             throw new \InvalidArgumentException('Unexpected end');
         }
+
         return $this->tokens[$this->position++];
     }
 

@@ -14,22 +14,22 @@ class CustomAuthMiddleware
     {
         $usuarioId = $request->session()->get('usuario_id');
 
-        if (!$usuarioId || !$usuario = Usuario::find($usuarioId)) {
+        if (! $usuarioId || ! $usuario = Usuario::find($usuarioId)) {
             return $this->unauthenticated($request);
         }
 
         $controlaSesiones = Schema::hasColumn('usuarios', 'session_version');
 
         if ($controlaSesiones && (
-            !$request->session()->has('usuario_session_version')
+            ! $request->session()->has('usuario_session_version')
             || (int) $request->session()->get('usuario_session_version') !== (int) $usuario->session_version
         )) {
             return $this->unauthenticated($request, 'Tu sesión fue cerrada por un cambio de seguridad. Inicia sesión nuevamente.');
         }
 
         $usuario->loadMissing('colegio');
-        if ((Schema::hasColumn('usuarios', 'activo') && !$usuario->activo)
-            || ($usuario->colegio && !$usuario->colegio->activo && !$usuario->esMaster())) {
+        if ((Schema::hasColumn('usuarios', 'activo') && ! $usuario->activo)
+            || ($usuario->colegio && ! $usuario->colegio->activo && ! $usuario->esMaster())) {
             return $this->unauthenticated($request, 'Esta cuenta fue desactivada. Comunícate con la administración.');
         }
         if (Schema::hasTable('two_factor_authentications')) {
@@ -45,7 +45,7 @@ class CustomAuthMiddleware
             'cambio_clave_requerido' => (bool) $usuario->cambio_clave_requerido,
         ]);
 
-        if ($usuario->cambio_clave_requerido && !$request->routeIs('cambio.clave.*', 'logout')) {
+        if ($usuario->cambio_clave_requerido && ! $request->routeIs('cambio.clave.*', 'logout')) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,

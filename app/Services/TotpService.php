@@ -26,12 +26,14 @@ class TotpService
                 return true;
             }
         }
+
         return false;
     }
 
     public function provisioningUri(string $secret, string $account, string $issuer = 'CodePlay'): string
     {
         $label = rawurlencode($issuer.':'.$account);
+
         return 'otpauth://totp/'.$label.'?secret='.rawurlencode($secret)
             .'&issuer='.rawurlencode($issuer).'&digits=6&period=30';
     }
@@ -41,11 +43,12 @@ class TotpService
         $key = $this->base32Decode($secret);
         $binaryCounter = pack('N2', intdiv($counter, 0x100000000), $counter % 0x100000000);
         $hash = hash_hmac('sha1', $binaryCounter, $key, true);
-        $offset = ord($hash[19]) & 0x0f;
-        $value = (((ord($hash[$offset]) & 0x7f) << 24)
-            | ((ord($hash[$offset + 1]) & 0xff) << 16)
-            | ((ord($hash[$offset + 2]) & 0xff) << 8)
-            | (ord($hash[$offset + 3]) & 0xff)) % 1000000;
+        $offset = ord($hash[19]) & 0x0F;
+        $value = (((ord($hash[$offset]) & 0x7F) << 24)
+            | ((ord($hash[$offset + 1]) & 0xFF) << 16)
+            | ((ord($hash[$offset + 2]) & 0xFF) << 8)
+            | (ord($hash[$offset + 3]) & 0xFF)) % 1000000;
+
         return str_pad((string) $value, 6, '0', STR_PAD_LEFT);
     }
 
@@ -59,6 +62,7 @@ class TotpService
         foreach (str_split($bits, 5) as $chunk) {
             $encoded .= self::ALPHABET[bindec(str_pad($chunk, 5, '0', STR_PAD_RIGHT))];
         }
+
         return $encoded;
     }
 
@@ -79,6 +83,7 @@ class TotpService
                 $decoded .= chr(bindec($chunk));
             }
         }
+
         return $decoded;
     }
 }

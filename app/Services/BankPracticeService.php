@@ -15,10 +15,14 @@ class BankPracticeService
     {
         $esPropietario = (int) $banco->creador_usuario_id === (int) $usuario->id
             && (int) $banco->colegio_id === (int) $usuario->colegio_id;
-        if (!$esPropietario) app(TestBankService::class)->validarBancoBiblioteca($usuario, $banco);
+        if (! $esPropietario) {
+            app(TestBankService::class)->validarBancoBiblioteca($usuario, $banco);
+        }
 
         $preguntas = $banco->preguntas()->where('activa', true)->get()->shuffle()->values();
-        if ($preguntas->isEmpty()) throw new \DomainException('Este banco todavía no tiene preguntas disponibles.');
+        if ($preguntas->isEmpty()) {
+            throw new \DomainException('Este banco todavía no tiene preguntas disponibles.');
+        }
 
         return DB::transaction(function () use ($usuario, $banco, $preguntas) {
             $sesion = app(LiveTestSessionService::class)->crear($usuario, [
@@ -42,8 +46,8 @@ class BankPracticeService
             $reglas = app(InteractiveTestRules::class);
             $reglas->transicionar($sesion, 'espera');
             $reglas->transicionar($sesion, 'activa');
+
             return $sesion;
         });
     }
 }
-

@@ -30,8 +30,8 @@ class TutorialController extends Controller
     {
         // Obtener el tutorial específico
         $tutorial = DB::table('tutoriales')->where('slug', $slug)->first();
-        
-        if (!$tutorial) {
+
+        if (! $tutorial) {
             abort(404, 'Tutorial no encontrado');
         }
 
@@ -43,9 +43,9 @@ class TutorialController extends Controller
             ->first();
 
         // Cargar la vista específica del tutorial
-        $vista = 'tutoriales.' . $slug;
-        
-        if (!view()->exists($vista)) {
+        $vista = 'tutoriales.'.$slug;
+
+        if (! view()->exists($vista)) {
             return view('tutoriales.en-desarrollo', compact('slug'));
         }
 
@@ -66,7 +66,7 @@ class TutorialController extends Controller
         $range = $request->header('Range');
 
         if ($range !== null) {
-            if (str_contains($range, ',') || !preg_match('/^bytes=(\d*)-(\d*)$/', trim($range), $matches)) {
+            if (str_contains($range, ',') || ! preg_match('/^bytes=(\d*)-(\d*)$/', trim($range), $matches)) {
                 abort(416, 'Rango de video no válido', ['Content-Range' => "bytes */{$size}"]);
             }
 
@@ -113,7 +113,7 @@ class TutorialController extends Controller
             fseek($stream, $start);
             $remaining = $length;
 
-            while ($remaining > 0 && !feof($stream) && connection_aborted() === 0) {
+            while ($remaining > 0 && ! feof($stream) && connection_aborted() === 0) {
                 $chunk = fread($stream, min(1024 * 1024, $remaining));
                 if ($chunk === false || $chunk === '') {
                     break;
@@ -131,21 +131,21 @@ class TutorialController extends Controller
     public function completar(Request $request, $slug)
     {
         $usuarioId = session('usuario_id');
-        
-        if (!$usuarioId) {
+
+        if (! $usuarioId) {
             return response()->json([
                 'success' => false,
-                'error' => 'Usuario no autenticado'
+                'error' => 'Usuario no autenticado',
             ]);
         }
 
         // Obtener el tutorial
         $tutorial = DB::table('tutoriales')->where('slug', $slug)->first();
-        
-        if (!$tutorial) {
+
+        if (! $tutorial) {
             return response()->json([
                 'success' => false,
-                'error' => 'Tutorial no encontrado'
+                'error' => 'Tutorial no encontrado',
             ]);
         }
 
@@ -158,7 +158,7 @@ class TutorialController extends Controller
         if ($progresoExistente && $progresoExistente->estado === 'completado') {
             return response()->json([
                 'success' => false,
-                'error' => 'Ya completaste este tutorial'
+                'error' => 'Ya completaste este tutorial',
             ]);
         }
 
@@ -169,7 +169,7 @@ class TutorialController extends Controller
                     ->where('id', $progresoExistente->id)
                     ->update([
                         'estado' => 'completado',
-                        'updated_at' => now()
+                        'updated_at' => now(),
                     ]);
             } else {
                 // Crear nuevo registro
@@ -179,7 +179,7 @@ class TutorialController extends Controller
                     'estado' => 'completado',
                     'fecha' => now(),
                     'created_at' => now(),
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ]);
             }
 
@@ -191,48 +191,48 @@ class TutorialController extends Controller
             // Actualizar sesión
             $usuario = DB::table('usuarios')->where('id', $usuarioId)->first();
             $puntosDisponibles = ($usuario->puntos_totales ?? 0) - ($usuario->puntos_usados ?? 0);
-            
+
             session([
                 'puntos_disponibles' => $puntosDisponibles,
-                'puntos_totales' => $usuario->puntos_totales ?? 0
+                'puntos_totales' => $usuario->puntos_totales ?? 0,
             ]);
         });
 
         return response()->json([
             'success' => true,
             'puntos_ganados' => $tutorial->puntos_otorgados,
-            'puntos_totales' => session('puntos_disponibles')
+            'puntos_totales' => session('puntos_disponibles'),
         ]);
     }
 
     public function getProgreso()
-{
-    $usuarioId = session('usuario_id');
-    
-    if (!$usuarioId) {
+    {
+        $usuarioId = session('usuario_id');
+
+        if (! $usuarioId) {
+            return response()->json([
+                'success' => false,
+                'progreso' => 0,
+                'tutorialesCompletados' => 0,
+                'totalTutoriales' => 10,
+            ]);
+        }
+
+        // Obtener tutoriales completados
+        $tutorialesCompletados = DB::table('progreso_tutorial')
+            ->where('usuario_id', $usuarioId)
+            ->where('estado', 'completado')
+            ->count();
+
+        $totalTutoriales = 10; // Total de tutoriales en el sistema
+        $progresoPorcentaje = round(($tutorialesCompletados / $totalTutoriales) * 100);
+
         return response()->json([
-            'success' => false,
-            'progreso' => 0,
-            'tutorialesCompletados' => 0,
-            'totalTutoriales' => 10
+            'success' => true,
+            'progreso' => $progresoPorcentaje,
+            'tutorialesCompletados' => $tutorialesCompletados,
+            'totalTutoriales' => $totalTutoriales,
+            'puntos' => session('puntos_disponibles') ?? 0,
         ]);
     }
-
-    // Obtener tutoriales completados
-    $tutorialesCompletados = DB::table('progreso_tutorial')
-        ->where('usuario_id', $usuarioId)
-        ->where('estado', 'completado')
-        ->count();
-
-    $totalTutoriales = 10; // Total de tutoriales en el sistema
-    $progresoPorcentaje = round(($tutorialesCompletados / $totalTutoriales) * 100);
-
-    return response()->json([
-        'success' => true,
-        'progreso' => $progresoPorcentaje,
-        'tutorialesCompletados' => $tutorialesCompletados,
-        'totalTutoriales' => $totalTutoriales,
-        'puntos' => session('puntos_disponibles') ?? 0
-    ]);
-}
 }

@@ -15,11 +15,11 @@ class ProgresoNivel extends Model
         'usuario_id',
         'nivel_id',
         'estado',
-        'fecha'
+        'fecha',
     ];
 
     protected $casts = [
-        'fecha' => 'datetime'
+        'fecha' => 'datetime',
     ];
 
     protected $attributes = [

@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\Schema;
 
 class AuthController extends Controller
 {
-    public function __construct(private readonly SecurityMailService $mail)
-    {
-    }
+    public function __construct(private readonly SecurityMailService $mail) {}
 
     public function verify(Request $request)
     {
@@ -20,13 +18,13 @@ class AuthController extends Controller
         $nombre = preg_replace('/\s+/u', ' ', trim((string) $datos['nombre'])) ?? trim((string) $datos['nombre']);
         $usuario = Usuario::query()->whereRaw('LOWER(nombre) = ?', [mb_strtolower($nombre, 'UTF-8')])->first();
 
-        if (!$usuario || !Hash::check($datos['clave'], $usuario->clave)) {
+        if (! $usuario || ! Hash::check($datos['clave'], $usuario->clave)) {
             return redirect()->route('login')->with('error', 'Nombre de usuario o contraseña incorrectos');
         }
 
         $usuario->load('colegio');
-        if ((Schema::hasColumn('usuarios', 'activo') && !$usuario->activo)
-            || ($usuario->colegio && !$usuario->colegio->activo && !$usuario->esMaster())) {
+        if ((Schema::hasColumn('usuarios', 'activo') && ! $usuario->activo)
+            || ($usuario->colegio && ! $usuario->colegio->activo && ! $usuario->esMaster())) {
             return redirect()->route('login')
                 ->with('error', 'Esta cuenta no se encuentra activa. Comunícate con la administración.');
         }
@@ -62,7 +60,10 @@ class AuthController extends Controller
         return $this->redirectByRole($request, $usuario);
     }
 
-    public function mostrarCambioClaveObligatorio() { return view('cambio-clave-obligatorio'); }
+    public function mostrarCambioClaveObligatorio()
+    {
+        return view('cambio-clave-obligatorio');
+    }
 
     public function mostrarActualizacionClave()
     {
@@ -82,7 +83,7 @@ class AuthController extends Controller
         $usuario = $request->attributes->get('usuario_actual');
         abort_unless($usuario instanceof Usuario, 401, 'Usuario no autenticado.');
 
-        if (!Hash::check($request->clave_actual, $usuario->clave)) {
+        if (! Hash::check($request->clave_actual, $usuario->clave)) {
             return back()->with('error', 'La contraseña actual es incorrecta');
         }
 
@@ -118,6 +119,7 @@ class AuthController extends Controller
     {
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect()->route('login');
     }
 
@@ -142,14 +144,20 @@ class AuthController extends Controller
     {
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect()->route('login')->with('error', 'Rol no válido');
     }
 
     private function validarRequisitosClave(string $clave): array
     {
         $errores = [];
-        if (!preg_match('/[A-Z]/', $clave)) $errores[] = 'La contraseña debe contener al menos una letra mayúscula';
-        if (!preg_match('/[0-9]/', $clave)) $errores[] = 'La contraseña debe contener al menos un número';
+        if (! preg_match('/[A-Z]/', $clave)) {
+            $errores[] = 'La contraseña debe contener al menos una letra mayúscula';
+        }
+        if (! preg_match('/[0-9]/', $clave)) {
+            $errores[] = 'La contraseña debe contener al menos un número';
+        }
+
         return $errores;
     }
 }

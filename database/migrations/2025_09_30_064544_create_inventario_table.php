@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('item_id')->constrained('items')->onDelete('cascade');
             $table->integer('cantidad')->default(1);
             $table->timestamps();
-            
+
             // Un usuario no puede tener el mismo item duplicado
             $table->unique(['usuario_id', 'item_id']);
         });

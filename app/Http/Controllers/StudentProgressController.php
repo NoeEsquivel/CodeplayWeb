@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Schema;
 class StudentProgressController extends Controller
 {
     private const DOCUMENTATION_TOTAL = 22;
+
     private const ADVENTURE_TOTAL = 50;
 
     public function __invoke(Request $request, TestAvailabilityService $availability)
@@ -30,7 +31,9 @@ class StudentProgressController extends Controller
             : 0;
 
         $challengeTotal = Schema::hasTable('niveles_desafio') ? DB::table('niveles_desafio')->count() : 0;
-        if ($challengeTotal === 0) $challengeTotal = 20;
+        if ($challengeTotal === 0) {
+            $challengeTotal = 20;
+        }
         $challengeDone = Schema::hasTable('desafio_recompensas')
             ? DB::table('desafio_recompensas')->where('usuario_id', $student->id)
                 ->where('completado_primera_vez', true)->distinct()->count('nivel_desafio')
@@ -45,11 +48,14 @@ class StudentProgressController extends Controller
         $victories = Schema::hasTable('aventura_expediciones')
             ? DB::table('aventura_expediciones')->where('usuario_id', $student->id)->where('estado', 'victoria')->count()
             : 0;
-        if ($victories > 0) $adventureScene = self::ADVENTURE_TOTAL;
+        if ($victories > 0) {
+            $adventureScene = self::ADVENTURE_TOTAL;
+        }
 
         $tests = $availability->catalogForUser($student->id)->map(function (array $test) use ($viewedDocuments) {
             $test['documento_revisado'] = $viewedDocuments->has($test['modulo']);
             $test['documento_visto_at'] = $viewedDocuments->get($test['modulo']);
+
             return $test;
         });
 
@@ -78,6 +84,7 @@ class StudentProgressController extends Controller
     private function progress(int $completed, int $total): array
     {
         $completed = max(0, min($completed, max($total, $completed)));
+
         return [
             'completados' => $completed,
             'total' => $total,

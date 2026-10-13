@@ -17,8 +17,7 @@ class LiveTestEngineService
         private readonly TestAnswerEvaluator $evaluador,
         private readonly LiveTestScoringService $puntuacion,
         private readonly TestHistoryService $history,
-    ) {
-    }
+    ) {}
 
     public function abrirSala(Usuario $actor, TestSesion $sesion): TestSesion
     {
@@ -30,6 +29,7 @@ class LiveTestEngineService
             }
 
             $sesion->forceFill(['estado' => 'espera', 'version' => $sesion->version + 1])->save();
+
             return $sesion->fresh();
         });
     }
@@ -42,10 +42,12 @@ class LiveTestEngineService
         return DB::transaction(function () use ($actor, $entrada, $codigo, $palabraClave, $tipoEsperado) {
             $sesion = TestSesion::where('codigo_sala', $codigo)->lockForUpdate()->first();
             $accesoPorPalabra = false;
-            if (!$sesion && $actor->colegio_id && $entrada !== '') {
+            if (! $sesion && $actor->colegio_id && $entrada !== '') {
                 $candidatas = TestSesion::where('colegio_id', $actor->colegio_id)
                     ->where('estado', 'espera')->whereNotNull('palabra_clave_hash');
-                if ($tipoEsperado) $candidatas->where('tipo', $tipoEsperado);
+                if ($tipoEsperado) {
+                    $candidatas->where('tipo', $tipoEsperado);
+                }
                 $coincidencias = $candidatas->get()
                     ->filter(fn (TestSesion $candidata) => Hash::check($entrada, $candidata->palabra_clave_hash));
                 if ($coincidencias->count() > 1) {
@@ -57,7 +59,7 @@ class LiveTestEngineService
                 }
             }
             $admiteExamenActivo = $sesion && $sesion->tipo === 'clase' && $sesion->modalidad === 'examen' && $sesion->estado === 'activa';
-            if (!$sesion || ($sesion->estado !== 'espera' && !$admiteExamenActivo)) {
+            if (! $sesion || ($sesion->estado !== 'espera' && ! $admiteExamenActivo)) {
                 throw new \DomainException('La sala no existe o ya no admite participantes.');
             }
             if ($sesion->disponible_desde && now()->lessThan($sesion->disponible_desde)) {
@@ -71,8 +73,8 @@ class LiveTestEngineService
             }
             $this->autorizarColegio($actor, $sesion);
             $this->autorizarClase($actor, $sesion);
-            if ($sesion->palabra_clave_hash && !$accesoPorPalabra
-                && !Hash::check((string) $palabraClave, $sesion->palabra_clave_hash)) {
+            if ($sesion->palabra_clave_hash && ! $accesoPorPalabra
+                && ! Hash::check((string) $palabraClave, $sesion->palabra_clave_hash)) {
                 throw new \DomainException('La palabra clave de la sala no es correcta.');
             }
 
@@ -118,7 +120,7 @@ class LiveTestEngineService
             }
 
             $participante = $sesion->participantes()->where('usuario_id', $actor->id)->lockForUpdate()->first();
-            if (!$participante || !hash_equals($participante->reconexion_token_hash, hash('sha256', $token))) {
+            if (! $participante || ! hash_equals($participante->reconexion_token_hash, hash('sha256', $token))) {
                 throw new \DomainException('El enlace de reconexión no es válido.');
             }
 
@@ -138,13 +140,25 @@ class LiveTestEngineService
         return DB::transaction(function () use ($actor, $sesion) {
             $sesion = TestSesion::lockForUpdate()->findOrFail($sesion->id);
             $this->autorizarAnfitrion($actor, $sesion);
-            if ($sesion->estado !== 'espera') throw new \DomainException('La sala no está en espera.');
-            if ($sesion->disponible_desde && now()->lessThan($sesion->disponible_desde)) throw new \DomainException('La actividad aún no está disponible.');
-            if ($sesion->disponible_hasta && now()->greaterThan($sesion->disponible_hasta)) throw new \DomainException('La actividad ya no está disponible.');
-            if ($sesion->modalidad !== 'examen' && $sesion->participantes()->count() < 1) throw new \DomainException('Debe ingresar al menos un participante.');
+            if ($sesion->estado !== 'espera') {
+                throw new \DomainException('La sala no está en espera.');
+            }
+            if ($sesion->disponible_desde && now()->lessThan($sesion->disponible_desde)) {
+                throw new \DomainException('La actividad aún no está disponible.');
+            }
+            if ($sesion->disponible_hasta && now()->greaterThan($sesion->disponible_hasta)) {
+                throw new \DomainException('La actividad ya no está disponible.');
+            }
+            if ($sesion->modalidad !== 'examen' && $sesion->participantes()->count() < 1) {
+                throw new \DomainException('Debe ingresar al menos un participante.');
+            }
 
-            if (!$sesion->preguntas()->exists()) $this->crearRonda($sesion, 1);
-            if (!$sesion->preguntas()->exists()) throw new \DomainException('Los bancos seleccionados no tienen preguntas disponibles.');
+            if (! $sesion->preguntas()->exists()) {
+                $this->crearRonda($sesion, 1);
+            }
+            if (! $sesion->preguntas()->exists()) {
+                throw new \DomainException('Los bancos seleccionados no tienen preguntas disponibles.');
+            }
 
             $sesion->forceFill([
                 'estado' => 'activa',
@@ -162,7 +176,9 @@ class LiveTestEngineService
 
     public function responder(Usuario $actor, TestSesion $sesion, mixed $respuesta): array
     {
-        if ($sesion->modalidad === 'examen') throw new \DomainException('Las respuestas del examen usan el guardado individual.');
+        if ($sesion->modalidad === 'examen') {
+            throw new \DomainException('Las respuestas del examen usan el guardado individual.');
+        }
         $this->sincronizar($sesion);
 
         $resultado = DB::transaction(function () use ($actor, $sesion, $respuesta) {
@@ -170,11 +186,12 @@ class LiveTestEngineService
             $participante = $this->participanteAutorizado($actor, $sesion, true);
             $emision = $this->preguntaActual($sesion, true);
 
-            if ($sesion->estado !== 'activa' || !$emision || $emision->estado !== 'abierta') {
+            if ($sesion->estado !== 'activa' || ! $emision || $emision->estado !== 'abierta') {
                 return ['error' => 'La pregunta ya no está abierta.'];
             }
-            if (!$emision->cierra_at || now()->greaterThan($emision->cierra_at)) {
+            if (! $emision->cierra_at || now()->greaterThan($emision->cierra_at)) {
                 $this->publicarResultado($sesion, $emision);
+
                 return ['error' => 'El tiempo para responder terminó.'];
             }
             if ($emision->respuestas()->where('participante_id', $participante->id)->exists()) {
@@ -210,7 +227,10 @@ class LiveTestEngineService
             return ['respuesta' => $registro, 'puntos' => $puntos, 'correcta' => $correcta];
         });
 
-        if (isset($resultado['error'])) throw new \DomainException($resultado['error']);
+        if (isset($resultado['error'])) {
+            throw new \DomainException($resultado['error']);
+        }
+
         return $resultado;
     }
 
@@ -219,8 +239,10 @@ class LiveTestEngineService
         $sesion = $this->sincronizar($sesion);
         $participante = $this->participanteAutorizado($actor, $sesion, false);
         $esAnfitrion = (int) $sesion->anfitrion_usuario_id === (int) $actor->id;
-        if (!$participante && !$esAnfitrion) throw new \DomainException('No perteneces a esta sesión.');
-        if ($participante && !in_array($sesion->estado, ['finalizada', 'cerrada'], true)) {
+        if (! $participante && ! $esAnfitrion) {
+            throw new \DomainException('No perteneces a esta sesión.');
+        }
+        if ($participante && ! in_array($sesion->estado, ['finalizada', 'cerrada'], true)) {
             $participante->forceFill(['estado' => 'conectado', 'ultima_actividad_at' => now()])->save();
         }
 
@@ -279,9 +301,11 @@ class LiveTestEngineService
         return DB::transaction(function () use ($actor, $sesion) {
             $sesion = TestSesion::lockForUpdate()->findOrFail($sesion->id);
             $this->autorizarAnfitrion($actor, $sesion);
-            if ($sesion->estado !== 'activa') throw new \DomainException('Solo se puede pausar una partida activa.');
+            if ($sesion->estado !== 'activa') {
+                throw new \DomainException('Solo se puede pausar una partida activa.');
+            }
             $emision = $this->preguntaActual($sesion, true);
-            if (!$emision || $emision->estado !== 'abierta') {
+            if (! $emision || $emision->estado !== 'abierta') {
                 throw new \DomainException('Espera a que comience la siguiente pregunta para pausar.');
             }
 
@@ -292,6 +316,7 @@ class LiveTestEngineService
                 'configuracion' => $configuracion,
                 'version' => $sesion->version + 1,
             ])->save();
+
             return $sesion->fresh();
         });
     }
@@ -301,9 +326,13 @@ class LiveTestEngineService
         return DB::transaction(function () use ($actor, $sesion) {
             $sesion = TestSesion::lockForUpdate()->findOrFail($sesion->id);
             $this->autorizarAnfitrion($actor, $sesion);
-            if ($sesion->estado !== 'pausada') throw new \DomainException('La partida no está pausada.');
+            if ($sesion->estado !== 'pausada') {
+                throw new \DomainException('La partida no está pausada.');
+            }
             $emision = $this->preguntaActual($sesion, true);
-            if (!$emision || $emision->estado !== 'abierta') throw new \DomainException('No hay una pregunta para reanudar.');
+            if (! $emision || $emision->estado !== 'abierta') {
+                throw new \DomainException('No hay una pregunta para reanudar.');
+            }
 
             $configuracion = $sesion->configuracion ?? [];
             $restante = max(1, min(300, (int) ($configuracion['pausa_restante'] ?? $sesion->tiempo_pregunta ?? 20)));
@@ -314,6 +343,7 @@ class LiveTestEngineService
                 'configuracion' => $configuracion,
                 'version' => $sesion->version + 1,
             ])->save();
+
             return $sesion->fresh();
         });
     }
@@ -323,7 +353,7 @@ class LiveTestEngineService
         return DB::transaction(function () use ($actor, $sesion, $paraReconfigurar) {
             $sesion = TestSesion::lockForUpdate()->findOrFail($sesion->id);
             $this->autorizarAnfitrion($actor, $sesion);
-            if (!in_array($sesion->estado, ['finalizada', 'cerrada'], true)) {
+            if (! in_array($sesion->estado, ['finalizada', 'cerrada'], true)) {
                 throw new \DomainException('La partida debe haber terminado antes de repetirla.');
             }
 
@@ -339,7 +369,7 @@ class LiveTestEngineService
             ]);
             $configuracion = $sesion->configuracion ?? [];
             unset($configuracion['pausa_restante']);
-            $configuracion['intento_actual']=max(1,(int)($configuracion['intento_actual']??1))+1;
+            $configuracion['intento_actual'] = max(1, (int) ($configuracion['intento_actual'] ?? 1)) + 1;
             $sesion->forceFill([
                 'estado' => $paraReconfigurar ? 'configuracion' : 'espera',
                 'pregunta_actual_indice' => 0,
@@ -349,6 +379,7 @@ class LiveTestEngineService
                 'cerrada_at' => null,
                 'version' => $sesion->version + 1,
             ])->save();
+
             return $sesion->fresh();
         });
     }
@@ -358,8 +389,12 @@ class LiveTestEngineService
         return DB::transaction(function () use ($actor, $sesion, $datos, $bancos) {
             $sesion = TestSesion::lockForUpdate()->findOrFail($sesion->id);
             $this->autorizarAnfitrion($actor, $sesion);
-            if ($sesion->estado !== 'configuracion') throw new \DomainException('La sala no está en configuración.');
-            foreach ($bancos as $banco) app(LiveTestSessionService::class)->validarBancoAccesible($actor, $banco, 'amigos');
+            if ($sesion->estado !== 'configuracion') {
+                throw new \DomainException('La sala no está en configuración.');
+            }
+            foreach ($bancos as $banco) {
+                app(LiveTestSessionService::class)->validarBancoAccesible($actor, $banco, 'amigos');
+            }
 
             $configuracion = [
                 'segundos_resultado' => 5,
@@ -377,6 +412,7 @@ class LiveTestEngineService
                 'estado' => 'espera',
                 'version' => $sesion->version + 1,
             ])->save();
+
             return $sesion->fresh();
         });
     }
@@ -386,7 +422,9 @@ class LiveTestEngineService
         return DB::transaction(function () use ($actor, $sesion) {
             $sesion = TestSesion::lockForUpdate()->findOrFail($sesion->id);
             $this->autorizarAnfitrion($actor, $sesion);
-            if ($sesion->estado === 'cerrada') return $sesion;
+            if ($sesion->estado === 'cerrada') {
+                return $sesion;
+            }
 
             $sesion->preguntas()->whereIn('estado', ['pendiente', 'abierta', 'resultado'])
                 ->update(['estado' => 'cerrada', 'cerrada_at' => now()]);
@@ -401,18 +439,26 @@ class LiveTestEngineService
 
     public function sincronizar(TestSesion $sesion): TestSesion
     {
-        if ($sesion->modalidad === 'examen') return $sesion->fresh();
+        if ($sesion->modalidad === 'examen') {
+            return $sesion->fresh();
+        }
+
         return DB::transaction(function () use ($sesion) {
             $sesion = TestSesion::lockForUpdate()->findOrFail($sesion->id);
-            if ($sesion->estado !== 'activa') return $sesion;
+            if ($sesion->estado !== 'activa') {
+                return $sesion;
+            }
             $emision = $this->preguntaActual($sesion, true);
-            if (!$emision) return $this->finalizarNaturalmente($sesion);
+            if (! $emision) {
+                return $this->finalizarNaturalmente($sesion);
+            }
 
             if ($emision->estado === 'abierta') {
                 $todosRespondieron = $emision->respuestas()->count() >= $sesion->participantes()->count();
                 if ($todosRespondieron || ($emision->cierra_at && now()->greaterThanOrEqualTo($emision->cierra_at))) {
                     $this->publicarResultado($sesion, $emision);
                 }
+
                 return $sesion->fresh();
             }
 
@@ -433,18 +479,21 @@ class LiveTestEngineService
         }
 
         $siguiente = $sesion->preguntas()->where('estado', 'pendiente')->orderBy('ronda')->orderBy('orden')->first();
-        if (!$siguiente && $sesion->puntaje_objetivo) {
+        if (! $siguiente && $sesion->puntaje_objetivo) {
             $ronda = ((int) $sesion->preguntas()->max('ronda')) + 1;
             $this->crearRonda($sesion, $ronda);
             $siguiente = $sesion->preguntas()->where('ronda', $ronda)->orderBy('orden')->first();
         }
-        if (!$siguiente) return $this->finalizarNaturalmente($sesion);
+        if (! $siguiente) {
+            return $this->finalizarNaturalmente($sesion);
+        }
 
         $sesion->forceFill([
             'pregunta_actual_indice' => $sesion->pregunta_actual_indice + 1,
             'version' => $sesion->version + 1,
         ])->save();
         $this->abrirPregunta($sesion, $siguiente);
+
         return $sesion->fresh();
     }
 
@@ -452,7 +501,9 @@ class LiveTestEngineService
     {
         $preguntas = $sesion->bancos()->with(['preguntas' => fn ($q) => $q->where('activa', true)])
             ->get()->pluck('preguntas')->flatten()->values();
-        if ((bool) ($sesion->configuracion['orden_aleatorio'] ?? true)) $preguntas = $preguntas->shuffle()->values();
+        if ((bool) ($sesion->configuracion['orden_aleatorio'] ?? true)) {
+            $preguntas = $preguntas->shuffle()->values();
+        }
         foreach ($preguntas as $indice => $pregunta) {
             $puntajes = (array) ($sesion->configuracion['puntos_pregunta'] ?? []);
             $sesion->preguntas()->create([
@@ -479,7 +530,9 @@ class LiveTestEngineService
 
     private function publicarResultado(TestSesion $sesion, TestSesionPregunta $emision): void
     {
-        if ($emision->estado !== 'abierta') return;
+        if ($emision->estado !== 'abierta') {
+            return;
+        }
         $emision->forceFill(['estado' => 'resultado', 'cerrada_at' => now()])->save();
         $sesion->forceFill(['version' => $sesion->version + 1])->save();
     }
@@ -493,6 +546,7 @@ class LiveTestEngineService
         ])->save();
         $sesion->participantes()->update(['estado' => 'finalizado', 'finalizado_at' => now(), 'ultima_actividad_at' => now()]);
         $this->history->snapshot($sesion->fresh());
+
         return $sesion->fresh();
     }
 
@@ -501,7 +555,10 @@ class LiveTestEngineService
         $consulta = $sesion->preguntas()->with('pregunta')
             ->whereIn('estado', ['abierta', 'resultado'])
             ->orderByDesc('ronda')->orderByDesc('orden');
-        if ($bloquear) $consulta->lockForUpdate();
+        if ($bloquear) {
+            $consulta->lockForUpdate();
+        }
+
         return $consulta->first();
     }
 
@@ -524,7 +581,10 @@ class LiveTestEngineService
     {
         $this->autorizarColegio($actor, $sesion);
         $participante = $sesion->participantes()->where('usuario_id', $actor->id)->first();
-        if ($requerido && !$participante) throw new \DomainException('No perteneces a esta sesión.');
+        if ($requerido && ! $participante) {
+            throw new \DomainException('No perteneces a esta sesión.');
+        }
+
         return $participante;
     }
 
@@ -538,15 +598,15 @@ class LiveTestEngineService
 
     private function autorizarColegio(Usuario $actor, TestSesion $sesion): void
     {
-        if (!$actor->colegio_id || (int) $actor->colegio_id !== (int) $sesion->colegio_id) {
+        if (! $actor->colegio_id || (int) $actor->colegio_id !== (int) $sesion->colegio_id) {
             throw new \DomainException('La sesión no pertenece a tu colegio.');
         }
     }
 
     private function autorizarClase(Usuario $actor, TestSesion $sesion): void
     {
-        if ($sesion->tipo === 'clase' && (!$actor->esAlumno()
-            || !$actor->clasesComoAlumno()->whereKey($sesion->clase_id)->exists())) {
+        if ($sesion->tipo === 'clase' && (! $actor->esAlumno()
+            || ! $actor->clasesComoAlumno()->whereKey($sesion->clase_id)->exists())) {
             throw new \DomainException('No perteneces a la clase de esta sesión.');
         }
     }

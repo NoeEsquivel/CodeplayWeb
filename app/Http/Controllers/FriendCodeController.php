@@ -33,6 +33,7 @@ class FriendCodeController extends Controller
                 'preguntas' => $banco->preguntas->count(),
                 'ya_agregado' => $banco->usuariosBiblioteca()->where('usuarios.id', $this->usuario()->id)->exists(),
             ];
+
             return $this->view($consulta);
         } catch (\DomainException $e) {
             return $this->view(null, $e->getMessage());
@@ -44,6 +45,7 @@ class FriendCodeController extends Controller
         $codigo = (string) $request->validate(['codigo' => ['required', 'string', 'max:16']])['codigo'];
         try {
             $banco = $service->agregarPorCodigo($this->usuario(), $codigo);
+
             return redirect()->route('alumno.codigo-amigo.index')->with('success', "“{$banco->nombre}” se añadió a tu biblioteca.");
         } catch (\DomainException $e) {
             return redirect()->route('alumno.codigo-amigo.index')->with('error', $e->getMessage());
@@ -54,6 +56,7 @@ class FriendCodeController extends Controller
     {
         try {
             $service->retirarDeBiblioteca($this->usuario(), $banco);
+
             return back()->with('success', 'Banco retirado de tu biblioteca. El original continúa con su creador.');
         } catch (\DomainException) {
             abort(404);
@@ -64,6 +67,7 @@ class FriendCodeController extends Controller
     {
         $this->autorizarBiblioteca($banco, $service);
         $copia = $service->copiarDesdeBiblioteca($this->usuario(), $banco);
+
         return redirect()->route('alumno.bancos.edit', $copia)
             ->with('success', 'Creaste una copia independiente. Puedes editarla sin cambiar el original.');
     }
@@ -73,6 +77,7 @@ class FriendCodeController extends Controller
         $this->autorizarBiblioteca($banco, $service);
         try {
             $sesion = $practicas->crear($this->usuario(), $banco);
+
             return redirect()->route('alumno.tests.codeplay.jugar', $sesion);
         } catch (\DomainException $e) {
             return back()->with('error', $e->getMessage());
@@ -107,7 +112,3 @@ class FriendCodeController extends Controller
         return Usuario::findOrFail((int) session('usuario_id'));
     }
 }
-
-
-
-

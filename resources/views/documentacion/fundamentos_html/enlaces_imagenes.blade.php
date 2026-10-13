@@ -269,8 +269,8 @@
     <div class="test-blocked-modal" id="testBlockedModal">
         <div class="test-blocked-content">
             <div class="emoticon">😴 ⏰ 🚫</div>
-            <h3 class="text-warning mb-3">¡Test No Disponible!</h3>
-            <p class="lead">Solo puedes realizar este Test cada 24 horas, regresa manana e intentalo de nuevo 😊🎮</p>
+            <h3 class="text-warning mb-3">¡Test no disponible!</h3>
+            <p class="lead">Solo puedes realizar este test cada {{ \App\Services\TestAvailabilityService::COOLDOWN_HOURS }} horas. Podrás intentarlo nuevamente cuando termine el contador. 😊🎮</p>
 
             <div class="countdown-timer" id="countdownTimer">
                 --:--:--
