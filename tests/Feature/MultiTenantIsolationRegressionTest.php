@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
+use ZipArchive;
 
 class MultiTenantIsolationRegressionTest extends TestCase
 {
@@ -122,9 +123,19 @@ class MultiTenantIsolationRegressionTest extends TestCase
             ->assertJsonFragment(['nombre' => $ownStudent->nombre])
             ->assertJsonMissing(['nombre' => $foreignStudent->nombre]);
 
-        $csv = $this->get('/api/profesor/progreso/exportar')->assertOk()->streamedContent();
-        $this->assertStringContainsString($ownStudent->nombre, $csv);
-        $this->assertStringNotContainsString($foreignStudent->nombre, $csv);
+        $export = $this->get('/api/profesor/progreso/exportar')
+            ->assertOk()
+            ->assertHeader('content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $temporary = tempnam(sys_get_temp_dir(), 'teacher-progress-');
+        file_put_contents($temporary, $export->getContent());
+        $zip = new ZipArchive();
+        $this->assertTrue($zip->open($temporary) === true);
+        $worksheet = $zip->getFromName('xl/worksheets/sheet1.xml');
+        $zip->close();
+        @unlink($temporary);
+        $this->assertIsString($worksheet);
+        $this->assertStringContainsString($ownStudent->nombre, $worksheet);
+        $this->assertStringNotContainsString($foreignStudent->nombre, $worksheet);
 
         $this->getJson('/api/profesor/progreso?clase_id='.$foreignClass->id)->assertNotFound();
         $this->getJson('/api/profesor/progreso?alumno_id='.$foreignStudent->id)->assertForbidden();

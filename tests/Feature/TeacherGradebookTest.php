@@ -90,6 +90,37 @@ class TeacherGradebookTest extends TestCase
         $this->assertNotNull($own);
     }
 
+    public function test_grade_report_service_applies_every_filter_and_summary_dimension(): void
+    {
+        [$teacher, $student, $class, $bank] = $this->scenario();
+        $teacher->update(['nombre_completo' => 'Profesora Nombre Completo']);
+        $student->update(['nombre_completo' => 'Alumno Nombre Completo']);
+        $session = $this->classSession($teacher, $class, $bank, 'examen', 'Reporte filtrado');
+        $participant = app(LiveTestEngineService::class)->unir($student, $session->codigo_sala, null, 'clase')['participante'];
+        TestResultadoSesion::create($this->resultData($session, $participant, $student, 'Reporte filtrado'));
+
+        $reports = app(\App\Services\GradeReportService::class);
+        $results = $reports->queryForTeacher($teacher, [
+            'alumno_id' => $student->id,
+            'clase_id' => $class->id,
+            'sesion_id' => $session->id,
+            'modalidad' => 'examen',
+            'banco_id' => $bank->id,
+            'desde' => now()->subDay()->toDateString(),
+            'hasta' => now()->addDay()->toDateString(),
+        ])->get();
+
+        $this->assertCount(1, $results);
+        foreach (['alumno', 'clase', 'sesion', 'profesor', 'colegio', 'banco', 'desconocida'] as $dimension) {
+            $summary = $reports->summary($results, $dimension);
+            $this->assertCount(1, $summary);
+            $this->assertSame(1, $summary->first()['intentos']);
+            $this->assertSame(50.0, $summary->first()['promedio']);
+        }
+        $this->assertSame('Alumno Nombre Completo', $reports->summary($results, 'alumno')->first()['nombre']);
+        $this->assertSame('Profesora Nombre Completo', $reports->summary($results, 'profesor')->first()['nombre']);
+        $this->assertSame($bank->nombre, $reports->summary($results, 'banco')->first()['nombre']);
+    }
     public function test_repeating_preserves_previous_attempt_history(): void
     {
         [$teacher,$student,$class,$bank]=$this->scenario();

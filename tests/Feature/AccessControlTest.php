@@ -31,9 +31,11 @@ class AccessControlTest extends TestCase
             '2025_10_02_083703_add_ultimo_acceso_to_usuarios_table.php',
             '2026_09_08_120000_create_aventura_preparacion_tables.php',
             '2026_09_24_120000_create_colegios_and_expand_user_roles.php',
+            '2026_09_25_100000_add_user_status_and_admin_audit.php',
             '2026_09_24_121000_add_email_to_usuarios_table.php',
             '2026_09_24_122000_assign_existing_users_to_ined_maria_luisa.php',
             '2026_09_24_123000_create_clases_and_memberships.php',
+            '2026_09_25_091000_add_ciclo_escolar_to_clases.php',
             '2026_09_27_130000_add_full_names_and_adventure_alias.php',
         ] as $migration) {
             (require database_path('migrations/' . $migration))->up();
@@ -251,6 +253,41 @@ class AccessControlTest extends TestCase
         $this->assertStringNotContainsString($usuario->clave, $usuario->toJson());
     }
 
+    public function test_authentication_rejects_invalid_inactive_and_unknown_role_accounts(): void
+    {
+        $this->post(route('login.verify'), ['nombre' => 'No existe', 'clave' => 'Incorrecta'])
+            ->assertRedirect(route('login'))
+            ->assertSessionHas('error');
+
+        $inactive = $this->usuario(Usuario::ROL_ALUMNO, 'Alumno Inactivo Login');
+        $inactive->forceFill(['activo' => false])->save();
+        $this->post(route('login.verify'), ['nombre' => $inactive->nombre, 'clave' => 'Clave1234'])
+            ->assertRedirect(route('login'))
+            ->assertSessionHas('error');
+
+        $unknown = $this->usuario(Usuario::ROL_ALUMNO, 'Usuario Rol Desconocido');
+        $unknown->forceFill(['rol' => 'Desconocido'])->save();
+        $this->post(route('login.verify'), ['nombre' => $unknown->nombre, 'clave' => 'Clave1234'])
+            ->assertRedirect(route('login'))
+            ->assertSessionHas('error', 'Rol no válido');
+        $this->assertNull(session('usuario_id'));
+    }
+
+    public function test_password_change_rejects_an_incorrect_current_password(): void
+    {
+        $student = $this->usuario(Usuario::ROL_ALUMNO, 'Alumno Cambia Clave', true);
+        $this->withSession([
+            'usuario_id' => $student->id,
+            'usuario_session_version' => $student->session_version,
+            'cambio_clave_requerido' => true,
+        ])->post(route('cambio.clave.procesar'), [
+            'clave_actual' => 'ClaveEquivocada9',
+            'nueva_clave' => 'NuevaClave9',
+            'nueva_clave_confirmation' => 'NuevaClave9',
+        ])->assertRedirect()->assertSessionHas('error', 'La contraseña actual es incorrecta');
+
+        $this->assertTrue(Hash::check('Clave1234', $student->fresh()->clave));
+    }
     public function test_temporary_password_blocks_access_until_it_is_changed(): void
     {
         $alumno = $this->usuario(Usuario::ROL_ALUMNO, 'Alumno Temporal', true);

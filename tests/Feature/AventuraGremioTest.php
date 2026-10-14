@@ -151,6 +151,35 @@ class AventuraGremioTest extends TestCase
         self::assertGreaterThan(1,$next['personaje']['nivel']);
     }
 
+    public function test_guild_store_validates_offers_and_applies_every_purchase_type_once(): void
+    {
+        $this->run->oro = 1000;
+        $history = $this->run->exploracion;
+        $history[1]['gremio']['tienda'] = [
+            'ofertas' => ['pocion-vida', 'arma_dano', 'dano'],
+            'compras' => [],
+            'abierta' => false,
+        ];
+        $this->run->exploracion = $history;
+        $this->run->save();
+
+        $this->guild('tienda')->assertOk();
+        self::assertTrue($this->run->fresh()->exploracion[1]['gremio']['tienda']['abierta']);
+        $this->guild('cerrar_tienda')->assertOk();
+        self::assertFalse($this->run->fresh()->exploracion[1]['gremio']['tienda']['abierta']);
+
+        $this->guild('comprar', null, ['oferta' => 'inexistente'])->assertStatus(422);
+        $this->guild('comprar', null, ['oferta' => 'pocion-vida'])->assertOk();
+        self::assertSame(1, (int) $this->run->fresh()->inventario()->sum('cantidad'));
+        $this->guild('comprar', null, ['oferta' => 'pocion-vida'])->assertStatus(409);
+
+        $this->guild('comprar', null, ['oferta' => 'arma_dano'])->assertOk();
+        self::assertSame(5, \App\Services\AventuraMejoras::valor($this->run->fresh(), 'arma_dano'));
+
+        $this->guild('comprar', null, ['oferta' => 'dano'])->assertOk();
+        self::assertSame(10, \App\Services\AventuraMejoras::valor($this->run->fresh(), 'dano'));
+        self::assertSame(842, $this->run->fresh()->oro);
+    }
     public function test_claiming_or_answering_during_combat_is_rejected(): void
     {
         $this->guild('aceptar','runas')->assertOk();

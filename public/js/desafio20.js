@@ -29,6 +29,12 @@
     let checksSourcePromise;
     let draftTimer;
 
+    function randomUnit() {
+        const value = new Uint32Array(1);
+        crypto.getRandomValues(value);
+        return value[0] / 4294967296;
+    }
+
     function setFeedback(message, type = '') {
         feedback.textContent = message;
         feedback.className = `feedback ${type}`;
@@ -273,7 +279,7 @@
             const colors = ['#63eed4', '#c9a2ff', '#ffd66b', '#ff8dbd', '#75baff'];
             for (let i = 0; i < 70; i++) {
                 const piece = document.createElement('i');
-                piece.style.cssText = `--x:${Math.random() * 100}%;--drift:${Math.random() * 180 - 90}px;--delay:${Math.random() * .8}s;--duration:${2.3 + Math.random() * 1.3}s;--spin:${Math.random() * 720 - 360}deg;background:${colors[i % colors.length]}`;
+                piece.style.cssText = `--x:${randomUnit() * 100}%;--drift:${randomUnit() * 180 - 90}px;--delay:${randomUnit() * .8}s;--duration:${2.3 + randomUnit() * 1.3}s;--spin:${randomUnit() * 720 - 360}deg;background:${colors[i % colors.length]}`;
                 confetti.append(piece);
             }
             celebrationTimer = setTimeout(() => {

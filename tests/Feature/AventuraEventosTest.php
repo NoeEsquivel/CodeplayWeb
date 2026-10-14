@@ -70,6 +70,27 @@ class AventuraEventosTest extends TestCase
         $this->eventPost('continuar')->assertStatus(409);
     }
 
+    public function test_equipment_and_spell_improvements_apply_limits_and_compensation(): void
+    {
+        $this->run->mejoras = [];
+        $this->run->oro = 0;
+
+        for ($i = 0; $i < 6; $i++) {
+            $message = AventuraMejoras::mejorarEquipo($this->run, 'arma_dano');
+        }
+        self::assertSame(25, AventuraMejoras::valor($this->run, 'arma_dano'));
+        self::assertStringContainsString('15 de oro', $message);
+        self::assertSame(15, $this->run->oro);
+
+        for ($i = 0; $i < 4; $i++) {
+            $spellMessage = AventuraMejoras::mejorarHechizo($this->run, 'fuego');
+        }
+        self::assertSame(30, AventuraMejoras::valorHechizo($this->run, 'fuego'));
+        self::assertSame(4, AventuraMejoras::nivelHechizo($this->run, 'fuego'));
+        self::assertStringContainsString('15 de oro', $spellMessage);
+        self::assertSame(30, $this->run->oro);
+    }
+
     public function test_legacy_encounter_and_all_stories_can_be_resolved_without_reward(): void
     {
         self::assertGreaterThanOrEqual(10,count(AventuraRelatos::todos()));
@@ -197,6 +218,43 @@ class AventuraEventosTest extends TestCase
         self::assertSame(19,$this->run->fresh()->exploracion[1]['combate']['recompensa']['xp']);
     }
 
+    public function test_chest_rewards_cover_equipment_spell_and_inventory_alternatives(): void
+    {
+        $this->run->oro = 0;
+        $this->run->save();
+
+        $this->encuentro('tesoro');
+        $this->engine->tiradas = [90, 4];
+        $this->eventPost('abrir')->assertOk();
+        self::assertSame(15, $this->run->fresh()->oro);
+
+        self::assertTrue(AventuraInventario::recibir($this->run->fresh(), 'filo-fenix'));
+        AventuraInventario::equiparBotin($this->run->fresh(), 'filo-fenix', null);
+        $this->encuentro('tesoro');
+        $this->engine->tiradas = [90, 4, 0];
+        $this->eventPost('abrir')->assertOk();
+        self::assertSame(5, AventuraMejoras::valor($this->run->fresh(), 'arma_dano'));
+
+        $this->encuentro('tesoro');
+        $this->engine->tiradas = [90, 6];
+        $this->eventPost('abrir')->assertOk();
+        self::assertSame(5, AventuraMejoras::valor($this->run->fresh(), 'critico'));
+
+        self::assertTrue(AventuraInventario::recibir($this->run->fresh(), 'brasa'));
+        AventuraInventario::equiparBotin($this->run->fresh(), 'brasa', null);
+        $this->encuentro('tesoro');
+        $this->engine->tiradas = [90, 6];
+        $this->eventPost('abrir')->assertOk();
+        self::assertTrue($this->narrativa()['mejora_hechizo']);
+        $this->eventPost('mejorar_hechizo', ['hechizo' => 'brasa'])->assertOk();
+        self::assertSame(2, AventuraMejoras::nivelHechizo($this->run->fresh(), 'brasa'));
+        $this->eventPost('mejorar_hechizo', ['hechizo' => 'brasa'])->assertStatus(409);
+
+        $this->encuentro('tesoro');
+        $this->engine->tiradas = [90, 3, 0];
+        $this->eventPost('abrir')->assertOk();
+        self::assertArrayHasKey('botin', $this->narrativa());
+    }
     public function test_bank_progression_missing_questions_and_user_boundaries(): void
     {
         DB::table('tests')->insert(['id'=>2,'documentacion_id'=>1,'titulo'=>'CSS','modulo'=>'css1']);

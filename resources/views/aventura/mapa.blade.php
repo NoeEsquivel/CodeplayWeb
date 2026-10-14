@@ -121,7 +121,7 @@
 @endif
     <footer class="camp-footer">No necesitas conocer todas las respuestas para comenzar a explorar.<span>CODEPLAY / APRENDER JUGANDO</span></footer>
 </main>
-<div id="worldEntrance" class="world-entrance" hidden role="status" aria-live="polite"><video class="world-entrance-video" playsinline preload="auto" role="presentation"><source src="{{ asset('videos/aventura/inicio-codeplay2.mp4') }}?v={{ filemtime(public_path('videos/aventura/inicio-codeplay2.mp4')) }}" type="video/mp4"></video><p class="eyebrow">TU HISTORIA ESTÁ POR COMENZAR</p><h2>El bosque reconoce tus pasos.</h2><p id="entranceStatus">Atravesando el portal…</p></div>
+<div id="worldEntrance" class="world-entrance" hidden role="status" aria-live="polite"><video class="world-entrance-video" playsinline preload="auto"><source src="{{ asset('videos/aventura/inicio-codeplay2.mp4') }}?v={{ filemtime(public_path('videos/aventura/inicio-codeplay2.mp4')) }}" type="video/mp4"></video><p class="eyebrow">TU HISTORIA ESTÁ POR COMENZAR</p><h2>El bosque reconoce tus pasos.</h2><p id="entranceStatus">Atravesando el portal…</p></div>
 @if(!empty($bossIntroduction['url']))
 <div id="bossIntroduction" data-boss-name="{{ $bossIntroduction['name'] }}" class="world-entrance boss-cinematic" hidden role="dialog" aria-modal="true" aria-label="Presentación de {{ $bossIntroduction['name'] }}">
     <video class="world-entrance-video" playsinline preload="auto" aria-label="{{ $bossIntroduction['name'] }} aparece ante el héroe">

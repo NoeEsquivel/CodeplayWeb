@@ -19,7 +19,7 @@ class AventuraCombateTest extends TestCase
         parent::setUp();
         if (!in_array('sqlite',\PDO::getAvailableDrivers())) $this->markTestSkipped('Se requiere pdo_sqlite.');
         config(['database.default'=>'sqlite','database.connections.sqlite.database'=>':memory:']); DB::purge('sqlite');
-        foreach (['2025_09_30_064434_create_usuarios_table.php','2025_09_30_064441_create_documentacion_table.php','2025_09_30_064446_create_tests_table.php','2025_09_30_064451_create_preguntas_test_table.php','2025_10_18_173127_add_test_module_to_tests_table.php','2025_09_30_064527_create_enemigos_table.php','2025_09_30_064532_create_combates_table.php','2025_09_30_064537_create_items_table.php','2025_09_30_064544_create_inventario_table.php','2025_10_21_082507_create_desafio_recompensas_table.php','2026_09_08_120000_create_aventura_preparacion_tables.php','2026_09_08_140000_integrate_aventura_inventory.php','2026_09_09_090000_add_aventura_exploracion.php','2026_09_09_120000_add_aventura_bosque_combate.php','2026_09_15_120000_add_aventura_spell_catalog_items.php'] as $file) (require database_path('migrations/'.$file))->up();
+        foreach (['2025_09_30_064434_create_usuarios_table.php','2025_09_30_064441_create_documentacion_table.php','2025_09_30_064446_create_tests_table.php','2025_09_30_064451_create_preguntas_test_table.php','2025_10_18_173127_add_test_module_to_tests_table.php','2025_09_30_064527_create_enemigos_table.php','2025_09_30_064532_create_combates_table.php','2025_09_30_064537_create_items_table.php','2025_09_30_064544_create_inventario_table.php','2025_10_21_082507_create_desafio_recompensas_table.php','2026_09_08_120000_create_aventura_preparacion_tables.php','2026_09_08_140000_integrate_aventura_inventory.php','2026_09_09_090000_add_aventura_exploracion.php','2026_09_09_120000_add_aventura_bosque_combate.php','2026_09_09_180000_add_aventura_regiones.php','2026_09_15_120000_add_aventura_spell_catalog_items.php'] as $file) (require database_path('migrations/'.$file))->up();
         DB::table('documentacion')->insert(['id'=>1,'titulo'=>'Fixture HTML','contenido'=>'Fixture']);
         DB::table('tests')->insert(['id'=>1,'documentacion_id'=>1,'titulo'=>'HTML','modulo'=>'html1']);
         DB::table('preguntas_test')->insert(['test_id'=>1,'pregunta'=>'¿Qué etiqueta crea un párrafo?','opcion_a'=>'<p>','opcion_b'=>'<img>','opcion_c'=>'<a>','opcion_d'=>'<br>','respuesta_correcta'=>'a']);
@@ -143,6 +143,41 @@ class AventuraCombateTest extends TestCase
         self::assertSame([],$this->run->fresh()->efectos);
     }
 
+    public function test_regional_scaling_temporary_attack_effects_and_enemy_resistances_are_applied(): void
+    {
+        $this->run->update(['escenario' => 11, 'exploracion' => [11 => ['tipo' => 'enemigo', 'estado' => 'pendiente']]]);
+        $this->action(['accion' => 'abrir']);
+        self::assertSame(2, $this->battle()['enemigos'][0]['region']);
+        self::assertGreaterThan(32, $this->battle()['enemigos'][0]['max']);
+        self::assertGreaterThan(5, $this->battle()['enemigos'][0]['ataque']);
+        $this->combatPost(['accion' => 'desconocida'])->assertStatus(422);
+
+        $this->editBattle(function (&$battle) {
+            $battle['enemigos'][0]['vida'] = 500;
+            $battle['enemigos'][0]['max'] = 500;
+            $battle['enemigos'][0]['defensa'] = 0;
+            $battle['enemigos'][0]['ataque'] = 1;
+        });
+        $this->run->refresh()->update(['efectos' => [
+            ['tipo' => 'imbuicion_ignea', 'nombre' => 'Imbuición', 'valor' => 25, 'turnos' => 3],
+            ['tipo' => 'ritual_doble', 'nombre' => 'Ritual', 'cargas' => 1],
+        ]]);
+        $this->action(['accion' => 'atacar', 'objetivo' => 0]);
+        self::assertSame([], array_values(array_filter($this->run->fresh()->efectos, fn ($effect) => $effect['tipo'] === 'ritual_doble')));
+
+        $this->editBattle(function (&$battle) { $battle['enemigos'][0]['habilidad'] = 'resiste_fisico'; });
+        $this->action(['accion' => 'atacar', 'objetivo' => 0]);
+
+        $this->editBattle(function (&$battle) { $battle['enemigos'][0]['habilidad'] = 'resiste_magia'; });
+        $this->action(['accion' => 'hechizo', 'objeto' => 'brasa', 'objetivo' => 0]);
+
+        $this->editBattle(function (&$battle) {
+            $battle['enemigos'][0]['clave'] = 'titan';
+            $battle['enemigos'][0]['habilidad'] = null;
+        });
+        $this->action(['accion' => 'hechizo', 'objeto' => 'brasa', 'objetivo' => 0]);
+        self::assertGreaterThan(0, $this->battle()['enemigos'][0]['vida']);
+    }
     public function test_boss_question_uses_existing_bank_and_never_exposes_answer_before_submission(): void
     {
         $this->run->update(['escenario'=>10,'exploracion'=>[10=>['tipo'=>'jefe','estado'=>'pendiente']]]);

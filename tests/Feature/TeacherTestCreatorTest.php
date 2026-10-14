@@ -46,6 +46,74 @@ class TeacherTestCreatorTest extends TestCase
         $this->assertSame('Privado', $foreign->fresh()->nombre);
     }
 
+    public function test_teacher_completes_the_bank_and_question_crud_flow(): void
+    {
+        [$teacher] = $this->scenario();
+        $service = app(TestBankService::class);
+        $bank = $service->crear($teacher, ['nombre' => 'Banco CRUD', 'materia' => 'Programación']);
+        $this->withSession($this->sessionFor($teacher));
+
+        $this->post(route('profesor.tests.banks.publish', $bank))->assertRedirect()->assertSessionHas('error');
+        $this->put(route('profesor.tests.banks.update', $bank), [
+            'nombre' => 'Banco CRUD actualizado', 'materia' => 'JavaScript', 'descripcion' => 'Validación integral',
+        ])->assertRedirect()->assertSessionHas('success');
+
+        $this->post(route('profesor.tests.questions.store', $bank), [
+            'tipo' => 'opcion_unica', 'enunciado' => '¿Cuál opción es correcta?',
+            'opciones' => ['a' => 'Primera', 'b' => 'Segunda'], 'respuesta_unica' => 'a',
+            'tiempo_limite' => 20, 'puntos' => 5,
+        ])->assertRedirect()->assertSessionHas('success');
+        $question = $bank->preguntas()->firstOrFail();
+        $this->put(route('profesor.tests.questions.update', [$bank, $question]), [
+            'tipo' => 'respuesta_directa', 'enunciado' => 'Escribe dos formas válidas',
+            'respuestas_escritas' => "respuesta uno\nrespuesta dos", 'tiempo_limite' => 30, 'puntos' => 8,
+        ])->assertRedirect()->assertSessionHas('success');
+        $this->assertSame(['respuesta uno', 'respuesta dos'], $question->fresh()->respuestas_correctas);
+
+        $this->post(route('profesor.tests.questions.store', $bank), [
+            'tipo' => 'verdadero_falso', 'enunciado' => 'JavaScript se ejecuta en el navegador',
+            'respuesta_booleana' => '1', 'tiempo_limite' => 15, 'puntos' => 3,
+        ])->assertRedirect()->assertSessionHas('success');
+        $second = $bank->preguntas()->whereKeyNot($question->id)->firstOrFail();
+        $this->delete(route('profesor.tests.questions.destroy', [$bank, $second]))
+            ->assertRedirect()->assertSessionHas('success');
+        $this->post(route('profesor.tests.banks.publish', $bank))->assertRedirect()->assertSessionHas('success');
+        $this->assertSame('publicado', $bank->fresh()->estado);
+
+        $this->delete(route('profesor.tests.banks.destroy', $bank))->assertRedirect()->assertSessionHas('success');
+        $this->assertSoftDeleted('test_bancos', ['id' => $bank->id]);
+    }
+
+    public function test_bank_service_rejects_cross_bank_and_invalid_question_data(): void
+    {
+        [$teacher] = $this->scenario();
+        $service = app(TestBankService::class);
+        $bank = $service->crear($teacher, ['nombre' => 'Validaciones A', 'materia' => 'HTML']);
+        $other = $service->crear($teacher, ['nombre' => 'Validaciones B', 'materia' => 'CSS']);
+        $question = $service->agregarPregunta($teacher, $other, [
+            'tipo' => 'respuesta_directa', 'enunciado' => 'Pregunta externa', 'respuestas_correctas' => ['ok'],
+        ]);
+
+        foreach ([
+            fn () => $service->actualizarPregunta($teacher, $bank, $question, ['tipo' => 'respuesta_directa', 'enunciado' => 'x', 'respuestas_correctas' => ['x']]),
+            fn () => $service->eliminarPregunta($teacher, $bank, $question),
+            fn () => $service->reordenar($teacher, $other, []),
+            fn () => $service->agregarPregunta($teacher, $bank, ['tipo' => 'desconocido', 'enunciado' => 'x', 'respuestas_correctas' => ['x']]),
+            fn () => $service->agregarPregunta($teacher, $bank, ['tipo' => 'respuesta_directa', 'enunciado' => '', 'respuestas_correctas' => []]),
+            fn () => $service->agregarPregunta($teacher, $bank, ['tipo' => 'opcion_unica', 'enunciado' => 'x', 'opciones' => ['a' => 'A'], 'respuestas_correctas' => ['a']]),
+            fn () => $service->agregarPregunta($teacher, $bank, ['tipo' => 'opcion_unica', 'enunciado' => 'x', 'opciones' => ['a' => 'A', 'b' => 'B'], 'respuestas_correctas' => ['z']]),
+            fn () => $service->agregarPregunta($teacher, $bank, ['tipo' => 'verdadero_falso', 'enunciado' => 'x', 'respuestas_correctas' => ['quizá']]),
+            fn () => $service->agregarPregunta($teacher, $bank, ['tipo' => 'respuesta_directa', 'enunciado' => 'x', 'respuestas_correctas' => range(1, 21)]),
+        ] as $operation) {
+            try {
+                $operation();
+                $this->fail('La validación debía rechazar la operación.');
+            } catch (\DomainException|\InvalidArgumentException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+    }
+
     public function test_teacher_assigns_banks_only_to_own_classes_and_creates_scheduled_session(): void
     {
         [$teacher, , $ownClass, $foreignClass] = $this->scenario();
@@ -79,6 +147,44 @@ class TeacherTestCreatorTest extends TestCase
         ])->assertNotFound();
     }
 
+    public function test_teacher_actions_return_friendly_errors_and_can_remove_class_assignment(): void
+    {
+        [$teacher, , $class] = $this->scenario();
+        $service = app(TestBankService::class);
+        $bank = $service->crear($teacher, ['nombre' => 'Banco bloqueado', 'materia' => 'HTML']);
+        $question = $service->agregarPregunta($teacher, $bank, [
+            'tipo' => 'respuesta_directa', 'enunciado' => 'Pregunta publicada', 'respuestas_correctas' => ['correcta'],
+        ]);
+        $service->publicar($teacher, $bank);
+        $this->withSession($this->sessionFor($teacher));
+
+        $this->post(route('profesor.tests.banks.assign', $bank), ['clase_ids' => [$class->id]])->assertRedirect();
+        $this->post(route('profesor.tests.banks.assign', $bank), ['clase_ids' => []])->assertRedirect();
+        $this->assertDatabaseMissing('test_banco_clase', ['banco_id' => $bank->id, 'clase_id' => $class->id]);
+
+        $questionData = [
+            'tipo' => 'respuesta_directa', 'enunciado' => 'No debe cambiar',
+            'respuestas_escritas' => '', 'tiempo_limite' => 20, 'puntos' => 1,
+        ];
+        $this->post(route('profesor.tests.questions.store', $bank), $questionData)
+            ->assertRedirect()->assertSessionHas('error');
+        $this->put(route('profesor.tests.questions.update', [$bank, $question]), $questionData)
+            ->assertRedirect()->assertSessionHas('error');
+
+        $this->post(route('profesor.tests.sessions.store'), [
+            'titulo' => 'Banco inexistente', 'clase_id' => $class->id,
+            'banco_ids' => [999999999], 'modalidad' => 'examen',
+        ])->assertRedirect()->assertSessionHas('error', 'Uno de los bancos no está disponible.');
+
+        $bank->clasesAsignadas()->syncWithoutDetaching([$class->id => ['asignado_por_usuario_id' => $teacher->id, 'activo' => true]]);
+        $this->post(route('profesor.tests.sessions.store'), [
+            'titulo' => 'Sesión para acción inválida', 'clase_id' => $class->id,
+            'banco_ids' => [$bank->id], 'modalidad' => 'examen',
+        ])->assertRedirect();
+        $session = TestSesion::where('anfitrion_usuario_id', $teacher->id)->latest('id')->firstOrFail();
+        $this->post(route('profesor.tests.sessions.action', [$session, 'pause']))
+            ->assertRedirect()->assertSessionHas('error', 'Solo se puede pausar una partida activa.');
+    }
     public function test_selected_bank_is_automatically_assigned_when_creating_a_session(): void
     {
         [$teacher, , $ownClass] = $this->scenario();

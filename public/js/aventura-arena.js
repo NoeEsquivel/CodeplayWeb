@@ -20,7 +20,9 @@
     function noise(ctx, high, low, volume, duration, delay=0) {
         const frames=Math.max(1,Math.floor(ctx.sampleRate*duration));
         const buffer=ctx.createBuffer(1,frames,ctx.sampleRate), data=buffer.getChannelData(0);
-        for(let i=0;i<frames;i++) data[i]=Math.random()*2-1;
+        const randomValues=new Uint32Array(frames);
+        for(let offset=0;offset<frames;offset+=16384) crypto.getRandomValues(randomValues.subarray(offset,Math.min(offset+16384,frames)));
+        for(let i=0;i<frames;i++) data[i]=(randomValues[i]/4294967296)*2-1;
         const source=ctx.createBufferSource(), filter=ctx.createBiquadFilter(), gain=ctx.createGain(), now=ctx.currentTime+delay;
         source.buffer=buffer; filter.type='bandpass'; filter.Q.value=.8; filter.frequency.setValueAtTime(high,now); filter.frequency.exponentialRampToValueAtTime(Math.max(80,low),now+duration);
         gain.gain.setValueAtTime(.0001,now); gain.gain.exponentialRampToValueAtTime(volume,now+.008); gain.gain.exponentialRampToValueAtTime(.0001,now+duration);

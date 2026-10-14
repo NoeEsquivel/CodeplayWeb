@@ -29,11 +29,14 @@ class MasterPanelTest extends TestCase
             '2025_09_30_064434_create_usuarios_table.php',
             '2025_10_01_063305_add_cambio_clave_requerido_to_usuarios_table.php',
             '2025_10_02_083703_add_ultimo_acceso_to_usuarios_table.php',
+            '2026_09_08_120000_create_aventura_preparacion_tables.php',
             '2026_09_24_120000_create_colegios_and_expand_user_roles.php',
             '2026_09_24_121000_add_email_to_usuarios_table.php',
             '2026_09_24_122000_assign_existing_users_to_ined_maria_luisa.php',
             '2026_09_24_123000_create_clases_and_memberships.php',
+            '2026_09_25_091000_add_ciclo_escolar_to_clases.php',
             '2026_09_25_100000_add_user_status_and_admin_audit.php',
+            '2026_09_27_130000_add_full_names_and_adventure_alias.php',
         ] as $migration) {
             (require database_path('migrations/' . $migration))->up();
         }

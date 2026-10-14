@@ -40,6 +40,7 @@ class TeacherPanelTest extends TestCase
             '2026_09_25_091000_add_ciclo_escolar_to_clases.php',
             '2026_09_25_100000_add_user_status_and_admin_audit.php',
             '2026_09_26_100000_create_documentation_progress.php',
+            '2026_09_27_130000_add_full_names_and_adventure_alias.php',
         ] as $migration) {
             (require database_path('migrations/'.$migration))->up();
         }

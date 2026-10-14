@@ -20,6 +20,8 @@ yarn-error.log
 /.idea
 /.vscode
 /.scannerwork/
+/coverage/
+/sonarqube-coverage-details.json
 /sonarqube-issues.csv
 /sonarqube-issues.json
 /sonarqube-scanner.log

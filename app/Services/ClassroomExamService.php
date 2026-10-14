@@ -50,6 +50,9 @@ class ClassroomExamService
             throw new \DomainException('El examen no está activo.');
         }
         $participant = $this->authorize($student, $session);
+        if ($participant->estado === 'finalizado') {
+            throw new \DomainException('El examen ya fue entregado.');
+        }
         $this->initialize($session, $participant);
         if ($this->expired($session, $participant)) {
             $this->submit($student, $session, true);
@@ -59,6 +62,9 @@ class ClassroomExamService
         return DB::transaction(function () use ($student, $session, $emission, $answer) {
             $session = TestSesion::lockForUpdate()->findOrFail($session->id);
             $participant = $this->authorize($student, $session, true);
+            if ($participant->estado === 'finalizado') {
+                throw new \DomainException('El examen ya fue entregado.');
+            }
             if ($session->estado !== 'activa') {
                 throw new \DomainException('El examen no está activo.');
             }

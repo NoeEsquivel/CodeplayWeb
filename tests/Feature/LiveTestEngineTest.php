@@ -144,6 +144,51 @@ class LiveTestEngineTest extends TestCase
         $this->assertSame(200, $finished['mi_resultado']['puntos_totales']);
     }
 
+    public function test_engine_rejects_invalid_start_answer_state_pause_and_resume_transitions(): void
+    {
+        [$host, $friend, , $bank] = $this->scenario();
+        $engine = app(LiveTestEngineService::class);
+        $assertDomain = function (callable $action, string $message): void {
+            try {
+                $action();
+                $this->fail('La operación inválida fue aceptada.');
+            } catch (\DomainException $exception) {
+                $this->assertSame($message, $exception->getMessage());
+            }
+        };
+
+        $unopened = $this->liveSession($host, $bank);
+        $assertDomain(fn () => $engine->iniciar($host, $unopened), 'La sala no está en espera.');
+        $engine->abrirSala($host, $unopened);
+        $assertDomain(fn () => $engine->iniciar($host, $unopened), 'Debe ingresar al menos un participante.');
+        $assertDomain(fn () => $engine->pausar($host, $unopened), 'Solo se puede pausar una partida activa.');
+        $assertDomain(fn () => $engine->reanudar($host, $unopened), 'La partida no está pausada.');
+
+        $future = $this->liveSession($host, $bank, ['disponible_desde' => now()->addHour()]);
+        $engine->abrirSala($host, $future);
+        $assertDomain(fn () => $engine->iniciar($host, $future), 'La actividad aún no está disponible.');
+
+        $expired = $this->liveSession($host, $bank, ['disponible_hasta' => now()->subMinute()]);
+        $engine->abrirSala($host, $expired);
+        $assertDomain(fn () => $engine->iniciar($host, $expired), 'La actividad ya no está disponible.');
+
+        $empty = $this->liveSession($host, $bank);
+        $engine->abrirSala($host, $empty);
+        $engine->unir($host, $empty->codigo_sala, 'mesa-secreta');
+        $empty->bancos()->detach();
+        $assertDomain(fn () => $engine->iniciar($host, $empty->fresh()), 'Los bancos seleccionados no tienen preguntas disponibles.');
+
+        $active = $this->liveSession($host, $bank);
+        $engine->abrirSala($host, $active);
+        $engine->unir($host, $active->codigo_sala, 'mesa-secreta');
+        $engine->iniciar($host, $active);
+        $assertDomain(fn () => $engine->estado($friend, $active), 'No perteneces a esta sesión.');
+
+        $exam = $this->liveSession($host, $bank, ['modalidad' => 'examen']);
+        $engine->abrirSala($host, $exam);
+        $engine->iniciar($host, $exam);
+        $assertDomain(fn () => $engine->responder($friend, $exam, 'correcta'), 'Las respuestas del examen usan el guardado individual.');
+    }
     public function test_teacher_controls_class_room_and_only_enrolled_students_can_join(): void
     {
         [$student, , , , , $class] = $this->scenario(1);

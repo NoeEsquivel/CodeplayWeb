@@ -172,6 +172,133 @@ class ClassroomCodePlayTest extends TestCase
         $this->assertSame('2026-09-27 14:00:00',$oneHourButClosesSooner->participantes()->where('usuario_id',$student->id)->firstOrFail()->examen_limite_at->format('Y-m-d H:i:s'));
     }
 
+    public function test_student_can_join_and_reopen_an_available_trivia_from_the_classroom_screen(): void
+    {
+        [$teacher, $student, $class, , , $bank] = $this->scenario();
+        $session = $this->classSession($teacher, $class, $bank, 'trivia', 'Trivia para ingresar');
+
+        $studentSession = $this->sessionFor($student);
+        $this->withSession($studentSession)
+            ->post(route('alumno.tests.clase.enter', $session))
+            ->assertRedirect(route('alumno.tests.clase.trivia', $session));
+
+        $this->assertDatabaseHas('test_sesion_participantes', [
+            'sesion_id' => $session->id,
+            'usuario_id' => $student->id,
+        ]);
+        $this->assertNotNull(session("live_test_tokens.{$session->id}"));
+
+        $this->withSession($studentSession)
+            ->get(route('alumno.tests.clase.trivia', $session))
+            ->assertOk()
+            ->assertSee('Trivia para ingresar');
+
+        $this->withSession($studentSession)
+            ->post(route('alumno.tests.clase.enter', $session))
+            ->assertRedirect(route('alumno.tests.clase.trivia', $session));
+        $this->assertSame(1, $session->participantes()->where('usuario_id', $student->id)->count());
+
+        $session->forceFill(['disponible_desde' => now()->addHour()])->save();
+        $this->withSession($studentSession)
+            ->post(route('alumno.tests.clase.enter', $session))
+            ->assertNotFound();
+
+        $session->forceFill(['disponible_desde' => null, 'modalidad' => 'examen'])->save();
+        $this->withSession($studentSession)
+            ->get(route('alumno.tests.clase.trivia', $session))
+            ->assertNotFound();
+    }
+    public function test_exam_service_rejects_foreign_questions_invalid_states_and_duplicate_submissions(): void
+    {
+        [$teacher, $student, $class, , , $bank] = $this->scenario();
+        $session = $this->classSession($teacher, $class, $bank, 'examen', 'Validaciones del examen');
+        $engine = app(LiveTestEngineService::class);
+        $engine->unir($student, $session->codigo_sala, null, 'clase');
+        $service = app(\App\Services\ClassroomExamService::class);
+
+        $waiting = $service->estado($student, $session->fresh());
+        $this->assertNull($waiting['pregunta']);
+        $this->assertFalse($waiting['entregado']);
+
+        $engine->iniciar($teacher, $session);
+        $session->refresh();
+        $foreignSession = $this->classSession($teacher, $class, $bank, 'examen', 'Otro examen');
+        $engine->iniciar($teacher, $foreignSession);
+        $foreignEmission = $foreignSession->preguntas()->firstOrFail();
+
+        try {
+            $service->estado($student, $session, $foreignEmission->id);
+            $this->fail('Debió rechazar una pregunta perteneciente a otro examen.');
+        } catch (\DomainException $exception) {
+            $this->assertSame('La pregunta seleccionada no pertenece a este examen.', $exception->getMessage());
+        }
+
+        try {
+            $service->save($student, $session, $foreignEmission, 'respuesta');
+            $this->fail('Debió rechazar una emisión perteneciente a otra sesión.');
+        } catch (\DomainException $exception) {
+            $this->assertSame('La pregunta no pertenece a este examen.', $exception->getMessage());
+        }
+
+        try {
+            $service->estado($teacher, $session);
+            $this->fail('Debió rechazar al profesor como participante alumno.');
+        } catch (\DomainException $exception) {
+            $this->assertSame('No perteneces a la clase de este examen.', $exception->getMessage());
+        }
+
+        $result = $service->submit($student, $session);
+        $this->assertSame($result->id, $service->submit($student, $session)->id);
+
+        try {
+            $service->save($student, $session->fresh(), $session->preguntas()->firstOrFail(), 'respuesta');
+            $this->fail('Debió impedir cambios después de la entrega.');
+        } catch (\DomainException $exception) {
+            $this->assertSame('El examen ya fue entregado.', $exception->getMessage());
+        }
+
+        $service->submitPending($foreignSession->forceFill(['modalidad' => 'trivia']));
+        $this->assertSame('activa', $foreignSession->fresh()->estado);
+    }
+    public function test_classroom_controller_handles_exam_navigation_join_errors_and_missing_participation(): void
+    {
+        [$teacher, $student, $class, , , $bank] = $this->scenario();
+        $studentSession = $this->sessionFor($student);
+        $engine = app(LiveTestEngineService::class);
+        $exam = $this->classSession($teacher, $class, $bank, 'examen', 'Examen por controlador');
+
+        $this->withSession($studentSession)
+            ->get(route('alumno.tests.clase'))
+            ->assertOk()
+            ->assertSee('Examen por controlador');
+        $this->post(route('alumno.tests.clase.enter', $exam))
+            ->assertRedirect(route('alumno.tests.clase.examen', $exam));
+        $engine->iniciar($teacher, $exam);
+        $emissions = $exam->fresh()->preguntas()->orderBy('orden')->get();
+
+        $this->get(route('alumno.tests.clase.examen', ['sesion' => $exam, 'pregunta' => 999999999]))
+            ->assertNotFound();
+        $this->post(route('alumno.tests.clase.examen.save', [$exam, $emissions[0]]), [
+            'respuesta' => 'correcta',
+            'destino' => $emissions[1]->id,
+        ])->assertRedirect(route('alumno.tests.clase.examen', [
+            'sesion' => $exam,
+            'pregunta' => $emissions[1]->id,
+        ]));
+
+        $notJoined = $this->classSession($teacher, $class, $bank, 'examen', 'Sin participación');
+        $engine->iniciar($teacher, $notJoined);
+        $this->post(route('alumno.tests.clase.examen.submit', $notJoined))
+            ->assertRedirect()->assertSessionHas('error', 'Primero debes ingresar a la sesión.');
+
+        $second = $this->user('Alumno que ocupa la sala '.uniqid(), Usuario::ROL_ALUMNO, $teacher->colegio_id, null);
+        $class->agregarAlumno($second);
+        $full = $this->classSession($teacher, $class, $bank, 'trivia', 'Sala completa');
+        $full->forceFill(['max_participantes' => 1])->save();
+        $engine->unir($second, $full->codigo_sala, null, 'clase');
+        $this->post(route('alumno.tests.clase.enter', $full))
+            ->assertRedirect()->assertSessionHas('error');
+    }
     public function test_live_polling_is_limited_per_account_instead_of_shared_ip(): void
     {
         [$teacher,$student,$class,,, $bank]=$this->scenario();

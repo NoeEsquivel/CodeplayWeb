@@ -388,8 +388,8 @@
 <body>
     <form id="formulario">
         <h1>Registro rápido</h1>
-        <input id="nombre" type="text" placeholder="Escribe tu nombre">
-        <input id="edad" type="number" placeholder="Escribe tu edad">
+        <input id="nombre" type="text" placeholder="Escribe tu nombre" aria-label="Nombre">
+        <input id="edad" type="number" placeholder="Escribe tu edad" aria-label="Edad">
         <button type="submit">Validar</button>
         <p id="mensaje"></p>
     </form>
