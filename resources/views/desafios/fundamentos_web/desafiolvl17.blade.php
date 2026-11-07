@@ -96,31 +96,31 @@
 
             <div class="editor-grid mt-4">
                 <div class="editor-panel">
-                    <textarea id="codeEditor" aria-label="Editor de código"><!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Registro</title>
-    <style>
+                    <textarea id="codeEditor" aria-label="Editor de código">&lt;!DOCTYPE html&gt;
+&lt;html lang="es"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Registro&lt;/title&gt;
+    &lt;style&gt;
         body { font-family: Arial, sans-serif; padding: 24px; }
         .tarjeta { max-width: 420px; margin: auto; }
         /* Completa el estilo del formulario */
-    </style>
-</head>
-<body>
-    <div class="tarjeta">
-        <h1>Únete al equipo</h1>
-        <form id="registroForm">
-            <!-- Agrega etiquetas, campos, un select y un textarea -->
-            <button type="submit">Registrarme</button>
-            <p id="mensaje"></p>
-        </form>
-    </div>
-    <script>
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="tarjeta"&gt;
+        &lt;h1&gt;Únete al equipo&lt;/h1&gt;
+        &lt;form id="registroForm"&gt;
+            &lt;!-- Agrega etiquetas, campos, un select y un textarea --&gt;
+            &lt;button type="submit"&gt;Registrarme&lt;/button&gt;
+            &lt;p id="mensaje"&gt;&lt;/p&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+    &lt;script&gt;
         // Conecta el evento submit y valida los datos aquí.
-    </script>
-</body>
-</html></textarea>
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
                 </div>
                 <div class="preview-panel"><iframe id="previewFrame" title="Vista previa del formulario" sandbox="allow-scripts allow-modals"></iframe></div>
             </div>
@@ -144,6 +144,9 @@
             mode: 'htmlmixed', theme: 'dracula', lineNumbers: true, lineWrapping: true,
             indentUnit: 4, tabSize: 4, autoCloseTags: true
         });
+        // Actualizar las medidas del editor cuando el navegador termine de dibujar la página.
+        requestAnimationFrame(() => editor.refresh());
+        window.addEventListener('load', () => editor.refresh());
         const previewFrame = document.getElementById('previewFrame');
         const validationGrid = document.getElementById('validationGrid');
         const feedback = document.getElementById('feedback');
@@ -168,7 +171,7 @@
 
         function renderValidation(showFeedback = false) {
             const checks = evaluateCode(editor.getValue());
-            validationGrid.innerHTML = Object.entries(checks).map(([key, ok]) = aria-label="Editor de código"> `
+            validationGrid.innerHTML = Object.entries(checks).map(([key, ok]) => `
                 <div class="validation-item ${ok ? 'ok' : 'missing'}"><i class="fas ${ok ? 'fa-check' : 'fa-circle'} me-2"></i>${requirementLabels[key]}</div>
             `).join('');
             const completed = Object.values(checks).filter(Boolean).length;

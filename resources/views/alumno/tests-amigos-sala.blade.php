@@ -13,7 +13,7 @@
 <form id="startForm" method="POST" action="{{ route('alumno.tests.amigos.start',$sesion) }}">@csrf<button class="primary"><i class="fas fa-play"></i> Iniciar partida</button></form>
 <form id="pauseForm" method="POST" action="{{ route('alumno.tests.amigos.pause',$sesion) }}">@csrf<button class="warning"><i class="fas fa-pause"></i> Pausar</button></form>
 <form id="resumeForm" method="POST" action="{{ route('alumno.tests.amigos.resume',$sesion) }}">@csrf<button class="primary"><i class="fas fa-play"></i> Reanudar</button></form>
-<form id="finishForm" method="POST" action="{{ route('alumno.tests.amigos.finish',$sesion) }}" onsubmit="return confirm('¿Terminar esta partida?')">@csrf<button class="danger"><i class="fas fa-stop"></i> Terminar</button></form>
+<form id="finishForm" method="POST" action="{{ route('alumno.tests.amigos.finish',$sesion) }}" data-confirm-title="Finalizar mesa de estudio" data-confirm-message="La partida terminará para todos los participantes y no se podrán enviar más respuestas. ¿Deseas finalizarla?" data-confirm-accept="Sí, finalizar partida">@csrf<button class="danger"><i class="fas fa-stop"></i> Terminar</button></form>
 <div class="final-actions" id="finalActions"><form method="POST" action="{{ route('alumno.tests.amigos.repeat',$sesion) }}">@csrf<button class="primary"><i class="fas fa-rotate-right"></i> Jugar otra vez</button></form><a class="btn secondary" href="{{ route('alumno.tests.amigos.configure',$sesion) }}"><i class="fas fa-sliders"></i> Cambiar reglas</a></div>
 </section>
 </main><script>
@@ -30,4 +30,5 @@ async function submitAnswer(event){event.preventDefault();const form=new FormDat
 async function reconnect(){const token=localStorage.getItem(tokenKey);if(!token)return false;try{const response=await fetch(reconnectUrl,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':csrf},body:JSON.stringify({reconexion_token:token})});const data=await response.json();if(!response.ok||!data.success)return false;localStorage.setItem(tokenKey,data.reconexion_token);return true}catch{return false}}
 async function poll(){if(polling)return;polling=true;try{let response=await fetch(stateUrl,{headers:{'Accept':'application/json'},cache:'no-store'});if(response.status===422&&await reconnect())response=await fetch(stateUrl,{headers:{'Accept':'application/json'},cache:'no-store'});const data=await response.json();if(!response.ok||!data.success)throw new Error(data.message||'Sin conexión');render(data);el('connection').innerHTML='<i class="fas fa-circle" style="color:var(--green)"></i> Sincronizado'}catch(error){el('connection').innerHTML='<i class="fas fa-circle" style="color:var(--red)"></i> Reconectando…'}finally{polling=false}}
 render(initialState);setInterval(poll,1000);
-</script></body></html>
+</script>@include('partials.student-confirm-dialog')
+</body></html>

@@ -14,6 +14,14 @@ return [
     |
     */
 
+    'turnstile' => [
+        'enabled' => (bool) env('TURNSTILE_ENABLED', false),
+        'testing' => (bool) env('TURNSTILE_TESTING', false),
+        'site_key' => env('TURNSTILE_SITE_KEY', ''),
+        'secret_key' => env('TURNSTILE_SECRET_KEY', ''),
+        'hostnames' => array_values(array_filter(array_map('trim', explode(',', env('TURNSTILE_HOSTNAMES', ''))))),
+    ],
+
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),

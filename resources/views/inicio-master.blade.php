@@ -293,7 +293,7 @@
 <script>
 // Cambiar el fondo específicamente para la vista Master
 document.addEventListener('DOMContentLoaded', function() {
-    document.body.style.background = 'url("{{ asset("imagenes/Fondo_Master.jpg") }}") no-repeat center center fixed';
+    document.body.style.background = 'url("{{ asset("Imagenes/Fondo_Master.jpg") }}") no-repeat center center fixed';
     document.body.style.backgroundSize = 'cover';
 
     const overlay = document.createElement('div');

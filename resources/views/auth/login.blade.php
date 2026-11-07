@@ -143,6 +143,8 @@
                                    id="clave" name="clave" placeholder="Ingresa tu contraseña" required>
                         </div>
 
+                        @include('partials.login-turnstile')
+
                         <button type="submit" class="btn btn-play btn-lg px-5 py-3">
                             <i class="fas fa-gamepad me-2"></i> INGRESAR
                         </button>

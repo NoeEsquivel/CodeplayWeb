@@ -1,0 +1,42 @@
+INSTALADOR DEL BANCO DE CULTURA POP Y HERRAMIENTAS DIGITALES
+===========================================================
+
+Contenido
+---------
+- InstalarBancoCulturaDigital.bat: archivo para ejecutar con doble clic.
+- instalar_banco_cultura_digital.php: instalador que se conecta a CodePlay.
+- banco_cultura_digital_jeremias.json: banco de 250 preguntas.
+
+Antes de comenzar
+-----------------
+1. Revise el banco de preguntas y confirme que desea instalarlo.
+2. Haga una copia de seguridad de la base de datos del servidor.
+3. Confirme que CodePlay funciona y que sus migraciones están actualizadas.
+4. Confirme que Jeremias tiene rol Profesor, está activo y tiene colegio asignado.
+
+Instalación
+-----------
+1. Descomprima la carpeta InstaladorBancoCulturaDigital.
+2. Copie la carpeta dentro de la carpeta principal de CodePlay, donde está artisan.
+3. Ejecute InstalarBancoCulturaDigital.bat con doble clic y revise el resultado.
+
+El instalador busca un profesor cuyo nombre o nombre completo contenga Jeremias.
+También reconoce Jeremías con tilde. Si encuentra varios, muestra sus datos y
+solicita seleccionar el ID correcto. También puede indicar el ID directamente:
+
+  InstalarBancoCulturaDigital.bat --user-id=NUMERO
+
+Comportamiento seguro
+---------------------
+- Valida que el JSON contenga exactamente 250 preguntas de opción única.
+- Inserta el banco y sus preguntas dentro de una sola transacción.
+- Si ocurre un error, la base de datos revierte la operación completa.
+- Si el mismo banco ya está instalado, no lo duplica.
+- Si existe un banco con el mismo nombre y contenido distinto, no lo sobrescribe.
+- No crea una Trivia ni asigna clases; publica el banco para que Jeremias lo
+  seleccione al crear una Trivia.
+
+Uso posterior
+-------------
+Jeremias debe abrir Tests y evaluaciones, crear una Trivia y seleccionar el banco
+"Cultura pop y herramientas digitales - 250 preguntas".

@@ -25,8 +25,8 @@ class InjectStudentLux
         }
 
         $html = (string) $response->getContent();
-        $bodyEnd = strripos($html, '</body>');
-        if ($bodyEnd === false || str_contains($html, 'id="codeplay-lux"')) {
+        $bodyEnd = $this->closingTagPosition($html, 'body');
+        if ($bodyEnd === null || str_contains($html, 'id="codeplay-lux"')) {
             return $response;
         }
 
@@ -36,18 +36,33 @@ class InjectStudentLux
                 ->whereNotNull('lux_bienvenida_vista_at')->exists();
 
         $style = '<link rel="stylesheet" href="'.e(asset('css/student-lux.css')).'">';
-        $headEnd = strripos($html, '</head>');
-        if ($headEnd !== false) {
+        $headEnd = $this->closingTagPosition($html, 'head');
+        if ($headEnd !== null) {
             $html = substr_replace($html, $style, $headEnd, 0);
-            $bodyEnd = strripos($html, '</body>');
+            $bodyEnd = $this->closingTagPosition($html, 'body');
         }
         $widget = view('partials.student-lux', compact('routeName', 'welcomePending'))->render();
-        if ($headEnd === false) {
+        if ($headEnd === null) {
             $widget = $style.$widget;
         }
         $response->setContent(substr_replace($html, $widget, $bodyEnd, 0));
         $response->headers->remove('Content-Length');
 
         return $response;
+    }
+
+    private function closingTagPosition(string $html, string $tag): ?int
+    {
+        // Los editores y scripts pueden contener documentos HTML completos.
+        // Ignorar su contenido, los comentarios y los atributos evita insertar Lux en esos ejemplos.
+        $pattern = <<<'REGEX'
+~(?:<!--.*?-->|<(script|style|textarea|title)\b(?:[^>"']|"[^"]*"|'[^']*')*>.*?</\1\s*>)(*SKIP)(*F)|</%s\s*>|<(?:[^>"']|"[^"]*"|'[^']*')*>(*SKIP)(*F)~is
+REGEX;
+
+        if (preg_match(sprintf($pattern, preg_quote($tag, '~')), $html, $match, PREG_OFFSET_CAPTURE) !== 1) {
+            return null;
+        }
+
+        return $match[0][1];
     }
 }

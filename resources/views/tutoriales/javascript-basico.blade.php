@@ -280,6 +280,7 @@
                                 <h4>Video Tutorial</h4>
                                 <p class="mb-3">Mira este video para ver el proceso completo:</p>
 
+                                @if ($videoAccess['unlocked'])
                                 <div class="video-container" id="videoContainer">
                                     <!-- Miniatura con diseño atractivo -->
                                     <div id="videoThumbnail" style="width: 100%; height: 100%; background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative;">
@@ -297,11 +298,15 @@
                                         <i class="fas fa-play"></i>
                                     </button>
 
-                                    <video id="tutorialVideo" style="display: none; width: 100%; height: 100%; border-radius: 12px;" controls poster="{{ asset('imagenes/video-poster.jpg') }}">
+                                    <video id="tutorialVideo" style="display: none; width: 100%; height: 100%; border-radius: 12px;" controls>
                                         <source src="{{ route('tutorial.video', ['video' => 'Javascript_basico.mp4']) }}" type="video/mp4">
                                         Tu navegador no soporta el elemento video.
                                     </video>
                                 </div>
+
+                                @else
+                                    @include('partials.tutorial-video-prerequisites')
+                                @endif
 
                                 <!-- Mensaje opcional si el video no carga -->
                                 <div id="videoError" style="display: none; background: rgba(220, 53, 69, 0.1); border: 1px solid #dc3545; border-radius: 8px; padding: 1rem; margin-top: 1rem; text-align: center;">
@@ -315,9 +320,7 @@
                     <!-- Botón Completar Tutorial -->
                     @if(!$progreso || $progreso->estado !== 'completado')
                     <div class="text-center">
-                        <button class="btn btn-complete" onclick="completarTutorial()">
-                            <i class="fas fa-check-circle me-2"></i>Completar Tutorial
-                        </button>
+                        @include('partials.tutorial-complete-button')
                     </div>
                     @else
                     <div class="text-center">
@@ -344,6 +347,7 @@
     const playButton = document.querySelector('.play-button');
     const video = document.getElementById('tutorialVideo');
     const videoError = document.getElementById('videoError');
+    if (!video || !thumbnail || !playButton || !videoError) return;
 
     // Ocultar miniatura y botón de play
     thumbnail.style.display = 'none';

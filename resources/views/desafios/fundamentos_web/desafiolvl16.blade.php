@@ -301,22 +301,22 @@
 
             <div class="editor-container">
                 <div class="code-editor">
-                    <textarea id="codeEditor" aria-label="Editor de código"><!DOCTYPE html>
-<html lang="es">
-<head>
-    <title>Mi Página Web Personal</title>
-    <style>
+                    <textarea id="codeEditor" aria-label="Editor de código">&lt;!DOCTYPE html&gt;
+&lt;html lang="es"&gt;
+&lt;head&gt;
+    &lt;title&gt;Mi Página Web Personal&lt;/title&gt;
+    &lt;style&gt;
         /* Diseña aquí tu página */
-    </style>
-</head>
-<body>
-    <!-- Construye aquí tu página personal -->
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;!-- Construye aquí tu página personal --&gt;
 
-    <script>
+    &lt;script&gt;
         // Agrega aquí una pequeña interacción
-    </script>
-</body>
-</html></textarea>
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
                 </div>
                 <div class="result-panel">
                     <iframe id="resultFrame" class="result-iframe" title="Vista previa de tu página web" sandbox="allow-scripts allow-modals"></iframe>
@@ -384,6 +384,9 @@
             tabSize: 4,
             lineWrapping: true
         });
+        // Actualizar las medidas del editor cuando el navegador termine de dibujar la página.
+        requestAnimationFrame(() => editor.refresh());
+        window.addEventListener('load', () => editor.refresh());
 
         let lastPreparedPreviewCode = '';
         let restoringPreview = false;
@@ -540,7 +543,7 @@
         function updateValidation(showMessage = true) {
             const checks = evaluateCode();
             const grid = document.getElementById('validationGrid');
-            grid.innerHTML = checks.map(check = aria-label="Editor de código"> `
+            grid.innerHTML = checks.map(check => `
                 <div class="validation-item ${check.ok ? 'ok' : 'missing'}">
                     <i class="fas ${check.ok ? 'fa-check-circle' : 'fa-circle-xmark'} me-2"></i>${check.label}
                 </div>

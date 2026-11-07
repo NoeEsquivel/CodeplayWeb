@@ -35,6 +35,20 @@ class ClassroomCodePlayTest extends TestCase
         $this->get(route('alumno.tests.clase.trivia',$foreign))->assertNotFound();
     }
 
+    public function test_classroom_list_keeps_historical_session_when_teacher_account_was_deleted(): void
+    {
+        [$teacher, $student, $class, , , $bank] = $this->scenario();
+        $session = $this->classSession($teacher, $class, $bank, 'trivia', 'Actividad histórica');
+        $session->forceFill(['anfitrion_usuario_id' => null])->save();
+
+        $this->withSession($this->sessionFor($student))
+            ->get(route('alumno.tests.clase'))
+            ->assertOk()
+            ->assertSee('Actividad histórica')
+            ->assertSee($class->nombre)
+            ->assertSee('Cuenta docente eliminada');
+    }
+
     public function test_exam_saves_individual_progress_hides_grade_until_submit_and_uses_teacher_points(): void
     {
         [$teacher,$student,$class,,, $bank]=$this->scenario();

@@ -285,7 +285,7 @@
                                     <li>Selecciona <strong>Nuevo</strong> → <strong>Carpeta</strong></li>
                                     <li>Nombra la carpeta como quieras (ej: "mi-pagina-web", "mi-proyecto", etc.)</li>
                                 </ol>
-                                <img src="{{ asset('imagenes/Crear_carpeta.png') }}" alt="Crear carpeta" class="tutorial-image img-fluid">
+                                <img src="{{ asset('Imagenes/Crear_carpeta.png') }}" alt="Crear carpeta" class="tutorial-image img-fluid">
                                 <p class="mt-2"><small>Nombra la carpeta como tu gustes. De preferencia ponle el nombre que quieres darle a tu proyecto o tu página web.</small></p>
                             </div>
                         </div>
@@ -303,7 +303,7 @@
                                     <li>Haz <strong>click derecho</strong> dentro de la carpeta</li>
                                     <li>Selecciona <strong>Nuevo</strong> → <strong>Documento de texto</strong></li>
                                 </ol>
-                                <img src="{{ asset('imagenes/Crear_documento_texto.png') }}" alt="Crear documento de texto" class="tutorial-image img-fluid">
+                                <img src="{{ asset('Imagenes/Crear_documento_texto.png') }}" alt="Crear documento de texto" class="tutorial-image img-fluid">
                             </div>
                         </div>
                     </div>
@@ -319,15 +319,15 @@
                                     <li>Nombra el archivo como: <code>inicio.html</code>, <code>index.html</code> o el nombre que prefieras</li>
                                     <li><strong>Lo más importante:</strong> asegúrate de que termine en <strong>.html</strong></li>
                                 </ol>
-                                <img src="{{ asset('imagenes/extencion_html.png') }}" alt="Extensión HTML" class="tutorial-image img-fluid">
+                                <img src="{{ asset('Imagenes/extencion_html.png') }}" alt="Extensión HTML" class="tutorial-image img-fluid">
                                 <div class="alert alert-warning mt-3">
                                     <i class="fas fa-exclamation-triangle me-2"></i>
                                     <strong>Si te sale este mensaje:</strong> "Si cambia la extensión del nombre de archivo, es posible que el archivo deje de ser utilizable. ¿Está seguro de que desea cambiarlo?"
                                     <br><strong>¡Dale "SI"!</strong>
-                                    <img src="{{ asset('imagenes/mensaje_advertencia.png') }}" alt="Mensaje de advertencia" class="tutorial-image img-fluid mt-2">
+                                    <img src="{{ asset('Imagenes/mensaje_advertencia.png') }}" alt="Mensaje de advertencia" class="tutorial-image img-fluid mt-2">
                                 </div>
                                 <p>Tu archivo debería verse así:</p>
-                                <img src="{{ asset('imagenes/html.png') }}" alt="Archivo HTML" class="tutorial-image img-fluid">
+                                <img src="{{ asset('Imagenes/html.png') }}" alt="Archivo HTML" class="tutorial-image img-fluid">
                             </div>
                         </div>
                     </div>
@@ -343,7 +343,7 @@
                                     <li>Haz <strong>click derecho</strong> en el archivo .html</li>
                                     <li>Selecciona <strong>Abrir con</strong> → <strong>Bloc de notas</strong></li>
                                 </ol>
-                                <img src="{{ asset('imagenes/abrir_block_notas.png') }}" alt="Abrir con bloc de notas" class="tutorial-image img-fluid">
+                                <img src="{{ asset('Imagenes/abrir_block_notas.png') }}" alt="Abrir con bloc de notas" class="tutorial-image img-fluid">
                             </div>
                         </div>
                     </div>
@@ -392,7 +392,7 @@
                                     <li>Ve al menú <strong>Archivo</strong> → <strong>Guardar</strong></li>
                                     <li>O presiona <strong>Ctrl + G</strong> en el teclado</li>
                                 </ol>
-                                <img src="{{ asset('imagenes/guardar.png') }}" alt="Guardar archivo" class="tutorial-image img-fluid">
+                                <img src="{{ asset('Imagenes/guardar.png') }}" alt="Guardar archivo" class="tutorial-image img-fluid">
                                 <p class="mt-3">¡Ahora abre tu archivo con doble click y verás tu primera página web!</p>
                                 <div class="alert alert-success">
                                     <i class="fas fa-check-circle me-2"></i>
@@ -427,7 +427,7 @@
                                         <i class="fas fa-play"></i>
                                     </button>
 
-                                    <video id="tutorialVideo" style="display: none; width: 100%; height: 100%; border-radius: 12px;" controls poster="{{ asset('imagenes/video-poster.jpg') }}">
+                                    <video id="tutorialVideo" style="display: none; width: 100%; height: 100%; border-radius: 12px;" controls>
                                         <source src="{{ route('tutorial.video', ['video' => 'Primera_pagina.mp4']) }}" type="video/mp4">
                                         Tu navegador no soporta el elemento video.
                                     </video>

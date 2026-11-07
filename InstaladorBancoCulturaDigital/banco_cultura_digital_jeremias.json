@@ -1,0 +1,4257 @@
+{
+  "nombre": "Cultura pop y herramientas digitales - 250 preguntas",
+  "materia": "Cultura pop y herramientas digitales",
+  "descripcion": "Banco de 250 preguntas sobre videojuegos, maquillaje, películas, literatura y atajos de teclado, preparado para las trivias del profesor Jeremias.",
+  "preguntas": [
+    {
+      "numero": 1,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué función cumple normalmente un punto de control o checkpoint?",
+      "opciones": {
+        "a": "Registrar un lugar al que volver tras perder una vida",
+        "b": "Aumentar permanentemente la velocidad del personaje",
+        "c": "Desbloquear todos los niveles del juego",
+        "d": "Cambiar el idioma del juego"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Permite reanudar desde un punto intermedio en vez de comenzar desde el inicio.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 2,
+      "tipo": "opcion_unica",
+      "enunciado": "En Minecraft, ¿para qué sirve principalmente una mesa de trabajo?",
+      "opciones": {
+        "a": "Guardar automáticamente cada construcción como plano",
+        "b": "Cambiar el modo de juego de todos los jugadores",
+        "c": "Intercambiar objetos con cualquier personaje",
+        "d": "Combinar materiales para fabricar objetos"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "La mesa amplía las recetas que se pueden fabricar con materiales recolectados.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 3,
+      "tipo": "opcion_unica",
+      "enunciado": "En Tetris, ¿qué ocurre al completar una fila horizontal sin espacios?",
+      "opciones": {
+        "a": "La pieza actual se convierte en un bloque especial",
+        "b": "El tablero se reinicia por completo",
+        "c": "La fila desaparece y las filas superiores bajan",
+        "d": "La velocidad vuelve al nivel inicial"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Completar una fila elimina sus bloques y libera espacio en el tablero.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 4,
+      "tipo": "opcion_unica",
+      "enunciado": "En muchos juegos de plataformas, ¿qué efecto suele tener recoger una vida extra?",
+      "opciones": {
+        "a": "Duplica automáticamente todos los puntos",
+        "b": "Aumenta las oportunidades antes de terminar la partida",
+        "c": "Desbloquea el final secreto de la historia",
+        "d": "Hace invulnerable al personaje hasta el final"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Una vida extra permite continuar tras un error o daño que normalmente acabaría la partida.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 5,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué describe mejor a un personaje no jugador (NPC)?",
+      "opciones": {
+        "a": "Un personaje controlado por el juego, no directamente por una persona",
+        "b": "Un jugador que no ha iniciado sesión",
+        "c": "Un personaje que solo aparece en el menú",
+        "d": "Un avatar que no puede interactuar con el entorno"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "NPC significa personaje no jugador: sus acciones dependen del sistema del juego.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 6,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué suele significar “modo cooperativo” en un videojuego?",
+      "opciones": {
+        "a": "Cada participante compite por eliminar a los demás",
+        "b": "El juego se pausa después de cada turno",
+        "c": "La historia se juega sin controles del usuario",
+        "d": "Dos o más participantes colaboran para lograr objetivos"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "La cooperación se centra en completar tareas compartidas en equipo.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 7,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Cuál es el objetivo habitual de un battle royale?",
+      "opciones": {
+        "a": "Construir una ciudad sin límite de tiempo",
+        "b": "Resolver una historia sin competir con otros",
+        "c": "Sobrevivir hasta quedar entre los últimos participantes",
+        "d": "Completar carreras en orden fijo"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "El género reduce progresivamente el espacio o los recursos y busca que sobrevivan pocos jugadores.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 8,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué significa que un juego permita “cross-play”?",
+      "opciones": {
+        "a": "Que se puede cambiar la cámara durante una partida",
+        "b": "Que personas en plataformas distintas pueden jugar juntas",
+        "c": "Que guarda una copia del progreso cada minuto",
+        "d": "Que incluye una versión para un sistema operativo distinto"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "El juego conecta jugadores que usan plataformas compatibles diferentes.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 9,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es un tutorial dentro de un juego?",
+      "opciones": {
+        "a": "Una guía inicial que enseña controles o mecánicas",
+        "b": "Una lista de los récords de la comunidad",
+        "c": "Una expansión que continúa la historia",
+        "d": "Una opción que elimina el nivel de dificultad"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "El tutorial introduce las acciones necesarias para jugar.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 10,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué caracteriza a un juego de rol (RPG)?",
+      "opciones": {
+        "a": "Todas las partidas duran exactamente una ronda",
+        "b": "El jugador solo controla una cámara",
+        "c": "No hay objetivos ni progresión",
+        "d": "La historia y el desarrollo de personajes tienen un papel central"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Muchos RPG permiten desarrollar habilidades, equipo o decisiones del personaje.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 11,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es un DLC en videojuegos?",
+      "opciones": {
+        "a": "Un archivo que guarda los controles del teclado",
+        "b": "Una herramienta para reducir la resolución",
+        "c": "Contenido descargable que amplía o complementa un juego",
+        "d": "Un modo de juego que solo funciona sin conexión"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "DLC es contenido adicional distribuido digitalmente, como expansiones o elementos nuevos.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 12,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué hace normalmente un “speedrunner”?",
+      "opciones": {
+        "a": "Busca terminar con la puntuación más baja",
+        "b": "Intenta completar un juego en el menor tiempo posible",
+        "c": "Diseña niveles para otros jugadores",
+        "d": "Juega únicamente con conexión lenta"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "El speedrun prioriza completar una ruta o juego con rapidez bajo reglas definidas.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 13,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es un “jefe” o boss en la estructura de muchos juegos?",
+      "opciones": {
+        "a": "Un adversario importante que suele cerrar una sección o etapa",
+        "b": "Un personaje que explica todos los controles",
+        "c": "Un objeto que permite guardar la partida",
+        "d": "Un menú para elegir el idioma"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Los jefes suelen exigir que el jugador aplique mecánicas aprendidas durante el nivel.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 14,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué significa que un videojuego tenga guardado automático?",
+      "opciones": {
+        "a": "El juego crea una copia impresa de cada partida",
+        "b": "El jugador no puede volver a cargar niveles",
+        "c": "El juego elimina los datos al cerrar la aplicación",
+        "d": "El juego registra el progreso sin exigir guardar manualmente cada vez"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "El guardado automático conserva el avance en puntos o momentos definidos por el juego.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 15,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es un “mod” creado por la comunidad?",
+      "opciones": {
+        "a": "Una actualización obligatoria del sistema operativo",
+        "b": "Un método oficial para transferir una licencia",
+        "c": "Una modificación que cambia o añade contenido al juego",
+        "d": "Un tipo de mando con botones adicionales"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Un mod adapta aspectos del juego y puede ser creado por usuarios, según las reglas de la plataforma.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 16,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué suele hacer una poción de curación en un juego de aventura?",
+      "opciones": {
+        "a": "Cambiar el mapa a una región nueva",
+        "b": "Recuperar parte de la salud del personaje",
+        "c": "Añadir una vida a cada oponente",
+        "d": "Reiniciar el inventario"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Su función habitual es restaurar puntos de salud; el efecto exacto depende del juego.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 17,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué representa la “dificultad” de un juego?",
+      "opciones": {
+        "a": "El nivel de reto que presentan sus reglas y desafíos",
+        "b": "La cantidad de idiomas disponibles",
+        "c": "El tamaño físico del control",
+        "d": "La duración obligatoria de cada sesión"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "La dificultad modifica cuánto esfuerzo requiere superar los retos.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 18,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué ventaja ofrece un punto de guardado frecuente?",
+      "opciones": {
+        "a": "Aumenta el tamaño de la pantalla",
+        "b": "Convierte todos los objetos en recompensas",
+        "c": "Evita que el jugador aprenda los controles",
+        "d": "Reduce cuánto progreso se pierde si la partida termina"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Un punto de guardado conserva avances recientes y reduce la repetición.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 19,
+      "tipo": "opcion_unica",
+      "enunciado": "En un juego multijugador en línea, ¿qué es la latencia o ping?",
+      "opciones": {
+        "a": "La cantidad de espacio que ocupa el juego",
+        "b": "El número de jugadores disponibles en una sala",
+        "c": "El tiempo que tarda la información en viajar entre el dispositivo y el servidor",
+        "d": "La resolución de la imagen transmitida"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Una latencia alta puede hacer que las acciones aparezcan con retraso.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 20,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué describe mejor un “mundo abierto”?",
+      "opciones": {
+        "a": "Una historia que solo se juega en orden lineal",
+        "b": "Un entorno amplio que permite explorar rutas y actividades con libertad",
+        "c": "Un juego sin objetivos, personajes ni reglas",
+        "d": "Una pantalla donde todos los niveles aparecen al mismo tiempo"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "El diseño de mundo abierto ofrece libertad de exploración y suele permitir varios caminos.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 21,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es una misión secundaria?",
+      "opciones": {
+        "a": "Una actividad opcional que complementa la misión principal",
+        "b": "La última escena de todos los juegos",
+        "c": "Una actualización que corrige errores",
+        "d": "Una competencia exclusiva de multijugador"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Puede ampliar el mundo o recompensar al jugador, pero normalmente no es necesaria para avanzar en la historia principal.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 22,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Para qué se utiliza principalmente un mapa minimizado en la interfaz?",
+      "opciones": {
+        "a": "Mostrar la lista completa de controles",
+        "b": "Ajustar la música del juego",
+        "c": "Medir la velocidad de internet",
+        "d": "Orientar al jugador respecto a su posición y objetivos cercanos"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "El minimapa resume información espacial útil sin ocupar toda la pantalla.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 23,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué diferencia básica hay entre juego local y juego en línea?",
+      "opciones": {
+        "a": "El local siempre es individual y el en línea siempre cooperativo",
+        "b": "El en línea no necesita servidor ni conexión",
+        "c": "El local reúne jugadores en el mismo dispositivo o red cercana; el en línea conecta por internet",
+        "d": "El local solo funciona en computadoras"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "La diferencia principal es cómo se conectan los participantes, aunque hay excepciones según el título.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 24,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es una “hitbox” en programación de juegos?",
+      "opciones": {
+        "a": "Una barra que mide la salud del personaje",
+        "b": "Una forma invisible usada para detectar choques o impactos",
+        "c": "Una zona de seguridad del servidor",
+        "d": "Un botón adicional del control"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Las hitboxes ayudan a determinar cuándo objetos o personajes se tocan dentro del juego.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 25,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué significa “respawn”?",
+      "opciones": {
+        "a": "Volver a aparecer en el juego tras ser eliminado o perder una vida",
+        "b": "Guardar la configuración de audio",
+        "c": "Cambiar de servidor sin cerrar sesión",
+        "d": "Reiniciar la historia desde el prólogo"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "La reaparición puede ocurrir en un punto de control o según las reglas de la partida.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 26,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué se entiende por “botín” o loot en un juego?",
+      "opciones": {
+        "a": "El nombre del mapa principal",
+        "b": "Una secuencia para abandonar el juego",
+        "c": "Un sistema de clasificación de equipos",
+        "d": "Objetos o recompensas obtenidos al explorar o superar desafíos"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "El botín suele incluir equipo, recursos o recompensas.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 27,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué hace normalmente una habilidad pasiva?",
+      "opciones": {
+        "a": "Se ejecuta solo al cerrar el juego",
+        "b": "Aparece exclusivamente en la pantalla de carga",
+        "c": "Aporta un efecto mientras se cumplan sus condiciones, sin activarla cada vez",
+        "d": "Reemplaza los controles del personaje"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Una pasiva funciona automáticamente o bajo ciertas condiciones, a diferencia de una habilidad activada manualmente.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 28,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es una tabla de clasificación o leaderboard?",
+      "opciones": {
+        "a": "Una colección de mapas descargables",
+        "b": "Una lista ordenada de puntuaciones o resultados",
+        "c": "Un registro de errores técnicos",
+        "d": "Un menú para ajustar los gráficos"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Permite comparar resultados según el criterio elegido, como puntos o tiempo.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 29,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué distingue a un juego por turnos?",
+      "opciones": {
+        "a": "Los participantes actúan en fases alternadas",
+        "b": "Todos los movimientos ocurren en tiempo real simultáneo",
+        "c": "Solo se puede jugar con un control",
+        "d": "La historia cambia de idioma en cada ronda"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Cada jugador dispone de un turno antes de que avance el siguiente.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 30,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué función cumplen los controles de accesibilidad?",
+      "opciones": {
+        "a": "Aumentan obligatoriamente la dificultad",
+        "b": "Eliminan la posibilidad de guardar",
+        "c": "Añaden publicidad a la pantalla",
+        "d": "Permiten adaptar la experiencia a distintas necesidades y preferencias"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Pueden incluir subtítulos, reasignación de controles, contraste o ayudas visuales.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 31,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es una “caja de hit” o hitbox mal ajustada?",
+      "opciones": {
+        "a": "Un elemento de inventario que no se puede mover",
+        "b": "Una caja usada para transportar una consola",
+        "c": "Un área de colisión que no coincide bien con lo que muestra la imagen",
+        "d": "Una pantalla que presenta los créditos"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Si no coincide con la imagen, un golpe puede registrarse antes o después de lo que parece justo.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 32,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué objetivo tiene una actualización de equilibrio o balance?",
+      "opciones": {
+        "a": "Cambiar todas las voces por otras nuevas",
+        "b": "Ajustar elementos para que las opciones del juego sean más justas o viables",
+        "c": "Borrar los archivos guardados de cada usuario",
+        "d": "Aumentar el tamaño del mapa sin revisar mecánicas"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Los cambios de balance suelen modificar atributos, habilidades o reglas para mejorar la competencia.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 33,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué quiere decir “sandbox” al describir un estilo de juego?",
+      "opciones": {
+        "a": "Que ofrece herramientas o sistemas para experimentar con libertad",
+        "b": "Que la partida solo se desarrolla en una playa",
+        "c": "Que se juega sin guardar ni cargar",
+        "d": "Que todos los niveles usan la misma ruta"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Un sandbox suele permitir construir, explorar o crear dentro de un conjunto de reglas.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 34,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es un juego “roguelike” en su uso actual más común?",
+      "opciones": {
+        "a": "Una aventura que solo permite una partida guardada",
+        "b": "Un juego basado exclusivamente en carreras",
+        "c": "Un título sin progreso ni condición de victoria",
+        "d": "Un juego con partidas repetibles, desafíos exigentes y elementos que pueden cambiar entre intentos"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Los elementos aleatorios o reinicios entre partidas son frecuentes, aunque el género tiene variantes.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 35,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué suele indicar una clasificación ESRB o PEGI en un juego?",
+      "opciones": {
+        "a": "La velocidad recomendada de internet",
+        "b": "El nivel de dificultad para principiantes",
+        "c": "La categoría de edad y el tipo de contenido que contiene",
+        "d": "La fecha de la última actualización"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Los sistemas de clasificación informan sobre edades recomendadas y descriptores de contenido.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 36,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es la “niebla de guerra” en un juego de estrategia?",
+      "opciones": {
+        "a": "Un efecto climático que siempre reduce la salud",
+        "b": "Una zona del mapa cuyo estado se oculta hasta ser explorada",
+        "c": "Una penalización por usar demasiadas unidades",
+        "d": "La pantalla que aparece al perder conexión"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "La información oculta obliga a explorar antes de conocer todos los detalles del mapa.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 37,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué describe mejor “FPS” cuando se habla de un género de videojuegos?",
+      "opciones": {
+        "a": "Juego de disparos en primera persona",
+        "b": "Simulación de carreras por vueltas",
+        "c": "Juego de rompecabezas con físicas",
+        "d": "Estrategia por turnos en un mapa"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "En un first-person shooter, la vista representa la perspectiva del personaje.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 38,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué hace una “rama de diálogo” en una aventura narrativa?",
+      "opciones": {
+        "a": "Aumenta la memoria disponible de la consola",
+        "b": "Muestra el historial de partidas anteriores",
+        "c": "Cambia el nivel de brillo de la interfaz",
+        "d": "Permite elegir respuestas que pueden cambiar una conversación o sus consecuencias"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Las opciones de diálogo pueden afectar relaciones, información o el desarrollo de la historia.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 39,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Por qué un juego puede mostrar “requisitos del sistema”?",
+      "opciones": {
+        "a": "Para informar cuántas personas siguen al estudio",
+        "b": "Para enumerar todos los objetos secretos",
+        "c": "Para indicar el hardware y software necesarios para ejecutarlo adecuadamente",
+        "d": "Para fijar el orden de los niveles"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Los requisitos ayudan a comparar las capacidades del dispositivo con las demandas del juego.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 40,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué permite la función de reasignar controles?",
+      "opciones": {
+        "a": "Aumentar automáticamente el rendimiento del servidor",
+        "b": "Cambiar qué botón o tecla realiza cada acción",
+        "c": "Mover el progreso entre juegos distintos",
+        "d": "Modificar el argumento principal"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "La reasignación adapta los controles a preferencias o necesidades del jugador.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 41,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Cuál es el uso principal de una prebase o primer facial?",
+      "opciones": {
+        "a": "Sustituir siempre la crema hidratante",
+        "b": "Cambiar de forma permanente el tono de la piel",
+        "c": "Preparar la superficie y ayudar a que el maquillaje se aplique de manera uniforme",
+        "d": "Retirar el maquillaje al final del día"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "La prebase prepara la piel y puede mejorar la aplicación o duración de los productos posteriores.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 42,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué función suele cumplir la base de maquillaje?",
+      "opciones": {
+        "a": "Delinear el contorno de los labios",
+        "b": "Unificar visualmente el tono de la piel",
+        "c": "Fijar una sombra con brillo",
+        "d": "Limpiar las brochas"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "La base aporta cobertura y ayuda a uniformar el tono, con acabados y coberturas diferentes.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 43,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Para qué se usa con frecuencia el corrector?",
+      "opciones": {
+        "a": "Disimular visualmente zonas específicas, como ojeras o pequeñas manchas",
+        "b": "Sellar todo el rostro con un acabado mate",
+        "c": "Dar color a las mejillas",
+        "d": "Separar las pestañas"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "El corrector permite trabajar con mayor precisión en áreas concretas.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 44,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué aporta normalmente el polvo fijador?",
+      "opciones": {
+        "a": "Añade volumen a las pestañas",
+        "b": "Define el borde de los labios",
+        "c": "Sustituye la limpieza facial",
+        "d": "Ayuda a fijar productos cremosos y reducir el brillo"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Se aplica en zonas seleccionadas para reducir transferencia o brillo, según el acabado buscado.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 45,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué efecto suele crear el rubor o blush?",
+      "opciones": {
+        "a": "Oscurece las cejas",
+        "b": "Ilumina el lagrimal exclusivamente",
+        "c": "Añade color a las mejillas",
+        "d": "Sella el delineador"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "El rubor aporta color y puede dar apariencia de frescura al rostro.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 46,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué se busca al aplicar iluminador?",
+      "opciones": {
+        "a": "Oscurecer toda la línea de la mandíbula",
+        "b": "Resaltar ciertas zonas con reflejo de luz",
+        "c": "Fijar una base líquida",
+        "d": "Retirar exceso de máscara"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "El iluminador se coloca en puntos que se desea destacar, como pómulos o arco de la ceja.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 47,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Para qué se utiliza el bronceador en maquillaje?",
+      "opciones": {
+        "a": "Aportar calidez o simular un tono ligeramente bronceado",
+        "b": "Corregir el color de las ojeras",
+        "c": "Delinear el párpado interno",
+        "d": "Fijar el labial"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Se usa para dar calidez; la intensidad depende del tono y la técnica.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 48,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué producto define principalmente la línea de las pestañas?",
+      "opciones": {
+        "a": "Polvo translúcido",
+        "b": "Rubor en crema",
+        "c": "Bálsamo labial",
+        "d": "Delineador de ojos"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "El delineador marca el contorno del ojo y puede modificar visualmente su forma.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 49,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué efecto busca principalmente la máscara de pestañas?",
+      "opciones": {
+        "a": "Fijar la base sobre la frente",
+        "b": "Cambiar el tono de los labios",
+        "c": "Dar definición, color o volumen a las pestañas",
+        "d": "Difuminar el rubor"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Las máscaras varían entre alargar, separar, dar volumen o resistir la humedad.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 50,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué área del rostro se trabaja con sombra de ojos?",
+      "opciones": {
+        "a": "Las mejillas y las sienes exclusivamente",
+        "b": "Los párpados y zonas alrededor de los ojos",
+        "c": "El contorno de los labios",
+        "d": "El puente de la nariz exclusivamente"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "La sombra permite añadir color y profundidad visual a los párpados.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 51,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Para qué sirve un lápiz delineador de labios?",
+      "opciones": {
+        "a": "Definir el contorno y ayudar a ordenar la aplicación del labial",
+        "b": "Crear una capa de polvo en los pómulos",
+        "c": "Rizar las pestañas",
+        "d": "Fijar el corrector"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "El delineador delimita el contorno y puede ayudar a que el color quede dentro de esa área.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 52,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué objetivo tiene un spray fijador?",
+      "opciones": {
+        "a": "Eliminar las impurezas de las brochas",
+        "b": "Aclarar de forma permanente la base",
+        "c": "Sustituir el protector solar",
+        "d": "Ayudar a que el maquillaje conserve su aspecto durante más tiempo"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "El spray se aplica al final para ayudar a integrar o prolongar el aspecto del maquillaje.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 53,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué práctica es recomendable para mantener limpias las brochas?",
+      "opciones": {
+        "a": "Guardarlas húmedas en un estuche cerrado",
+        "b": "Compartirlas sin limpiarlas entre usos",
+        "c": "Lavarlas con regularidad y dejarlas secar completamente",
+        "d": "Aplicarles perfume para desinfectarlas"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "La limpieza periódica reduce la acumulación de producto y suciedad; secarlas bien ayuda a conservarlas.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 54,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Por qué conviene no compartir productos de maquillaje para ojos?",
+      "opciones": {
+        "a": "Porque el color cambia al abrir el envase",
+        "b": "Porque el contacto con varias personas puede transferir microorganismos",
+        "c": "Porque el producto pierde automáticamente su pigmento",
+        "d": "Porque las brochas compartidas modifican la fórmula"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Los productos que tocan ojos o mucosas pueden transferir microorganismos si se comparten.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 55,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué método ayuda a elegir un tono de base adecuado?",
+      "opciones": {
+        "a": "Comparar una pequeña muestra cerca de la mandíbula con luz natural",
+        "b": "Elegir siempre el tono más claro disponible",
+        "c": "Probarla únicamente sobre la mano bajo luz de color",
+        "d": "Seleccionar el tono según el color del envase"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "La piel del rostro y el cuello se comparan mejor con iluminación natural para evitar diferencias visibles.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 56,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué significa “cobertura” al hablar de una base?",
+      "opciones": {
+        "a": "Cuánto tiempo tarda en secarse una brocha",
+        "b": "La cantidad de fragancia del producto",
+        "c": "El tamaño del aplicador",
+        "d": "Cuánto logra disimular visualmente el tono o las marcas de la piel"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Las bases pueden ofrecer cobertura ligera, media o alta, según su fórmula y aplicación.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 57,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué describe mejor un acabado mate?",
+      "opciones": {
+        "a": "Un acabado con partículas reflectantes",
+        "b": "Un efecto húmedo y luminoso",
+        "c": "Un aspecto con poco reflejo de luz o brillo",
+        "d": "Una textura que siempre es en polvo"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "“Mate” describe una apariencia con brillo reducido; no determina por sí solo si el producto es polvo o crema.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 58,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué distingue a un acabado luminoso o dewy?",
+      "opciones": {
+        "a": "Elimina cualquier diferencia de tono",
+        "b": "Refleja más luz y da una apariencia fresca o hidratada",
+        "c": "Siempre se seca como una capa en polvo",
+        "d": "Solo se puede usar en los labios"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "El acabado luminoso conserva o añade reflejo, según la fórmula aplicada.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 59,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué hace una brocha difuminadora de ojos?",
+      "opciones": {
+        "a": "Suaviza los bordes entre tonos de sombra",
+        "b": "Recorta las pestañas postizas",
+        "c": "Aplica esmalte alrededor de los ojos",
+        "d": "Retira el maquillaje con vapor"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "El difuminado integra los tonos para evitar bordes abruptos.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 60,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué herramienta suele ayudar a aplicar base líquida en áreas amplias?",
+      "opciones": {
+        "a": "Un cepillo para cejas",
+        "b": "Un lápiz de labios",
+        "c": "Un rizador de pestañas",
+        "d": "Una esponja de maquillaje o una brocha facial"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Una esponja o brocha facial permite distribuir el producto de forma controlada.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 61,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Por qué se humedece ligeramente una esponja antes de usarla?",
+      "opciones": {
+        "a": "Para diluir todos los productos hasta hacerlos transparentes",
+        "b": "Para cambiar la base de líquida a polvo",
+        "c": "Puede ayudar a que absorba menos producto y difumine con suavidad",
+        "d": "Para fijar el maquillaje sin otros productos"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Una esponja apenas húmeda puede facilitar una aplicación uniforme; se debe retirar el exceso de agua.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 62,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué función tiene un corrector de color verde?",
+      "opciones": {
+        "a": "Añadir brillo dorado a los pómulos",
+        "b": "Neutralizar visualmente algunos tonos rojizos",
+        "c": "Oscurecer las cejas",
+        "d": "Crear un acabado translúcido"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "En teoría del color, el verde puede contrarrestar el rojo cuando se usa con moderación.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 63,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué tono se utiliza con frecuencia para contrarrestar visualmente tonos violáceos o azulados?",
+      "opciones": {
+        "a": "Amarillo o durazno, según el tono de piel",
+        "b": "Verde intenso en toda el área",
+        "c": "Azul marino",
+        "d": "Gris oscuro"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Los correctores cálidos pueden equilibrar ojeras violáceas o azuladas; el tono apropiado depende de la piel.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 64,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué diferencia hay entre un producto en crema y uno en polvo?",
+      "opciones": {
+        "a": "El producto en crema siempre dura más horas",
+        "b": "El polvo solo se utiliza en los labios",
+        "c": "La crema no puede mezclarse con otros productos",
+        "d": "La textura y la forma de aplicación; ambos pueden ofrecer efectos similares"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "La textura afecta el acabado y la forma de difuminar, pero no determina por sí sola el resultado.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 65,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Para qué se usa un gel para cejas?",
+      "opciones": {
+        "a": "Fijar sombras en el párpado",
+        "b": "Eliminar el brillo de la nariz",
+        "c": "Peinar y mantener los vellos de las cejas en una posición",
+        "d": "Aclarar el color de los labios"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "El gel puede ordenar las cejas y ayudar a que conserven su forma.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 66,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué paso ayuda a evitar que el labial se salga del contorno?",
+      "opciones": {
+        "a": "Cubrir los labios con polvo de ojos",
+        "b": "Aplicar el color con precisión y, si se desea, definir primero los labios",
+        "c": "Aplicar máscara de pestañas en el borde",
+        "d": "Usar una brocha facial en seco"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Un delineador o un aplicador fino puede ayudar a controlar el contorno del labial.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 67,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es el contorno facial o contouring?",
+      "opciones": {
+        "a": "Una técnica que usa tonos de luz y sombra para definir visualmente rasgos",
+        "b": "Una técnica para teñir las pestañas",
+        "c": "Un método para medir el tono de base",
+        "d": "Una manera de retirar el maquillaje"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "El contorno crea efectos de profundidad usando tonos más oscuros y, a veces, más claros.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 68,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué diferencia al iluminador del bronzer?",
+      "opciones": {
+        "a": "El iluminador fija productos y el bronzer los retira",
+        "b": "El iluminador se usa solo en pestañas y el bronzer en cejas",
+        "c": "Ambos se usan únicamente para dibujar los labios",
+        "d": "El iluminador refleja luz y el bronzer suele aportar calidez"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Aunque se pueden combinar, cumplen funciones visuales distintas.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 69,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es un delineado “cat eye” o de ala?",
+      "opciones": {
+        "a": "Una sombra aplicada solo bajo el ojo",
+        "b": "Un método para dar volumen a las cejas",
+        "c": "Un delineado que prolonga la línea del ojo hacia afuera y arriba",
+        "d": "Una técnica para difuminar el rubor"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "El ala extiende el delineado más allá de la esquina externa del ojo.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 70,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Por qué se utiliza una prebase para sombras?",
+      "opciones": {
+        "a": "Para rizar las pestañas antes de aplicar máscara",
+        "b": "Para preparar el párpado y ayudar a que la sombra se adhiera mejor",
+        "c": "Para retirar el delineador resistente al agua",
+        "d": "Para dar color a la línea de agua"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Una prebase puede mejorar la adherencia o duración de la sombra, según el producto.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 71,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué conviene hacer antes de usar un producto nuevo si se tiene sensibilidad conocida?",
+      "opciones": {
+        "a": "Revisar sus ingredientes y seguir las indicaciones del fabricante",
+        "b": "Mezclarlo con varios productos para reducir su concentración",
+        "c": "Aplicarlo directamente en todo el rostro",
+        "d": "Compartirlo primero para comparar reacciones"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Leer la etiqueta y seguir las recomendaciones del fabricante ayuda a elegir y usar el producto con cuidado.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 72,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Por qué es importante retirar el maquillaje al terminar el día?",
+      "opciones": {
+        "a": "Para impedir que las cejas cambien de forma",
+        "b": "Para conservar el labial en su envase",
+        "c": "Para que la piel pierda su tono natural",
+        "d": "Para limpiar los residuos de productos y suciedad de la superficie de la piel"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "La limpieza retira los productos y permite iniciar la rutina habitual de cuidado de la piel.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 73,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué significa que un producto sea resistente al agua?",
+      "opciones": {
+        "a": "Que no necesita retirarse al final del día",
+        "b": "Que funciona solo bajo el agua",
+        "c": "Que está formulado para resistir mejor la humedad, aunque puede requerir un removedor adecuado",
+        "d": "Que no puede transferirse a ninguna superficie"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Resistente al agua no significa permanente ni imposible de retirar.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 74,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué se recomienda hacer con el aplicador de un producto líquido si se comparte en una demostración?",
+      "opciones": {
+        "a": "Enjuagarlo con agua y guardarlo mojado dentro del envase",
+        "b": "Evitar devolver al envase un aplicador que ya tocó la piel",
+        "c": "Aplicarlo sobre varias personas consecutivamente",
+        "d": "Limpiarlo con la misma base del producto"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "El contacto directo puede contaminar el contenido; los aplicadores desechables reducen ese riesgo.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 75,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Cómo puede ayudar un bálsamo labial antes del labial de color?",
+      "opciones": {
+        "a": "Suaviza los labios y puede mejorar la comodidad de la aplicación",
+        "b": "Define por sí solo el contorno con precisión",
+        "c": "Fija cualquier sombra de ojos",
+        "d": "Oscurece permanentemente el labial"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "El bálsamo aporta emoliencia; retirar el exceso puede ayudar antes de aplicar color.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 76,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué se entiende por “subtono” de la piel en maquillaje?",
+      "opciones": {
+        "a": "La cantidad de cobertura de una base",
+        "b": "El nivel de brillo del iluminador",
+        "c": "El número de tonos disponibles en una paleta",
+        "d": "La tendencia de color que se percibe bajo el tono superficial"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "El subtono suele describirse como cálido, frío o neutro y puede orientar la elección de colores.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 77,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Para qué se usa un rizador de pestañas?",
+      "opciones": {
+        "a": "Retirar pestañas postizas",
+        "b": "Peinar las cejas hacia arriba",
+        "c": "Curvar las pestañas antes de aplicar máscara",
+        "d": "Difuminar el delineador"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "El rizador curva las pestañas y se usa con cuidado antes de aplicar la máscara.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 78,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué función tiene un lápiz o polvo para cejas?",
+      "opciones": {
+        "a": "Fijar el maquillaje de todo el rostro",
+        "b": "Rellenar o definir visualmente zonas de la ceja",
+        "c": "Crear una sombra bajo los pómulos",
+        "d": "Retirar exceso de corrector"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Estos productos permiten ajustar forma o densidad visual de las cejas.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 79,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué debe hacerse con un producto cuyo envase o fórmula ha cambiado de forma inusual?",
+      "opciones": {
+        "a": "Dejar de usarlo y revisar la información del fabricante",
+        "b": "Mezclarlo con un producto nuevo para ocultar el cambio",
+        "c": "Aplicarlo primero cerca de los ojos",
+        "d": "Guardarlo abierto para que recupere su textura"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Un cambio visible puede indicar deterioro; se debe seguir la información del producto y evitar su uso si hay dudas.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 80,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué aspecto suele favorecer una aplicación gradual del rubor?",
+      "opciones": {
+        "a": "Asegura que el color no se vea bajo ninguna luz",
+        "b": "Convierte el rubor en un producto de larga duración",
+        "c": "Elimina la necesidad de elegir un tono",
+        "d": "Permite controlar la intensidad y difuminar el color en capas"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Añadir poco producto y construir el color facilita controlar el resultado.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 81,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Cuál es la tarea principal de quien dirige una película?",
+      "opciones": {
+        "a": "Coordinar la visión artística y la puesta en escena",
+        "b": "Diseñar todas las salas donde se proyectará",
+        "c": "Distribuir personalmente cada copia física",
+        "d": "Escribir siempre cada diálogo sin apoyo de guionistas"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "La dirección coordina interpretación, encuadres y decisiones creativas para dar unidad a la película.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 82,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué contiene principalmente un guion cinematográfico?",
+      "opciones": {
+        "a": "El registro de ventas de entradas",
+        "b": "La lista de cámaras disponibles en una sala",
+        "c": "El calendario de estrenos de todos los estudios",
+        "d": "La historia y las indicaciones de escenas y diálogos"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "El guion organiza escenas, acciones y diálogos que sirven de base para la producción.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 83,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué trabajo realiza la cinematografía o dirección de fotografía?",
+      "opciones": {
+        "a": "Compone todos los diálogos de los actores",
+        "b": "Organiza la distribución de boletos",
+        "c": "Diseña cómo se capturan la luz, el encuadre y la imagen",
+        "d": "Redacta las críticas de prensa"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "La fotografía define aspectos visuales como iluminación, composición y movimiento de cámara.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 84,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué logra principalmente el montaje o edición?",
+      "opciones": {
+        "a": "Convierte una película en una novela",
+        "b": "Organiza y combina tomas para construir el ritmo y la continuidad",
+        "c": "Diseña el sonido de cada objeto únicamente",
+        "d": "Cambia la clasificación de edad"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "La edición selecciona y ordena imágenes y sonidos para dar forma al relato.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 85,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es una toma de primer plano?",
+      "opciones": {
+        "a": "Un encuadre cercano que destaca un rostro u objeto",
+        "b": "Una toma grabada al inicio de cada jornada",
+        "c": "Una imagen que siempre muestra todo el escenario",
+        "d": "Una escena filmada antes de escribir el guion"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "El primer plano dirige la atención hacia detalles o emociones.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 86,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es un plano secuencia?",
+      "opciones": {
+        "a": "Un resumen de todas las escenas de la película",
+        "b": "Una lista de planos ordenada por duración",
+        "c": "Una toma realizada exclusivamente desde el aire",
+        "d": "Una toma continua que presenta una acción sin cortes visibles durante ese tramo"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "El plano secuencia mantiene la continuidad visual de una acción durante una toma.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 87,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué función cumple la banda sonora musical de una película?",
+      "opciones": {
+        "a": "Sustituir todas las voces de los personajes",
+        "b": "Mostrar el presupuesto de producción",
+        "c": "Acompañar y reforzar emociones, ritmo o temas de la historia",
+        "d": "Indicar al público cuándo debe aplaudir"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "La música orienta el tono emocional y puede conectar escenas o personajes.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 88,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es un efecto de sonido Foley?",
+      "opciones": {
+        "a": "Una técnica para cambiar la velocidad de reproducción",
+        "b": "Un sonido creado o grabado para sincronizarlo con acciones de la imagen",
+        "c": "Una categoría de película documental",
+        "d": "Un tipo de lente para primeros planos"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "El Foley reproduce sonidos cotidianos, como pasos, para dar detalle al audio de una escena.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 89,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué significa que una película sea una adaptación?",
+      "opciones": {
+        "a": "Que transforma una obra previa, como una novela o cómic, a otro formato",
+        "b": "Que se filma sin guion ni planificación",
+        "c": "Que solo se proyecta en una sala pequeña",
+        "d": "Que usa exclusivamente actores principiantes"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Una adaptación parte de material anterior, aunque puede cambiar personajes o detalles.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 90,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué diferencia a una secuela de una precuela?",
+      "opciones": {
+        "a": "La secuela es muda y la precuela animada",
+        "b": "La secuela no comparte personajes; la precuela sí",
+        "c": "La precuela siempre dura menos que la original",
+        "d": "La secuela continúa una historia; la precuela ocurre antes de ella"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "La distinción depende de la ubicación temporal respecto a una obra anterior.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 91,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué caracteriza a un documental?",
+      "opciones": {
+        "a": "Siempre es una historia de fantasía con actores",
+        "b": "No puede incluir narración ni música",
+        "c": "Presenta hechos o temas del mundo real con recursos audiovisuales",
+        "d": "Se filma obligatoriamente en blanco y negro"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "El documental aborda personas, hechos o ideas reales; sus técnicas pueden variar.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 92,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué se entiende por “montaje” en una escena?",
+      "opciones": {
+        "a": "El vestuario usado por todo el elenco",
+        "b": "La organización de tomas para relacionar acciones e ideas",
+        "c": "La grabación de sonido en estudio",
+        "d": "La publicación del afiche de estreno"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "El montaje combina planos para dar continuidad, ritmo o significado.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 93,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es la relación de aspecto de una película?",
+      "opciones": {
+        "a": "La proporción entre el ancho y la altura de la imagen",
+        "b": "La proporción de escenas interiores y exteriores",
+        "c": "La relación entre el elenco y el equipo técnico",
+        "d": "La diferencia entre sonido y música"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Una relación como 16:9 describe dimensiones relativas de la imagen.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 94,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué busca el diseño de producción?",
+      "opciones": {
+        "a": "Elegir la fecha de entrega de entradas",
+        "b": "Controlar solo la mezcla de sonido",
+        "c": "Redactar los subtítulos de distribución",
+        "d": "Definir la apariencia de espacios, decorados y elementos visuales de la historia"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "El diseño de producción crea entornos y objetos que apoyan el mundo de la película.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 95,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué función cumple el vestuario en una película?",
+      "opciones": {
+        "a": "Reemplaza el trabajo de iluminación",
+        "b": "Establece el orden definitivo de las escenas",
+        "c": "Ayuda a caracterizar personajes, época y contexto",
+        "d": "Controla el volumen de los diálogos"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "El vestuario aporta información visual sobre quiénes son los personajes y cuándo ocurre la historia.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 96,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es un cameo?",
+      "opciones": {
+        "a": "Una escena que muestra el final antes del inicio",
+        "b": "Una aparición breve, a menudo de una persona conocida, en una película",
+        "c": "Una película que se divide en capítulos sin relación",
+        "d": "Un sonido repetido durante los créditos"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "El cameo es una participación corta que suele destacar por quién aparece.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 97,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es un “cliffhanger” al final de una escena o episodio?",
+      "opciones": {
+        "a": "Un cierre que deja una pregunta o peligro sin resolver",
+        "b": "Una escena que resume los créditos iniciales",
+        "c": "Un plano largo de un paisaje tranquilo",
+        "d": "Una transición que indica un salto de época"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "El cliffhanger busca mantener el interés dejando una situación pendiente.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 98,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué significa doblar una película a otro idioma?",
+      "opciones": {
+        "a": "Añadir subtítulos debajo de la imagen",
+        "b": "Cambiar el orden de las escenas",
+        "c": "Eliminar la música de fondo",
+        "d": "Grabar voces nuevas en otro idioma para sustituir o adaptar las originales"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "El doblaje reemplaza o adapta las voces para otro idioma.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 99,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué son los subtítulos?",
+      "opciones": {
+        "a": "Una versión con escenas adicionales",
+        "b": "Una lista de cámaras usadas",
+        "c": "Texto en pantalla que transcribe o traduce diálogos y sonidos relevantes",
+        "d": "Un sistema de iluminación para primeros planos"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Los subtítulos permiten leer diálogos o información sonora durante la reproducción.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 100,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué suele distinguir a una película de animación?",
+      "opciones": {
+        "a": "Todas las escenas carecen de sonido",
+        "b": "Las imágenes se crean mediante dibujos, modelos o técnicas digitales en vez de registrar todo como acción real",
+        "c": "La historia siempre se dirige a niños pequeños",
+        "d": "El montaje se realiza sin guion"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "La animación crea movimiento a partir de imágenes diseñadas o generadas mediante distintas técnicas.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 101,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién dirigió la película “Tiburón” (Jaws, 1975)?",
+      "opciones": {
+        "a": "Steven Spielberg",
+        "b": "Francis Ford Coppola",
+        "c": "Martin Scorsese",
+        "d": "George Lucas"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Steven Spielberg dirigió el thriller estrenado en 1975.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 102,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién dirigió “El padrino” (The Godfather, 1972)?",
+      "opciones": {
+        "a": "Steven Spielberg",
+        "b": "Ridley Scott",
+        "c": "Billy Wilder",
+        "d": "Francis Ford Coppola"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "La película de 1972 fue dirigida por Francis Ford Coppola.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 103,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué cineasta japonés dirigió “El viaje de Chihiro”?",
+      "opciones": {
+        "a": "Akira Kurosawa",
+        "b": "Isao Takahata",
+        "c": "Hayao Miyazaki",
+        "d": "Satoshi Kon"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Hayao Miyazaki dirigió la película animada producida por Studio Ghibli.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 104,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién dirigió la película surcoreana “Parásitos” (2019)?",
+      "opciones": {
+        "a": "Park Chan-wook",
+        "b": "Bong Joon-ho",
+        "c": "Lee Chang-dong",
+        "d": "Kim Ki-duk"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Bong Joon-ho dirigió la película ganadora del Óscar a mejor película.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 105,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién dirigió “2001: Una odisea del espacio”?",
+      "opciones": {
+        "a": "Stanley Kubrick",
+        "b": "Orson Welles",
+        "c": "Alfred Hitchcock",
+        "d": "David Lean"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "La película de ciencia ficción de 1968 fue dirigida por Stanley Kubrick.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 106,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién dirigió “Ciudadano Kane”?",
+      "opciones": {
+        "a": "Billy Wilder",
+        "b": "John Ford",
+        "c": "Frank Capra",
+        "d": "Orson Welles"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Orson Welles dirigió y protagonizó la película estrenada en 1941.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 107,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién creó la saga cinematográfica “Star Wars”?",
+      "opciones": {
+        "a": "James Cameron",
+        "b": "Steven Spielberg",
+        "c": "George Lucas",
+        "d": "Stanley Kubrick"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "George Lucas creó la saga y dirigió la primera película estrenada en 1977.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 108,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué personaje de “Casablanca” interpreta Humphrey Bogart?",
+      "opciones": {
+        "a": "Victor Laszlo",
+        "b": "Rick Blaine",
+        "c": "Louis Renault",
+        "d": "Sam Wilson"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Bogart interpreta a Rick Blaine, propietario del café central de la historia.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 109,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué género suele centrarse en investigación de delitos y pistas?",
+      "opciones": {
+        "a": "Misterio o cine detectivesco",
+        "b": "Musical",
+        "c": "Cine de aventuras fantástico",
+        "d": "Comedia romántica"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Las historias de misterio desarrollan preguntas y pistas que ayudan a esclarecer un caso.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 110,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué describe mejor una película de suspenso?",
+      "opciones": {
+        "a": "Se compone únicamente de canciones",
+        "b": "Presenta hechos reales sin montaje",
+        "c": "Se desarrolla siempre en un solo plano",
+        "d": "Construye expectativa e incertidumbre sobre lo que ocurrirá"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "El suspenso regula información y ritmo para mantener la expectativa del público.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 111,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Para qué sirve una claqueta al comienzo de una toma?",
+      "opciones": {
+        "a": "Medir la temperatura del set",
+        "b": "Ajustar la altura de la pantalla",
+        "c": "Identificar la escena y sincronizar imagen con sonido",
+        "d": "Indicar el precio de las entradas"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "El golpe de la claqueta ayuda a sincronizar las pistas de audio y video; sus datos identifican la toma.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 112,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es la continuidad cinematográfica?",
+      "opciones": {
+        "a": "La duración de la película sin contar créditos",
+        "b": "La coherencia de acciones, objetos y posiciones entre tomas",
+        "c": "La permanencia del mismo actor en todas las escenas",
+        "d": "La repetición de una banda sonora completa"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "El equipo de continuidad cuida detalles que deben coincidir entre planos y escenas.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 113,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué suele hacer un doble de riesgo?",
+      "opciones": {
+        "a": "Realizar acciones peligrosas o físicamente exigentes en lugar de un actor",
+        "b": "Editar el sonido de los diálogos",
+        "c": "Diseñar el cartel promocional",
+        "d": "Presentar la película en festivales"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Los dobles de riesgo realizan secuencias especializadas con planificación de seguridad.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 114,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué significa que una película tenga una “escena poscréditos”?",
+      "opciones": {
+        "a": "Elimina la lista de participantes del equipo",
+        "b": "Empieza la historia después de la primera escena",
+        "c": "Se proyecta únicamente en festivales",
+        "d": "Incluye una escena adicional después de parte o todos los créditos"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "La escena aparece tras los créditos y puede añadir una broma, pista o continuación.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 115,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Para qué se utiliza el etalonaje o color grading?",
+      "opciones": {
+        "a": "Regrabar el diálogo de todos los personajes",
+        "b": "Corregir las fechas de estreno",
+        "c": "Ajustar y unificar los colores y el aspecto visual de las imágenes",
+        "d": "Medir la cantidad de fotogramas por segundo de cada sala"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "El etalonaje ajusta el color para lograr continuidad o una intención visual.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 116,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es un “remake”?",
+      "opciones": {
+        "a": "Una escena eliminada que se publica en línea",
+        "b": "Una nueva versión de una película previa",
+        "c": "Una secuela directa de una serie",
+        "d": "Una película que solo contiene material documental"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Un remake vuelve a contar una historia ya llevada al cine en una producción nueva.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 117,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué trabajo realiza quien produce una película?",
+      "opciones": {
+        "a": "Organiza recursos y coordina aspectos de producción para hacer posible el proyecto",
+        "b": "Interpreta siempre al personaje principal",
+        "c": "Diseña únicamente los subtítulos",
+        "d": "Elige personalmente cada movimiento de cámara"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "La producción coordina presupuesto, equipo, calendario y otras necesidades del proyecto.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 118,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es un tráiler cinematográfico?",
+      "opciones": {
+        "a": "El archivo final con todos los créditos técnicos",
+        "b": "Una versión abreviada que se proyecta como película completa",
+        "c": "Una grabación del público saliendo de la sala",
+        "d": "Un avance breve que presenta una película y busca informar o despertar interés"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "El tráiler reúne fragmentos seleccionados para presentar tono, personajes o premisa.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 119,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es la taquilla en el contexto del cine?",
+      "opciones": {
+        "a": "El lugar donde se guardan las cámaras",
+        "b": "La lista de escenas pendientes",
+        "c": "El ingreso o número de entradas asociado a la exhibición",
+        "d": "El equipo que mezcla el sonido"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "La taquilla suele referirse a venta de entradas o a los ingresos que genera una película en salas.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 120,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué función cumple una sala de proyección con subtítulos descriptivos?",
+      "opciones": {
+        "a": "Reemplaza la imagen por una transcripción completa",
+        "b": "Muestra diálogos y sonidos relevantes en texto para apoyar la comprensión",
+        "c": "Aumenta automáticamente el volumen de la música",
+        "d": "Cambia el idioma del rodaje original"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Los subtítulos descriptivos identifican también sonidos importantes, como música o efectos.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 121,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “Don Quijote de la Mancha”?",
+      "opciones": {
+        "a": "Lope de Vega",
+        "b": "Francisco de Quevedo",
+        "c": "Miguel de Cervantes",
+        "d": "Garcilaso de la Vega"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "La novela de Miguel de Cervantes se publicó en dos partes, en 1605 y 1615.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 122,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “Cien años de soledad”?",
+      "opciones": {
+        "a": "Mario Vargas Llosa",
+        "b": "Gabriel García Márquez",
+        "c": "Julio Cortázar",
+        "d": "Jorge Luis Borges"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "La novela de Gabriel García Márquez se publicó en 1967 y es una obra central del realismo mágico.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 123,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “Frankenstein”?",
+      "opciones": {
+        "a": "Mary Shelley",
+        "b": "Jane Austen",
+        "c": "Emily Brontë",
+        "d": "Virginia Woolf"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Mary Shelley publicó la novela en 1818.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 124,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “1984”?",
+      "opciones": {
+        "a": "Aldous Huxley",
+        "b": "Ray Bradbury",
+        "c": "H. G. Wells",
+        "d": "George Orwell"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "George Orwell publicó esta novela distópica en 1949.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 125,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “Fahrenheit 451”?",
+      "opciones": {
+        "a": "George Orwell",
+        "b": "Philip K. Dick",
+        "c": "Ray Bradbury",
+        "d": "Isaac Asimov"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Ray Bradbury escribió la novela publicada en 1953.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 126,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “Orgullo y prejuicio”?",
+      "opciones": {
+        "a": "Mary Shelley",
+        "b": "Jane Austen",
+        "c": "Charlotte Brontë",
+        "d": "Louisa May Alcott"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "La novela de Jane Austen se publicó originalmente en 1813.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 127,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “El principito”?",
+      "opciones": {
+        "a": "Antoine de Saint-Exupéry",
+        "b": "Jules Verne",
+        "c": "Victor Hugo",
+        "d": "Albert Camus"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "El escritor y aviador francés Antoine de Saint-Exupéry publicó la obra en 1943.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 128,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “La metamorfosis”?",
+      "opciones": {
+        "a": "Thomas Mann",
+        "b": "Hermann Hesse",
+        "c": "Stefan Zweig",
+        "d": "Franz Kafka"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "La novela corta de Franz Kafka apareció en 1915.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 129,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “Hamlet”?",
+      "opciones": {
+        "a": "Christopher Marlowe",
+        "b": "Ben Jonson",
+        "c": "William Shakespeare",
+        "d": "John Milton"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Hamlet es una tragedia de William Shakespeare.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 130,
+      "tipo": "opcion_unica",
+      "enunciado": "¿A quién se atribuye la autoría de “La Odisea”?",
+      "opciones": {
+        "a": "Sófocles",
+        "b": "Homero",
+        "c": "Virgilio",
+        "d": "Hesíodo"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "La tradición griega atribuye “La Odisea” a Homero.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 131,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “La casa de los espíritus”?",
+      "opciones": {
+        "a": "Isabel Allende",
+        "b": "Laura Esquivel",
+        "c": "Gabriela Mistral",
+        "d": "Elena Poniatowska"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "La primera novela de Isabel Allende se publicó en 1982.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 132,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “El poema de mio Cid”?",
+      "opciones": {
+        "a": "Gonzalo de Berceo",
+        "b": "Juan Ruiz",
+        "c": "Fernando de Rojas",
+        "d": "Autor anónimo"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "El cantar medieval se conserva sin nombre de autor.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 133,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “La Divina comedia”?",
+      "opciones": {
+        "a": "Francesco Petrarca",
+        "b": "Giovanni Boccaccio",
+        "c": "Dante Alighieri",
+        "d": "Ludovico Ariosto"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Dante Alighieri escribió el poema narrativo en italiano.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 134,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “Rayuela”?",
+      "opciones": {
+        "a": "Ernesto Sábato",
+        "b": "Julio Cortázar",
+        "c": "Juan Rulfo",
+        "d": "Carlos Fuentes"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "“Rayuela” de Julio Cortázar se publicó en 1963.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 135,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “Pedro Páramo”?",
+      "opciones": {
+        "a": "Juan Rulfo",
+        "b": "Juan José Arreola",
+        "c": "Octavio Paz",
+        "d": "Carlos Fuentes"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "La novela de Juan Rulfo se publicó en 1955.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 136,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “La tregua”?",
+      "opciones": {
+        "a": "Eduardo Galeano",
+        "b": "Juan Carlos Onetti",
+        "c": "Horacio Quiroga",
+        "d": "Mario Benedetti"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Mario Benedetti publicó la novela “La tregua” en 1960.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 137,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “El amor en los tiempos del cólera”?",
+      "opciones": {
+        "a": "Isabel Allende",
+        "b": "Mario Vargas Llosa",
+        "c": "Gabriel García Márquez",
+        "d": "Juan Rulfo"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "La novela de García Márquez se publicó en 1985.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 138,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “El nombre de la rosa”?",
+      "opciones": {
+        "a": "Italo Calvino",
+        "b": "Umberto Eco",
+        "c": "Primo Levi",
+        "d": "Alessandro Manzoni"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Umberto Eco publicó la novela histórica y de misterio en 1980.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 139,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “Mujercitas”?",
+      "opciones": {
+        "a": "Louisa May Alcott",
+        "b": "Jane Austen",
+        "c": "L. M. Montgomery",
+        "d": "Frances Hodgson Burnett"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Louisa May Alcott escribió la novela publicada en dos partes en 1868 y 1869.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 140,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién escribió “El gran Gatsby”?",
+      "opciones": {
+        "a": "Ernest Hemingway",
+        "b": "John Steinbeck",
+        "c": "William Faulkner",
+        "d": "F. Scott Fitzgerald"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "La novela de Fitzgerald se publicó en 1925.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 141,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es un narrador en primera persona?",
+      "opciones": {
+        "a": "Una voz que solo conoce lo que piensan todos los personajes",
+        "b": "La persona que revisa la ortografía del libro",
+        "c": "Una voz que cuenta usando su propia experiencia, a menudo con “yo”",
+        "d": "El personaje que aparece únicamente en el final"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "El narrador en primera persona relata desde una posición interna a la historia.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 142,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es una metáfora?",
+      "opciones": {
+        "a": "Una repetición de sonidos al final de versos",
+        "b": "Una expresión que identifica una cosa con otra por semejanza o relación",
+        "c": "Una pregunta que espera una respuesta literal",
+        "d": "Una lista ordenada de capítulos"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "La metáfora traslada un sentido para destacar una semejanza o asociación.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 143,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué distingue a un símil de una metáfora?",
+      "opciones": {
+        "a": "El símil compara de forma explícita, a menudo con “como”",
+        "b": "El símil solo aparece en novelas policiales",
+        "c": "La metáfora siempre contiene la palabra “como”",
+        "d": "La metáfora describe únicamente sonidos"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "El símil establece la comparación de forma expresa, mientras que la metáfora la presenta directamente.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 144,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es la personificación?",
+      "opciones": {
+        "a": "Repetir una palabra al inicio de cada párrafo",
+        "b": "Cambiar la voz narrativa de primera a tercera persona",
+        "c": "Describir un lugar con datos geográficos",
+        "d": "Atribuir rasgos o acciones humanas a animales, objetos o ideas"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "La personificación atribuye características humanas a elementos no humanos.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 145,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es una hipérbole?",
+      "opciones": {
+        "a": "Una comparación que usa datos exactos",
+        "b": "Un cambio de narrador en una escena",
+        "c": "Una exageración deliberada para producir énfasis",
+        "d": "Una palabra que imita un sonido"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "La hipérbole amplía intencionalmente una idea más allá de lo literal.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 146,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién es el protagonista?",
+      "opciones": {
+        "a": "La voz que traduce el libro",
+        "b": "El personaje central de la acción o conflicto",
+        "c": "La persona que publica la edición",
+        "d": "El personaje que aparece en una sola escena"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "El protagonista ocupa un lugar central en el desarrollo de la historia.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 147,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué papel suele cumplir el antagonista?",
+      "opciones": {
+        "a": "Se opone al objetivo del protagonista o genera el conflicto",
+        "b": "Narra siempre la historia en primera persona",
+        "c": "Es necesariamente el villano sin matices",
+        "d": "Presenta el libro antes del prólogo"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "El antagonista es una fuerza o personaje que obstaculiza los objetivos del protagonista.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 148,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es el ambiente de una narración?",
+      "opciones": {
+        "a": "La lista de personajes por orden alfabético",
+        "b": "La opinión personal de quien lee",
+        "c": "La nota escrita por la editorial",
+        "d": "El marco temporal, espacial y social donde ocurren los hechos"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "El ambiente sitúa la historia y puede influir en las acciones de los personajes.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 149,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué se entiende por tema literario?",
+      "opciones": {
+        "a": "El nombre de la colección donde se publica",
+        "b": "El número de páginas de la edición",
+        "c": "La idea central que una obra explora",
+        "d": "La lista completa de capítulos"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "El tema puede ser, por ejemplo, la identidad, la justicia o el paso del tiempo.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 150,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué caracteriza a una distopía?",
+      "opciones": {
+        "a": "Narra hechos únicamente del pasado documentado",
+        "b": "Representa una sociedad imaginaria con condiciones opresivas o problemáticas",
+        "c": "Describe una vida ideal sin conflictos",
+        "d": "Presenta solo sucesos sobrenaturales"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "La distopía imagina una sociedad cuyo orden genera problemas o restricciones.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 151,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es una novela epistolar?",
+      "opciones": {
+        "a": "Una historia narrada mediante cartas u otros documentos",
+        "b": "Una novela escrita exclusivamente en verso",
+        "c": "Una obra sin personajes ni narrador",
+        "d": "Un libro formado por mapas sin texto"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "La forma epistolar usa cartas, diarios o documentos para narrar.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 152,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué caracteriza al diálogo en una obra narrativa?",
+      "opciones": {
+        "a": "Enumera las fuentes consultadas por el autor",
+        "b": "Explica el significado de cada metáfora",
+        "c": "Resume todos los capítulos al inicio",
+        "d": "Presenta las palabras intercambiadas por personajes"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "El diálogo representa conversaciones y puede revelar relaciones o información.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 153,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué suele ser el clímax de una historia?",
+      "opciones": {
+        "a": "La explicación del significado de todas las palabras",
+        "b": "El listado de personajes secundarios",
+        "c": "El momento de mayor tensión o punto decisivo del conflicto",
+        "d": "La introducción del lugar antes de la acción"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "El clímax concentra un giro o enfrentamiento importante antes del desenlace.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 154,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué función tiene un prólogo?",
+      "opciones": {
+        "a": "Cierra obligatoriamente la historia después del final",
+        "b": "Ofrece una entrada o contexto previo al texto principal",
+        "c": "Enumera todas las citas en orden alfabético",
+        "d": "Reemplaza el título de la obra"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "El prólogo precede al cuerpo principal y puede presentar contexto o una voz introductoria.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 155,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué suele contener un epílogo?",
+      "opciones": {
+        "a": "Una sección posterior al desenlace que muestra consecuencias o cierre adicional",
+        "b": "Una explicación de cómo se imprimió el libro",
+        "c": "El índice de ilustraciones antes del primer capítulo",
+        "d": "La biografía completa de cada lector"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "El epílogo amplía el cierre después de la acción principal.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 156,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es una antología?",
+      "opciones": {
+        "a": "Una novela contada desde un único personaje",
+        "b": "Un poema con catorce versos",
+        "c": "Un manual de signos de puntuación",
+        "d": "Una selección de obras o fragmentos reunidos en un volumen"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Una antología reúne textos, a menudo de distintos autores o épocas, bajo un criterio común.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 157,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es un cuento?",
+      "opciones": {
+        "a": "Un texto que siempre tiene varios volúmenes",
+        "b": "Un listado de palabras sin relaciones",
+        "c": "Una narración breve que desarrolla una situación o conflicto",
+        "d": "Una obra escrita necesariamente para teatro"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "El cuento suele concentrarse en pocos personajes y un conflicto acotado.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 158,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es el verso libre?",
+      "opciones": {
+        "a": "Un texto que no contiene figuras literarias",
+        "b": "Una forma poética que no sigue un esquema fijo de métrica o rima",
+        "c": "Un poema escrito solo para ser cantado",
+        "d": "Una narración sin puntuación"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "El verso libre puede organizar ritmo y sonido sin ajustarse a un patrón métrico fijo.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 159,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es una obra de teatro?",
+      "opciones": {
+        "a": "Un texto dramático concebido para ser representado",
+        "b": "Una narración que solo puede circular como audiolibro",
+        "c": "Un ensayo sobre técnicas de impresión",
+        "d": "Una lista de personajes sin parlamentos ni acciones"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "El texto teatral organiza acciones y diálogos para la representación escénica.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 160,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué hace un editor literario en una editorial?",
+      "opciones": {
+        "a": "Escribe necesariamente cada capítulo por el autor",
+        "b": "Vende personalmente todas las copias",
+        "c": "Asigna la edad a cada persona que lee el libro",
+        "d": "Acompaña la revisión y preparación del manuscrito para su publicación"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "La edición puede incluir trabajo sobre estructura, claridad, estilo y preparación del texto.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 161,
+      "tipo": "opcion_unica",
+      "enunciado": "En Excel para Windows, ¿qué hace Ctrl+C con un rango seleccionado?",
+      "opciones": {
+        "a": "Copia la selección al portapapeles",
+        "b": "Elimina la selección y la guarda en el portapapeles",
+        "c": "Abre el cuadro de formato de celdas",
+        "d": "Activa el filtro de la tabla"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Ctrl+C copia el rango para pegarlo en otra ubicación.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 162,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué acción realiza Ctrl+V en Excel?",
+      "opciones": {
+        "a": "Copia el formato sin los valores",
+        "b": "Abre el cuadro Buscar",
+        "c": "Repite la última fórmula de la hoja",
+        "d": "Pega el contenido del portapapeles"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Ctrl+V pega el contenido que se copió o cortó.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 163,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué hace Ctrl+X en una hoja de cálculo?",
+      "opciones": {
+        "a": "Borra la fila completa sin aviso",
+        "b": "Abre la vista previa de impresión",
+        "c": "Corta la selección para moverla a otra ubicación",
+        "d": "Convierte fórmulas en valores"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Ctrl+X corta el contenido seleccionado y lo deja disponible para pegar.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 164,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué permite Ctrl+Z en Excel?",
+      "opciones": {
+        "a": "Repetir la última acción",
+        "b": "Deshacer la acción reciente",
+        "c": "Cerrar el libro actual",
+        "d": "Insertar una fila"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Ctrl+Z revierte una acción reciente cuando esa acción se puede deshacer.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 165,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué suele hacer Ctrl+Y?",
+      "opciones": {
+        "a": "Rehacer o repetir una acción que se había deshecho",
+        "b": "Buscar un valor en la hoja",
+        "c": "Abrir un libro guardado",
+        "d": "Seleccionar la columna actual"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Ctrl+Y rehace una acción deshecha o repite una acción compatible.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 166,
+      "tipo": "opcion_unica",
+      "enunciado": "En Excel para Windows, ¿qué hace Ctrl+S?",
+      "opciones": {
+        "a": "Selecciona todas las hojas",
+        "b": "Muestra la suma automática",
+        "c": "Cierra el libro sin guardar",
+        "d": "Guarda el libro"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Microsoft documenta Ctrl+S como el atajo para guardar un libro de Excel.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 167,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué cuadro abre Ctrl+O en Excel para Windows?",
+      "opciones": {
+        "a": "Crear un gráfico nuevo",
+        "b": "Buscar y reemplazar",
+        "c": "Abrir un libro existente",
+        "d": "Cambiar la orientación de página"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Ctrl+O muestra las opciones para abrir un libro existente.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 168,
+      "tipo": "opcion_unica",
+      "enunciado": "En Excel configurado en español, ¿qué hace Ctrl+U?",
+      "opciones": {
+        "a": "Abre un libro existente",
+        "b": "Crea un libro en blanco",
+        "c": "Añade una hoja al libro actual",
+        "d": "Aplica negrita a la celda activa"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "En la distribución en español, Ctrl+U permite abrir un libro en blanco.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 169,
+      "tipo": "opcion_unica",
+      "enunciado": "En Excel configurado en español, ¿qué herramienta abre Ctrl+B?",
+      "opciones": {
+        "a": "Buscar texto o valores en el libro",
+        "b": "Dar formato de moneda",
+        "c": "Aplicar un filtro a la columna actual",
+        "d": "Insertar una función"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "En la versión en español, Ctrl+B abre el cuadro Buscar.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 170,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué permite Ctrl+H en Excel?",
+      "opciones": {
+        "a": "Ocultar la columna seleccionada",
+        "b": "Cambiar el formato de fecha",
+        "c": "Ir a la última hoja",
+        "d": "Buscar y reemplazar valores o texto"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Buscar y reemplazar permite localizar contenido y sustituirlo según el alcance elegido.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 171,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué sucede al presionar F2 con una celda seleccionada?",
+      "opciones": {
+        "a": "Se abre la ayuda de Excel",
+        "b": "Se recalculan todas las hojas",
+        "c": "Se edita el contenido de esa celda",
+        "d": "Se cierra el libro"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "F2 activa la edición de la celda seleccionada.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 172,
+      "tipo": "opcion_unica",
+      "enunciado": "¿A qué celda suele llevar Ctrl+Home en Excel?",
+      "opciones": {
+        "a": "A la última celda utilizada",
+        "b": "A la celda A1 de la hoja",
+        "c": "A la primera celda vacía debajo de la selección",
+        "d": "A la celda con la fórmula más larga"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Ctrl+Home mueve la selección al inicio de la hoja, normalmente A1.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 173,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué ubicación selecciona normalmente Ctrl+End?",
+      "opciones": {
+        "a": "La última celda del área usada de la hoja",
+        "b": "La celda A1",
+        "c": "La última fila con datos de la columna A exclusivamente",
+        "d": "La celda situada a la derecha de la selección"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Ctrl+End salta al extremo del área que Excel considera utilizada.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 174,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué hace Ctrl+flecha en una dirección dentro de una región de datos?",
+      "opciones": {
+        "a": "Mueve una sola celda sin importar el contenido",
+        "b": "Selecciona toda la hoja",
+        "c": "Cambia a la hoja siguiente",
+        "d": "Salta al borde de la región de datos en esa dirección"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Ctrl más una flecha permite desplazarse por los bordes de regiones de datos.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 175,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué hace Ctrl+Mayús+flecha al partir de una celda?",
+      "opciones": {
+        "a": "Ordena las celdas alfabéticamente",
+        "b": "Cambia la dirección del cálculo",
+        "c": "Extiende la selección hasta el borde de la región de datos",
+        "d": "Inserta una fila vacía"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "La combinación amplía la selección hacia el borde de un bloque continuo de datos.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 176,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué abre Ctrl+1 en Excel?",
+      "opciones": {
+        "a": "La pestaña Inicio",
+        "b": "El cuadro Formato de celdas",
+        "c": "La lista de funciones recientes",
+        "d": "El cuadro Guardar como"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Ctrl+1 abre el cuadro donde se configuran formatos de número, alineación, fuente y otros atributos.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 177,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué hace Alt+= en Excel?",
+      "opciones": {
+        "a": "Inserta una fórmula de Autosuma para un rango cercano",
+        "b": "Aplica formato de porcentaje",
+        "c": "Cambia la hoja a vista de impresión",
+        "d": "Agrupa las filas seleccionadas"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Alt+= invoca Autosuma para proponer una suma de celdas adyacentes.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 178,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué activa o desactiva Ctrl+Mayús+L en Excel?",
+      "opciones": {
+        "a": "La vista de diseño de página",
+        "b": "La selección de todas las celdas vacías",
+        "c": "El panel de navegación",
+        "d": "Los botones de filtro para un rango o tabla compatible"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Esta combinación alterna los filtros automáticos en los datos seleccionados.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 179,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué inserta Ctrl+; en una celda de Excel?",
+      "opciones": {
+        "a": "La hora actual",
+        "b": "Una fórmula de suma",
+        "c": "La fecha actual",
+        "d": "Un punto y coma como separador de argumentos"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Ctrl+; inserta la fecha actual como valor en la celda activa.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 180,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué hace Alt+Enter mientras se edita una celda de Excel?",
+      "opciones": {
+        "a": "Confirma la edición y selecciona la celda superior",
+        "b": "Inserta un salto de línea dentro de la misma celda",
+        "c": "Abre la lista desplegable de validación",
+        "d": "Inicia una nueva hoja de cálculo"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Alt+Enter crea una nueva línea dentro del contenido de la celda.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 181,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué hace Ctrl+C en Word cuando hay texto seleccionado?",
+      "opciones": {
+        "a": "Corta el texto y lo elimina del documento",
+        "b": "Abre el cuadro Buscar",
+        "c": "Copia el texto al portapapeles",
+        "d": "Aplica formato de cursiva"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Ctrl+C copia la selección para poder pegarla en otra ubicación.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 182,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué hace Ctrl+V en Word?",
+      "opciones": {
+        "a": "Abre la vista previa de impresión",
+        "b": "Pega el contenido del portapapeles",
+        "c": "Selecciona el párrafo actual",
+        "d": "Cierra el documento"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Ctrl+V pega lo que se copió o cortó, con opciones de formato disponibles.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 183,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué función cumple Ctrl+X en Word?",
+      "opciones": {
+        "a": "Corta el contenido seleccionado",
+        "b": "Copia solo el formato del texto",
+        "c": "Inserta una nota al pie",
+        "d": "Guarda el documento como PDF"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Ctrl+X retira la selección y la deja disponible para pegar.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 184,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué permite Ctrl+Z en Word?",
+      "opciones": {
+        "a": "Rehacer el último cambio",
+        "b": "Guardar una copia del documento",
+        "c": "Seleccionar el texto hasta el final",
+        "d": "Deshacer la última acción"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Ctrl+Z revierte una acción reciente si se puede deshacer.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 185,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué hace Ctrl+Y en Word?",
+      "opciones": {
+        "a": "Subrayar el texto seleccionado",
+        "b": "Abrir un documento existente",
+        "c": "Rehacer una acción deshecha o repetir una acción compatible",
+        "d": "Insertar una página en blanco"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Ctrl+Y rehace una acción deshecha o repite la última acción compatible.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 186,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué selecciona Ctrl+A en el documento de Word?",
+      "opciones": {
+        "a": "Solo la línea actual",
+        "b": "Todo el contenido del documento",
+        "c": "Todos los documentos abiertos",
+        "d": "El texto entre dos encabezados"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Ctrl+A selecciona el contenido del documento activo.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 187,
+      "tipo": "opcion_unica",
+      "enunciado": "En Word configurado en español, ¿qué herramienta abre Ctrl+B?",
+      "opciones": {
+        "a": "El panel de navegación para buscar en el documento",
+        "b": "El cuadro de fuentes",
+        "c": "La vista de impresión",
+        "d": "La lista de estilos rápidos"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "En la versión en español, Ctrl+B abre Buscar y permite recorrer coincidencias del documento.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 188,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué cuadro abre Ctrl+H en Word?",
+      "opciones": {
+        "a": "Insertar hipervínculo",
+        "b": "Cambiar márgenes",
+        "c": "Revisar ortografía",
+        "d": "Buscar y reemplazar"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Ctrl+H abre las herramientas para buscar y reemplazar texto o formato.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 189,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué vista abre Ctrl+P en Word?",
+      "opciones": {
+        "a": "La revisión de comentarios",
+        "b": "El panel de estilos",
+        "c": "La pantalla de impresión y sus opciones",
+        "d": "El cuadro de selección de fuentes"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Ctrl+P abre la vista de impresión, desde donde se puede revisar y configurar la salida.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 190,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué hace Ctrl+S en Word para Windows?",
+      "opciones": {
+        "a": "Selecciona todo el texto",
+        "b": "Guarda el documento",
+        "c": "Abre el cuadro de búsqueda",
+        "d": "Inserta un salto de página"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Ctrl+S guarda los cambios del documento activo.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 191,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué acción suele realizar Ctrl+O en Word?",
+      "opciones": {
+        "a": "Abrir un documento existente",
+        "b": "Abrir la pestaña Diseño",
+        "c": "Insertar una tabla",
+        "d": "Mostrar el panel de comentarios"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Ctrl+O muestra opciones para buscar y abrir un documento.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 192,
+      "tipo": "opcion_unica",
+      "enunciado": "En Word configurado en español, ¿qué hace Ctrl+U?",
+      "opciones": {
+        "a": "Aplica negrita al texto seleccionado",
+        "b": "Inserta una nota al pie",
+        "c": "Cambia el documento a vista de lectura",
+        "d": "Crea un documento nuevo"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "En la versión en español, Ctrl+U crea un documento nuevo; Ctrl+N aplica negrita.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 193,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué inserta Ctrl+Enter en Word?",
+      "opciones": {
+        "a": "Un salto de línea sin iniciar otro párrafo",
+        "b": "Una tabla de contenido",
+        "c": "Un salto de página",
+        "d": "Una nota al pie"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Ctrl+Enter fuerza el inicio del contenido siguiente en una nueva página.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 194,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué hace Mayús+Enter en Word?",
+      "opciones": {
+        "a": "Inserta un salto de página",
+        "b": "Inserta un salto de línea dentro del mismo párrafo",
+        "c": "Guarda y cierra el documento",
+        "d": "Selecciona la siguiente palabra"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Mayús+Enter mueve el texto a la línea siguiente sin crear un párrafo nuevo.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 195,
+      "tipo": "opcion_unica",
+      "enunciado": "¿A dónde lleva Ctrl+Home en Word?",
+      "opciones": {
+        "a": "Al principio del documento",
+        "b": "Al principio del párrafo actual",
+        "c": "A la página anterior",
+        "d": "Al encabezado de la sección actual"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Ctrl+Home mueve el punto de inserción al comienzo del documento.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 196,
+      "tipo": "opcion_unica",
+      "enunciado": "¿A dónde lleva Ctrl+End en Word?",
+      "opciones": {
+        "a": "Al final de la línea actual",
+        "b": "A la última página impresa",
+        "c": "Al pie de página de la sección",
+        "d": "Al final del documento"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Ctrl+End mueve el punto de inserción al final del documento.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 197,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué hace Ctrl+Retroceso mientras se edita texto en Word?",
+      "opciones": {
+        "a": "Elimina el párrafo completo",
+        "b": "Retrocede una página",
+        "c": "Elimina la palabra situada a la izquierda del cursor",
+        "d": "Deshace la última edición"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "La combinación elimina la palabra anterior al punto de inserción.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 198,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué hace Ctrl+Suprimir mientras se edita texto?",
+      "opciones": {
+        "a": "Elimina la página actual",
+        "b": "Elimina la palabra situada a la derecha del cursor",
+        "c": "Cierra el panel de navegación",
+        "d": "Selecciona la siguiente oración"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "La combinación elimina la palabra siguiente al punto de inserción.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 199,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué abre Ctrl+G en Word para Windows?",
+      "opciones": {
+        "a": "El cuadro Ir a para desplazarse a una página u otra ubicación",
+        "b": "El corrector ortográfico",
+        "c": "La galería de gráficos",
+        "d": "El modo de lectura"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Ctrl+G abre Ir a, que permite indicar una página o ubicación del documento.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 200,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué permite Ctrl+Mayús+flecha derecha en Word?",
+      "opciones": {
+        "a": "Mover el cursor una palabra sin seleccionar",
+        "b": "Seleccionar el documento completo",
+        "c": "Cambiar la alineación del párrafo",
+        "d": "Extender la selección una palabra hacia la derecha"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "La combinación amplía la selección desde el cursor hasta la palabra siguiente.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 201,
+      "tipo": "opcion_unica",
+      "enunciado": "¿En qué año se lanzó oficialmente Garena Free Fire?",
+      "opciones": {
+        "a": "En 2017",
+        "b": "En 2014",
+        "c": "En 2019",
+        "d": "En 2021"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Garena informó que Free Fire se lanzó oficialmente el 4 de diciembre de 2017. Fuente: https://ff.garena.com/en/article/7/",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 202,
+      "tipo": "opcion_unica",
+      "enunciado": "¿A qué género pertenece principalmente Free Fire?",
+      "opciones": {
+        "a": "Simulación de carreras para consolas",
+        "b": "Estrategia por turnos para computadora",
+        "c": "Rompecabezas sin conexión",
+        "d": "Battle royale en línea para dispositivos móviles"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Garena describe Free Fire como un juego móvil de battle royale en línea. Fuente: https://ff.garena.com/en/faq/",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 203,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Cuál es el objetivo central de una partida de battle royale como Free Fire?",
+      "opciones": {
+        "a": "Completar todas las misiones del mapa en orden",
+        "b": "Construir la base más grande de la partida",
+        "c": "Sobrevivir hasta ser la última persona o equipo en pie",
+        "d": "Llegar primero a una meta de carreras"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Las partidas de battle royale enfrentan a participantes que buscan sobrevivir hasta el final.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 204,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué estudio desarrolló Fortnite?",
+      "opciones": {
+        "a": "Nintendo",
+        "b": "Epic Games",
+        "c": "Riot Games",
+        "d": "Valve"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Epic Games es el estudio responsable de Fortnite.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 205,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué personaje es el protagonista habitual de la serie The Legend of Zelda?",
+      "opciones": {
+        "a": "Link",
+        "b": "Ganondorf",
+        "c": "Mario",
+        "d": "Kirby"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Link es el héroe controlado por el jugador en la mayoría de los títulos principales de la serie.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 206,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué compañía creó la franquicia Super Mario?",
+      "opciones": {
+        "a": "Sega",
+        "b": "Capcom",
+        "c": "Square Enix",
+        "d": "Nintendo"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Super Mario es una franquicia de Nintendo.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 207,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Cuál es el nombre del erizo azul protagonista de la serie de Sega?",
+      "opciones": {
+        "a": "Tails",
+        "b": "Knuckles",
+        "c": "Sonic",
+        "d": "Shadow"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Sonic es el personaje principal de la franquicia Sonic the Hedgehog de Sega.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 208,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué criatura de Pokémon es conocida por ataques eléctricos y mejillas rojas?",
+      "opciones": {
+        "a": "Bulbasaur",
+        "b": "Pikachu",
+        "c": "Squirtle",
+        "d": "Meowth"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Pikachu es un Pokémon de tipo eléctrico reconocido por sus mejillas rojas.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 209,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué estudio desarrolló Among Us?",
+      "opciones": {
+        "a": "Innersloth",
+        "b": "Mojang Studios",
+        "c": "Naughty Dog",
+        "d": "Ubisoft Montreal"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Among Us fue desarrollado y publicado por el estudio independiente Innersloth.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 210,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Cuál es la actividad central de Minecraft en su modo de supervivencia?",
+      "opciones": {
+        "a": "Completar carreras profesionales de autos",
+        "b": "Resolver casos como detective en una ciudad",
+        "c": "Dirigir una orquesta virtual",
+        "d": "Recolectar recursos, fabricar objetos y sobrevivir"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "En supervivencia, el jugador reúne materiales, fabrica herramientas y gestiona amenazas y necesidades.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 211,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién creó la versión inicial de Minecraft?",
+      "opciones": {
+        "a": "Jens Bergensten, conocido como Jeb",
+        "b": "Shigeru Miyamoto",
+        "c": "Markus Persson, conocido como Notch",
+        "d": "John Carmack"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Markus Persson inició el desarrollo de Minecraft; posteriormente el juego continuó bajo Mojang.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 212,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué compañía desarrolla League of Legends?",
+      "opciones": {
+        "a": "Epic Games",
+        "b": "Riot Games",
+        "c": "Bandai Namco",
+        "d": "Konami"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "League of Legends es un juego desarrollado por Riot Games.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 213,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué tipo de juego es principalmente The Sims?",
+      "opciones": {
+        "a": "Simulación de vida",
+        "b": "Carreras de kart",
+        "c": "Disparos en primera persona",
+        "d": "Estrategia militar histórica"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "The Sims permite crear personajes y gestionar distintos aspectos de su vida cotidiana.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 214,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué hacen los jugadores principalmente en Animal Crossing: New Horizons?",
+      "opciones": {
+        "a": "Compiten en torneos de fútbol profesional",
+        "b": "Exploran una estación espacial en combate",
+        "c": "Resuelven acertijos dentro de una pirámide",
+        "d": "Desarrollan una vida en una isla y realizan actividades cotidianas"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "El juego se centra en personalizar la isla, reunir recursos e interactuar con sus habitantes.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 215,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Cuál es la mecánica principal de Tetris?",
+      "opciones": {
+        "a": "Conectar tuberías para transportar agua",
+        "b": "Ordenar cartas por palo y valor",
+        "c": "Encajar piezas para completar filas horizontales",
+        "d": "Desplazar una pelota por un laberinto"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Las piezas geométricas caen y se organizan para completar filas.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 216,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué personaje es el vaquero de la serie de videojuegos Red Dead Redemption?",
+      "opciones": {
+        "a": "Nathan Drake",
+        "b": "Arthur Morgan",
+        "c": "Joel Miller",
+        "d": "Geralt de Rivia"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Arthur Morgan es el protagonista de Red Dead Redemption 2.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 217,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién es el protagonista de la serie God of War?",
+      "opciones": {
+        "a": "Kratos",
+        "b": "Dante",
+        "c": "Ezio Auditore",
+        "d": "Cloud Strife"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Kratos es el personaje central de la serie God of War.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 218,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué estudio creó la serie The Last of Us?",
+      "opciones": {
+        "a": "Insomniac Games",
+        "b": "FromSoftware",
+        "c": "Remedy Entertainment",
+        "d": "Naughty Dog"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "The Last of Us fue desarrollado por Naughty Dog.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 219,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Cómo se llama el arqueólogo protagonista de la serie Uncharted?",
+      "opciones": {
+        "a": "Lara Croft",
+        "b": "Indiana Jones",
+        "c": "Nathan Drake",
+        "d": "Sam Fisher"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Nathan Drake es el protagonista principal de los juegos Uncharted.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 220,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué es una “Poké Ball” en los videojuegos principales de Pokémon?",
+      "opciones": {
+        "a": "Una medalla que aumenta la velocidad del entrenador",
+        "b": "Un dispositivo que permite capturar y transportar Pokémon",
+        "c": "Un mapa que muestra todos los gimnasios",
+        "d": "Una poción que revive a cualquier personaje"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Las Poké Balls se utilizan para intentar capturar Pokémon durante la aventura.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 221,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué empresa publica la serie de juegos FIFA, ahora llamada EA Sports FC?",
+      "opciones": {
+        "a": "Electronic Arts",
+        "b": "Konami",
+        "c": "Sega",
+        "d": "Take-Two Interactive"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "La serie fue desarrollada y publicada por EA Sports bajo la marca FIFA y continuó como EA Sports FC.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 222,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Cuál es la meta habitual en Mario Kart?",
+      "opciones": {
+        "a": "Resolver un misterio sin usar vehículos",
+        "b": "Construir una pista y no recorrerla",
+        "c": "Recoger monedas sin llegar a una meta",
+        "d": "Completar una carrera antes que los demás competidores"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Mario Kart es una serie de carreras con personajes de Nintendo y objetos especiales.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 223,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué personaje es el protagonista de Hollow Knight?",
+      "opciones": {
+        "a": "Hornet",
+        "b": "Zote",
+        "c": "El Caballero",
+        "d": "Quirrel"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "El personaje jugable sin nombre suele identificarse como el Caballero.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 224,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué debe hacer el jugador en Plants vs. Zombies?",
+      "opciones": {
+        "a": "Cultivar un jardín sin enemigos ni objetivos",
+        "b": "Defender la casa colocando plantas contra oleadas de zombis",
+        "c": "Atrapar fantasmas dentro de una mansión",
+        "d": "Construir vehículos para escapar de una isla"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "El juego combina defensa de torres y estrategia: las plantas detienen a los zombis que avanzan.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 225,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué compañía desarrolló Grand Theft Auto V?",
+      "opciones": {
+        "a": "Rockstar North",
+        "b": "Bungie",
+        "c": "Insomniac Games",
+        "d": "Treyarch"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Grand Theft Auto V fue desarrollado principalmente por Rockstar North y publicado por Rockstar Games.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 226,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué actor interpreta a John Wick en la película John Wick?",
+      "opciones": {
+        "a": "Bruce Willis",
+        "b": "Tom Cruise",
+        "c": "Keanu Reeves",
+        "d": "Jason Statham"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Keanu Reeves interpreta al personaje titular John Wick.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 227,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué actor interpreta a John McClane en Duro de matar (Die Hard)?",
+      "opciones": {
+        "a": "Keanu Reeves",
+        "b": "Bruce Willis",
+        "c": "Mel Gibson",
+        "d": "Harrison Ford"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Bruce Willis interpreta al detective John McClane en Die Hard, conocida en español como Duro de matar.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 228,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué actriz interpreta a Hermione Granger en las películas de Harry Potter?",
+      "opciones": {
+        "a": "Emma Watson",
+        "b": "Keira Knightley",
+        "c": "Natalie Portman",
+        "d": "Anne Hathaway"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Emma Watson interpreta a Hermione Granger en la serie cinematográfica de Harry Potter.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 229,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué actor interpreta a Jack Sparrow en Piratas del Caribe?",
+      "opciones": {
+        "a": "Orlando Bloom",
+        "b": "Javier Bardem",
+        "c": "Robert Downey Jr.",
+        "d": "Johnny Depp"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Johnny Depp interpreta al capitán Jack Sparrow.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 230,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién interpreta a Tony Stark en las películas del Universo Cinematográfico de Marvel?",
+      "opciones": {
+        "a": "Chris Evans",
+        "b": "Mark Ruffalo",
+        "c": "Robert Downey Jr.",
+        "d": "Jeremy Renner"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Robert Downey Jr. dio vida a Tony Stark, también conocido como Iron Man.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 231,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué actriz interpreta a Katniss Everdeen en Los juegos del hambre?",
+      "opciones": {
+        "a": "Shailene Woodley",
+        "b": "Jennifer Lawrence",
+        "c": "Emma Stone",
+        "d": "Saoirse Ronan"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Jennifer Lawrence interpreta a Katniss Everdeen en las películas de la saga.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 232,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién interpreta a Forrest Gump en la película homónima?",
+      "opciones": {
+        "a": "Tom Hanks",
+        "b": "Robin Williams",
+        "c": "Kevin Costner",
+        "d": "Michael Douglas"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Tom Hanks interpreta al personaje principal de Forrest Gump.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 233,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué actor interpreta a Neo en The Matrix?",
+      "opciones": {
+        "a": "Laurence Fishburne",
+        "b": "Hugo Weaving",
+        "c": "Christian Bale",
+        "d": "Keanu Reeves"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Keanu Reeves protagoniza The Matrix como Neo.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 234,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién dirigió Jurassic Park (1993)?",
+      "opciones": {
+        "a": "James Cameron",
+        "b": "George Lucas",
+        "c": "Steven Spielberg",
+        "d": "Ridley Scott"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Steven Spielberg dirigió la película estrenada en 1993.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 235,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién dirigió Titanic (1997)?",
+      "opciones": {
+        "a": "Christopher Nolan",
+        "b": "James Cameron",
+        "c": "Peter Jackson",
+        "d": "Ron Howard"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Titanic fue escrita y dirigida por James Cameron.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 236,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién dirigió El padrino (The Godfather)?",
+      "opciones": {
+        "a": "Francis Ford Coppola",
+        "b": "Martin Scorsese",
+        "c": "Brian De Palma",
+        "d": "William Friedkin"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Francis Ford Coppola dirigió la película estrenada en 1972.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 237,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué actor interpreta a Indiana Jones en la serie cinematográfica clásica?",
+      "opciones": {
+        "a": "Sean Connery",
+        "b": "Tom Hanks",
+        "c": "Liam Neeson",
+        "d": "Harrison Ford"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Harrison Ford interpreta al arqueólogo aventurero Indiana Jones.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 238,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué actriz interpreta a la protagonista de Wonder Woman en las películas del universo DC?",
+      "opciones": {
+        "a": "Margot Robbie",
+        "b": "Brie Larson",
+        "c": "Gal Gadot",
+        "d": "Charlize Theron"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Gal Gadot interpreta a Diana Prince/Wonder Woman en las películas de DC.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 239,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué actor interpreta a Black Panther/T’Challa en la película de 2018?",
+      "opciones": {
+        "a": "Michael B. Jordan",
+        "b": "Chadwick Boseman",
+        "c": "Anthony Mackie",
+        "d": "Idris Elba"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Chadwick Boseman interpreta a T’Challa en Black Panther (2018).",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 240,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué actor interpreta al personaje principal en la película Gladiator (2000)?",
+      "opciones": {
+        "a": "Russell Crowe",
+        "b": "Joaquin Phoenix",
+        "c": "Eric Bana",
+        "d": "Gerard Butler"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Russell Crowe interpreta a Máximo Décimo Meridio en la película de Ridley Scott.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 241,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién interpreta a Barbie en la película Barbie (2023)?",
+      "opciones": {
+        "a": "Emma Mackey",
+        "b": "Anne Hathaway",
+        "c": "Florence Pugh",
+        "d": "Margot Robbie"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Margot Robbie interpreta a Barbie en la película dirigida por Greta Gerwig.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 242,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién interpreta a Ken en Barbie (2023)?",
+      "opciones": {
+        "a": "Ryan Reynolds",
+        "b": "Chris Pine",
+        "c": "Ryan Gosling",
+        "d": "Channing Tatum"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Ryan Gosling interpreta a Ken junto a Margot Robbie.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 243,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué actor interpreta a Willy Wonka en Charlie y la fábrica de chocolate (2005)?",
+      "opciones": {
+        "a": "Gene Wilder",
+        "b": "Johnny Depp",
+        "c": "Jim Carrey",
+        "d": "Ewan McGregor"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Johnny Depp interpreta a Willy Wonka en la versión dirigida por Tim Burton en 2005.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 244,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién interpreta a Rocky Balboa en la película Rocky?",
+      "opciones": {
+        "a": "Sylvester Stallone",
+        "b": "Arnold Schwarzenegger",
+        "c": "Dolph Lundgren",
+        "d": "Jean-Claude Van Damme"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Sylvester Stallone escribió e interpreta a Rocky Balboa en la película de 1976.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 245,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué actor da voz a Shrek en la versión original en inglés?",
+      "opciones": {
+        "a": "Eddie Murphy",
+        "b": "Cameron Diaz",
+        "c": "John Lithgow",
+        "d": "Mike Myers"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Mike Myers presta su voz a Shrek; Eddie Murphy interpreta a Burro.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 246,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué actriz da voz a Elsa en la versión original en inglés de Frozen?",
+      "opciones": {
+        "a": "Kristen Bell",
+        "b": "Amy Adams",
+        "c": "Idina Menzel",
+        "d": "Mandy Moore"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Idina Menzel da voz a Elsa y canta “Let It Go” en la versión original en inglés.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 247,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién interpreta a Marty McFly en Volver al futuro?",
+      "opciones": {
+        "a": "Tom Cruise",
+        "b": "Michael J. Fox",
+        "c": "Matthew Broderick",
+        "d": "Johnny Depp"
+      },
+      "respuestas_correctas": [
+        "b"
+      ],
+      "explicacion": "Michael J. Fox interpreta a Marty McFly en la trilogía Volver al futuro.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 248,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué personaje interpreta Daniel Radcliffe en las películas de Harry Potter?",
+      "opciones": {
+        "a": "Harry Potter",
+        "b": "Ron Weasley",
+        "c": "Neville Longbottom",
+        "d": "Draco Malfoy"
+      },
+      "respuestas_correctas": [
+        "a"
+      ],
+      "explicacion": "Daniel Radcliffe interpreta al protagonista Harry Potter.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 249,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Quién interpreta a James Bond en Casino Royale (2006)?",
+      "opciones": {
+        "a": "Pierce Brosnan",
+        "b": "Sean Connery",
+        "c": "Timothy Dalton",
+        "d": "Daniel Craig"
+      },
+      "respuestas_correctas": [
+        "d"
+      ],
+      "explicacion": "Daniel Craig debutó como James Bond en Casino Royale (2006).",
+      "tiempo_limite": 20,
+      "puntos": 1
+    },
+    {
+      "numero": 250,
+      "tipo": "opcion_unica",
+      "enunciado": "¿Qué actor interpreta a Dominic Toretto en la saga Rápidos y furiosos?",
+      "opciones": {
+        "a": "Paul Walker",
+        "b": "Dwayne Johnson",
+        "c": "Vin Diesel",
+        "d": "Jason Statham"
+      },
+      "respuestas_correctas": [
+        "c"
+      ],
+      "explicacion": "Vin Diesel interpreta a Dominic Toretto en la franquicia Fast & Furious.",
+      "tiempo_limite": 20,
+      "puntos": 1
+    }
+  ]
+}

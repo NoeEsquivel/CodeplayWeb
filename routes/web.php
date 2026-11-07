@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', fn () => view('auth.login'))->name('home');
 Route::get('/login', fn () => view('auth.login'))->name('login');
 Route::post('/login/verify', [AuthController::class, 'verify'])
-    ->middleware('throttle:10,1')
+    ->middleware(['throttle:500,1', \App\Http\Middleware\VerifyLoginTurnstile::class])
     ->name('login.verify');
 
 Route::get('/recuperar-cuenta', [RecoveryController::class, 'showRequestForm'])->name('recovery.form');
@@ -50,7 +50,7 @@ Route::middleware('auth.custom')->group(function () {
         ->middleware('role:Profesor,AdministradorColegio,Master')
         ->name('cuenta.clave.editar');
     Route::post('/cambio-clave-procesar', [AuthController::class, 'procesarCambioClaveObligatorio'])
-        ->middleware('throttle:10,1')
+        ->middleware('throttle:500,1')
         ->name('cambio.clave.procesar');
     Route::get('/seguridad/correo', [SecurityController::class, 'showEmailForm'])->name('security.email.form');
     Route::post('/seguridad/correo', [SecurityController::class, 'saveEmail'])

@@ -31,7 +31,7 @@ class ClassroomTestController extends Controller
             $lifecycle->synchronize($candidate);
         }
         $sessions = TestSesion::whereIn('id', $candidates->pluck('id'))
-            ->with(['clase:id,nombre', 'anfitrion:id,nombre', 'bancos:id,nombre'])
+            ->with(['clase:id,nombre', 'anfitrion:id,nombre,nombre_completo', 'bancos:id,nombre'])
             ->withExists(['participantes as ya_ingreso' => fn ($q) => $q->where('usuario_id', $student->id)])->latest()->get()
             ->filter(function (TestSesion $session) use ($student, $lifecycle) {
                 if ($session->modalidad === 'examen' && $lifecycle->canReview($student, $session)) {

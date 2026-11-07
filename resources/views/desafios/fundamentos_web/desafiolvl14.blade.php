@@ -350,21 +350,21 @@
                     <h3 class="section-title">Tu Código</h3>
                     <div class="editor-container">
                         <div class="code-editor">
-                            <textarea id="html-code" aria-label="Editor de código"><?php
+                            <textarea id="html-code" aria-label="Editor de código">&lt;?php
 // Procesa un formulario usando PHP
-?>
+?&gt;
 
-<form method="post">
-    <label for="nombre">Nombre:</label>
-    <input id="nombre" type="text" name="nombre">
-    <button type="submit">Enviar</button>
-</form>
+&lt;form method="post"&gt;
+    &lt;label for="nombre"&gt;Nombre:&lt;/label&gt;
+    &lt;input id="nombre" type="text" name="nombre"&gt;
+    &lt;button type="submit"&gt;Enviar&lt;/button&gt;
+&lt;/form&gt;
 
-<?php
+&lt;?php
 // Completa aquí la lectura del formulario
 
 
-?></textarea>
+?&gt;</textarea>
                         </div>
                         <div class="result-panel" id="result">
                             <!-- Aquí se mostrará el resultado -->

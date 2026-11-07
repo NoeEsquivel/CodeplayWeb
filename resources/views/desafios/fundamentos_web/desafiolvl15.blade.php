@@ -350,12 +350,12 @@
                     <h3 class="section-title">Tu Código</h3>
                     <div class="editor-container">
                         <div class="code-editor">
-                            <textarea id="html-code" aria-label="Editor de código"><?php
+                            <textarea id="html-code" aria-label="Editor de código">&lt;?php
 // Guarda un dato del usuario usando sesión y cookie
 
 
 
-?></textarea>
+?&gt;</textarea>
                         </div>
                         <div class="result-panel" id="result">
                             <!-- Aquí se mostrará el resultado -->

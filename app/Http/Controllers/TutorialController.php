@@ -2,31 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\TutorialPrerequisiteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TutorialController extends Controller
 {
-    private const VIDEOS = [
-        'Botones_interactivos.mp4',
-        'Diseno_responsivo.mp4',
-        'Entorno_desarrollo.mp4',
-        'Estilos_css.mp4',
-        'Formularios_web.mp4',
-        'Introduccion_bootstrap.mp4',
-        'Javascript_basico.mp4',
-        'Navegacion_paginas.mp4',
-        'Primera_pagina.mp4',
-        'Proyecto_completo.mp4',
-    ];
-
     public function index()
     {
         return view('tutoriales.tutoriales');
     }
 
-    public function show($slug)
+    public function show($slug, TutorialPrerequisiteService $prerequisites)
     {
         // Obtener el tutorial específico
         $tutorial = DB::table('tutoriales')->where('slug', $slug)->first();
@@ -49,14 +37,25 @@ class TutorialController extends Controller
             return view('tutoriales.en-desarrollo', compact('slug'));
         }
 
-        return view($vista, compact('tutorial', 'progreso'));
+        $videoAccess = $prerequisites->status($slug, (int) $usuarioId);
+
+        return view($vista, compact('tutorial', 'progreso', 'videoAccess'));
     }
 
-    public function video(Request $request, string $video): StreamedResponse
+    public function video(Request $request, string $video, TutorialPrerequisiteService $prerequisites): StreamedResponse
     {
-        abort_unless(in_array($video, self::VIDEOS, true), 404);
+        $slug = $prerequisites->slugForVideo($video);
+        abort_if($slug === null, 404);
 
-        $path = public_path('videos'.DIRECTORY_SEPARATOR.$video);
+        $access = $prerequisites->status($slug, (int) $request->session()->get('usuario_id'));
+        $pending = array_column(array_filter($access['requirements'], fn ($item) => ! $item['complete']), 'title');
+        abort_unless($access['unlocked'], 403,
+            'Para desbloquear este video, visita la documentación y realiza al menos un test de cada tema pendiente: '.implode(', ', $pending).'.');
+
+        // Los videos restringidos se guardan fuera de la carpeta pública.
+        $path = $slug === 'primer-pagina-web'
+            ? public_path('videos'.DIRECTORY_SEPARATOR.$video)
+            : resource_path('videos/tutoriales/'.$video);
         abort_unless(is_file($path) && is_readable($path), 404);
 
         $size = filesize($path);
@@ -97,7 +96,7 @@ class TutorialController extends Controller
             'Content-Type' => 'video/mp4',
             'Content-Length' => (string) $length,
             'Content-Disposition' => 'inline; filename="'.$video.'"',
-            'Cache-Control' => 'private, max-age=3600',
+            'Cache-Control' => 'private, no-store',
         ];
 
         if ($status === 206) {
@@ -147,6 +146,17 @@ class TutorialController extends Controller
                 'success' => false,
                 'error' => 'Tutorial no encontrado',
             ]);
+        }
+
+        $access = app(TutorialPrerequisiteService::class)->status($slug, (int) $usuarioId);
+        if (! $access['unlocked']) {
+            $pending = array_column(array_filter($access['requirements'], fn ($item) => ! $item['complete']), 'title');
+
+            return response()->json([
+                'success' => false,
+                'error' => 'Para completar este tutorial, visita la documentación y realiza al menos un test de cada tema pendiente: '.implode(', ', $pending).'.',
+                'requirements' => $access['requirements'],
+            ], 403);
         }
 
         // Verificar si ya completó el tutorial

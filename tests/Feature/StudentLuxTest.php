@@ -65,6 +65,46 @@ class StudentLuxTest extends TestCase
         $this->get('/inicio-profesor')->assertOk()->assertDontSee('id="codeplay-lux"', false);
     }
 
+    public function test_lux_styles_load_in_the_page_head_and_never_in_any_challenge_editor(): void
+    {
+        $student = $this->user(Usuario::ROL_ALUMNO, 'Alumno Lux Desafíos');
+        $this->withSession($this->sessionFor($student));
+        $paths = ['/alumno/desafios', '/alumno/desafios/programacion'];
+        for ($level = 1; $level <= 20; $level++) {
+            $paths[] = '/alumno/desafios/nivel'.$level;
+        }
+
+        foreach ($paths as $path) {
+            $html = $this->get($path)->assertOk()->getContent();
+            $document = new \DOMDocument;
+            // libxml interpreta como HTML4 los cierres HTML escritos dentro de JavaScript.
+            // Conservar los nodos script, sin su texto, permite revisar la estructura de la página.
+            $markup = preg_replace('~(<script\b[^>]*>).*?(</script\s*>)~is', '$1$2', $html);
+            $document->loadHTML($markup, LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING);
+            $xpath = new \DOMXPath($document);
+            $this->assertSame(1, $xpath->query('/html/head/link[contains(@href, "/css/student-lux.css")]')->length,
+                'Los estilos de Lux deben cargarse en el encabezado de '.$path);
+            $this->assertSame(1, $xpath->query('/html/body/aside[@id="codeplay-lux"]')->length,
+                'Lux debe aparecer una sola vez fuera del editor en '.$path);
+            $this->assertSame(1, $xpath->query('//script[contains(@src, "/js/student-lux.js")]')->length);
+            foreach ($document->getElementsByTagName('textarea') as $editor) {
+                $this->assertStringNotContainsString('/css/student-lux.css', $editor->textContent, $path);
+                $this->assertStringNotContainsString('id="codeplay-lux"', $editor->textContent, $path);
+                if (in_array($path, ['/alumno/desafios/nivel16', '/alumno/desafios/nivel17'], true)) {
+                    $this->assertStringStartsWith('<!DOCTYPE html>', trim($editor->textContent), $path);
+                    $this->assertStringContainsString('<title>', $editor->textContent, $path);
+                    $this->assertStringContainsString('<body>', $editor->textContent, $path);
+                    $this->assertStringContainsString('</html>', $editor->textContent, $path);
+                }
+                if (in_array($path, ['/alumno/desafios/nivel13', '/alumno/desafios/nivel14', '/alumno/desafios/nivel15'], true)) {
+                    $this->assertStringStartsWith('<?php', trim($editor->textContent), $path);
+                    $this->assertStringContainsString('?>', $editor->textContent, $path);
+                    $this->assertStringContainsString('// ', $editor->textContent, $path);
+                }
+            }
+        }
+    }
+
     private function user(string $role, string $name): Usuario
     {
         return Usuario::create([
